@@ -24,88 +24,9 @@
 <body>
 
 
-<<<<<<< Updated upstream:cart.php
 <?php
         include 'navbar.php';
     ?>
-=======
-    <header class="header">
-        <div class="container">
-            <section class="header--main">
-                <div class="mobile-menu">
-                    <input id="menu__toggle" class="open-nav" type="checkbox" />
-                    <label class="menu__btn" class="open" for="menu__toggle">
-                        <span></span>
-                    </label>
-                </div>
-                <div class="header--logo">
-                    <a href="">
-                        <img src="assets/img/light-logo.png" class="nav-logo" alt="Ora Watches &amp; Jewelery | Logo">
-                    </a>
-                </div>
-                <nav class="menu js-menu">
-                    <ul class="ul-menu">
-                        <li class="menu-item">
-                            <a href="index.html">Home</a>
-                        </li>
-                        <li class="menu-item menu-item-child">
-                            <a href="#" class="js-sub_menu">Products <i class="fa-solid fa-angle-down"></i></a>
-                            <ul class="sub-menu">
-                                <li class="sub-menu-item"><a href="products.html">All Products</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-item menu-item-child">
-                            <a href="#" class="js-sub_menu">Pages <i class="fa-solid fa-angle-down"></i></a>
-                            <ul class="sub-menu">
-                                <li class="sub-menu-item"><a href="blog.html">blog</a></li>
-                                <li class="sub-menu-item"><a href="about.html">about Us</a></li>
-                                <li class="sub-menu-item"><a href="contact.html">contact Us</a></li>
-                            </ul>
-                        </li>
-                        <li class="menu-item">
-                            <a href="login.html">Log In</a>
-                        </li>
-                        </li>
-                        <li class="menu-item">
-                            <a href="sign.html">Sign Up</a>
-                        </li>
-                    </ul>
-                </nav>
-                <div class="darkLight-searchBox">
-                    <div class="dark-light">
-                        <!-- <i class="fa-solid fa-moon moon"></i> -->
-                        <!-- <i class="fa-solid fa-sun"></i> -->
-                        <i class="uil uil-moon moon"></i>
-                        <i class="fa-regular fa-sun sun"></i>
-                    </div>
-                    <div class="searchBox">
-                        <div class="searchToggle">
-                            <!-- <i class="fa-solid fa-xmark cancel"></i> -->
-                            <!-- <i class="fa-solid fa-magnifying-glass search"></i> -->
-                            <i class="uil uil-times cancel"></i>
-                            <i class="uil uil-search search"></i>
-                        </div>
-
-                        <div class="search-field">
-                            <input type="text" placeholder="Search..." />
-                            <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
-                            <i class="uil uil-search-alt"></i>
-                        </div>
-                    </div>
-                    <div class="cart-checkout">
-                        <i class="uil uil-shopping-bag shopping-cart active-n"></i>
-                    </div>
-                    <!-- <i class="fa-solid fa-bars open-nav"></i> -->
-                    <div class="mcart">
-                        <i>(<span id="cartCount" class="active-n active">0</span>)</i>
-                    </div>
-                </div>
-            </section>
-            <div class="progress"></div>
-        </div>
-    </header><!-- header-end  -->
-
->>>>>>> Stashed changes:cart.html
 
     <main class="wrapper">
         <section class="hero blog-hero">
