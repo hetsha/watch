@@ -3,8 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SignIn&SignUp</title>
+    <title>Ragister</title>
     <link rel="stylesheet" type="text/css" href="assets/css/log.css" />
+    
+    <link rel="icon" href="assets/img/favicon.png" sizes="192x192" />
     <script
       src="https://kit.fontawesome.com/64d58efce2.js"
       crossorigin="anonymous"
