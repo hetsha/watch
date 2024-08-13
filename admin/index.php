@@ -6,7 +6,7 @@ include ("includes/db.php");
 
 if (!isset($_SESSION['admin_email'])) {
 
-    echo "<script>window.open('login.php','_self')</script>";
+    echo "<script>window.open('../login.php','_self')</script>";
 
 } else {
 
@@ -75,9 +75,8 @@ if (!isset($_SESSION['admin_email'])) {
         <link href="css/style.css" rel="stylesheet">
 
         <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
-        <!-- <link rel="shortcut icon" href="//cdn.shopify.com/s/files/1/2484/9148/files/SDQSDSQ_32x32.png?v=1511436147"
-            type="image/png"> -->
-            <link rel="icon" href="../assets/img/favicon.png" sizes="192x192" />
+        <link rel="shortcut icon" href="//cdn.shopify.com/s/files/1/2484/9148/files/SDQSDSQ_32x32.png?v=1511436147"
+            type="image/png">
 
     </head>
 

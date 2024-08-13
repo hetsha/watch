@@ -44,6 +44,7 @@ function validateForm() {
   }
 
   // If all validations pass, submit the form
+  window.open('index.php');
   showAlertPopup("All fields are valid.");
   return true;
 }
@@ -90,6 +91,7 @@ function validform() {
 
   // If all validations pass, submit the form
   showAlertPopup("All fields are valid.");
+  window.open('index.php');
   return true;
 }
 

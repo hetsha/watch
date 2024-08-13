@@ -1,90 +1,206 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="assets/css/log.css" />
-    <!-- <script
-      src="https://kit.fontawesome.com/64d58efce2.js"
-      crossorigin="anonymous"
-    ></script> -->
+<?php
+session_start(); // Ensure this is the very first line in your PHP script
+require_once "include/db.php";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") 
+{
+    if (isset($_POST['signup'])) {
+        // Handle signup logic
+        $username = $_POST['signup_username'];
+        $email = $_POST['signup_email'];
+        $number = $_POST['signup_number'];
+        $country = $_POST['signup_country'];
+        $password = $_POST['signup_password'];
+        $confirm_password = $_POST['signup_confirm_password'];
+        $job = 'user'; // Add this line
     
-    <link rel="icon" href="assets/img/favicon.png" sizes="192x192" />
-    <script src="assets/js/log.js"></script>
-  </head>
-  <body>
-    <div class="container">
-      <div class="forms-container">
-        <div class="signin-signup">
-          <form
-            action="<?php echo $_SERVER['PHP_SELF']; ?>"
-            id="sub"
-            onsubmit="return validform()"
-            class="sign-in-form"
-            method="post"
-          >
-            <h2 class="title">Log In</h2>
-            <div class="input-field">
-              <i class="fas fa-user"></i>
-              <input type="text" placeholder="Username" id="user" name="username" />
-            </div>
-            <div class="input-field">
-              <i class="fas fa-lock"></i>
-              <input type="password" placeholder="Password" id="pass" name="password" />
-            </div>
-            <input type="submit" value="Login" class="btn solid" />
-
-            <p class="social-text">Or Sign in with social platforms</p>
-            <div class="social-media">
-              <a href="#" class="social-icon">
-                <i class="fab fa-facebook-f"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-twitter"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-google"></i>
-              </a>
-              <a href="#" class="social-icon">
-                <i class="fab fa-linkedin-in"></i>
-              </a>
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="panels-container">
-        <div class="panel left-panel">
-          <div class="content">
-            <h3>New here?</h3>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio
-              minus natus est.
-            </p>
-            <a href="sign.php"
-              ><button class="btn transparent" id="sign-up-btn">
-                Sign Up
-              </button></a
-            >
-          </div>
-          <img src="./assets/img/log.svg" class="image" alt="" />
-        </div>
-
-        <div class="panel right-panel"></div>
-      </div>
-    </div>
-
-    <?php
-      if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if ($password === $confirm_password) {
+            // Insert the new user into the database
+            $query = "INSERT INTO admins (admin_name, admin_email, admin_contact, admin_country, admin_pass, admin_job) VALUES (?, ?, ?, ?, ?, ?)";
+            if ($stmt = $con->prepare($query)) {
+                $stmt->bind_param("ssssss", $username, $email, $number, $country, $password, $job); // Add $job to the bind parameters
+                $stmt->execute();
+                echo "<script>alert('Registration successful!');</script>";
+                $stmt->close();
+            }
+        } else {
+            echo "<script>alert('Passwords do not match!');</script>";
+        }
+    }
+     elseif (isset($_POST['login'])) 
+    {
+        // Handle login logic
         $username = $_POST["username"];
         $password = $_POST["password"];
-
-        // TO DO: Validate the username and password
-        // For demonstration purposes, we'll just echo the input
-        echo "Username: $username, Password: $password";
-      }
+    
+        // Validate the username and password from admins table
+        $query = "SELECT * FROM admins WHERE admin_name = ? AND admin_pass = ?";
+        if ($stmt = $con->prepare($query)) 
+        {
+            $stmt->bind_param("ss", $username, $password);
+            $stmt->execute();
+            $result = $stmt->get_result();
+    
+            if ($result->num_rows > 0) 
+            {
+                $user = $result->fetch_assoc();
+                $_SESSION['loggedin'] = true;
+                $_SESSION['username'] = $username;
+                $_SESSION['user_job'] = $user['admin_job'];
+                $_SESSION['admin_name'] = $username;
+                $_SESSION['admin_email'] = $user['admin_email']; // Add this line
+                // Store a hashed version of the password in the session
+                $_SESSION['admin_pass'] = $password;
+    
+                // Redirect based on user job
+                if ($user['admin_job'] == 'admin')
+                {
+                    header("Location: admin/index.php?dashboard");
+                } 
+                else 
+                {
+                    header("Location: index.php");
+                }
+                exit;
+            } 
+            else 
+            {
+                echo "<script>alert('Invalid Username or Password!');</script>";
+            }
+            $stmt->close();
+        }
+    }
+    $con->close();
+}
     ?>
 
-    <script src="app.js"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login / Register</title>
+    <link rel="stylesheet" type="text/css" href="assets/css/log.css" />
+    <link rel="icon" href="assets/img/favicon.png" sizes="192x192" />
+    <link rel="stylesheet" href="assets/css/fontawesome-free-6.4.0-web/css/all.min.css">
+</head>
+<body>
+    <div class="container <?php if(isset($_POST['signup'])) { echo 'sign-up-mode'; } ?>">
+        <div class="forms-container">
+            <div class="signin-signup">
+                <!-- Sign In Form -->
+                <form action="" method="POST" class="sign-in-form">
+                    <h2 class="title">Log In</h2>
+                    <div class="input-field">
+                        <i class="fas fa-user fa-2x"></i>
+                        <input type="text" placeholder="Username" id="user" name="username" required />
+                    </div>
+                    <div class="input-field">
+                        <i class="fas fa-lock fa-2x"></i>
+                        <input type="password" placeholder="Password" id="pass" name="password" required />
+                    </div>
+                    <input type="submit" value="Login" class="btn solid" name="login" />
+
+                    <p class="social-text">Or Sign in with social platforms</p>
+                    <div class="social-media">
+                        <a href="#" class="social-icon">
+                            <i class="fab fa-facebook-f fa-lg"></i>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <i class="fab fa-twitter fa-lg"></i>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <i class="fab fa-google fa-lg"></i>
+                        </a>
+                        <a href="#" class="social-icon">
+                            <i class="fab fa-linkedin-in fa-lg"></i>
+                        </a>
+                    </div>
+                </form>
+
+<!-- Sign Up Form -->
+<form action="" method="POST" class="sign-up-form">
+    <h2 class="title">Sign Up</h2>
+    <div class="input-field">
+        <i class="fas fa-user-plus fa-2x"></i>
+        <input type="text" placeholder="Username" id="user" name="signup_username" required />
+    </div>
+    <div class="input-field">
+        <i class="fas fa-envelope fa-2x"></i>
+        <input type="email" placeholder="Email" id="email" name="signup_email" required />
+    </div>
+    <div class="input-field">
+        <i class="fas fa-phone fa-2x"></i>
+        <input type="text" placeholder="Number" id="num" name="signup_number" required />
+    </div>
+    <div class="input-field">
+        <i class="fas fa-globe fa-2x"></i>
+        <input type="text" placeholder="Country" id="country" name="signup_country" required />
+    </div>
+    <div class="input-field">
+        <i class="fas fa-lock fa-2x"></i>
+        <input type="password" placeholder="Password" id="pass" name="signup_password" required />
+    </div>
+    <div class="input-field">
+        <i class="fas fa-lock fa-2x"></i>
+        <input type="password" placeholder="Confirm Password" id="copass" name="signup_confirm_password" required />
+    </div>
+    <input type="submit" value="Sign Up" class="btn solid" name="signup" />
+
+    <p class="social-text">Or Sign up with social platforms</p>
+    <div class="social-media">
+        <a href="#" class="social-icon">
+            <i class="fab fa-facebook-f fa-lg"></i>
+        </a>
+        <a href="#" class="social-icon">
+            <i class="fab fa-twitter fa-lg"></i>
+        </a>
+        <a href="#" class="social-icon">
+            <i class="fab fa-google fa-lg"></i>
+        </a>
+        <a href="#" class="social-icon">
+            <i class="fab fa-linkedin-in fa-lg"></i>
+        </a>
+    </div>
+</form>
+            </div>
+        </div>
+        <div class="panels-container">
+            <div class="panel left-panel">
+                <div class="content">
+                    <h3>New here?</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio minus natus est.</p>
+                    <button class="btn transparent" id="sign-up-btn">
+                        <i class="fas fa-user-plus fa-lg"></i> Sign Up
+                    </button>
+                </div>
+                <img src="./assets/img/log.svg" class="image" alt="" />
+            </div>
+            <div class="panel right-panel">
+                <div class="content">
+                    <h3>One of us?</h3>
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio minus natus est.</p>
+                    <button class="btn transparent" id="sign-in-btn">
+                        <i class="fas fa-sign-in-alt fa-lg"></i> Sign In
+                    </button>
+                </div>
+                <img src="./assets/img/register.svg" class="image" alt="" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sign_in_btn = document.querySelector("#sign-in-btn");
+        const sign_up_btn = document.querySelector("#sign-up-btn");
+        const container = document.querySelector(".container");
+
+        sign_up_btn.addEventListener("click", () => {
+            container.classList.add("sign-up-mode");
+        });
+
+        sign_in_btn.addEventListener("click", () => {
+            container.classList.remove("sign-up-mode");
+        });
+    </script>
+</body>
 </html>

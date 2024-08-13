@@ -54,7 +54,7 @@
                             <ul class="sub-menu">
                                 <li class="sub-menu-item"><a href="login.php">login</a></li>
                                 <li class="sub-menu-item"><a href="sign.php">sign up</a></li>
-                                <li class="sub-menu-item"><a href="admin\login.php">admin</a></li>
+                                <li class="sub-menu-item"><a href="logout.php">logout</a></li>
                             </ul>
                         </li>
                     </ul>

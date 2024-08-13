@@ -1,160 +1,189 @@
 <?php
 
+if (!isset($_SESSION['admin_email'])) {
 
+    echo "<script>window.open('../login.php','_self')</script>";
 
-if(!isset($_SESSION['admin_email'])){
+} else {
+    ?>
 
-echo "<script>window.open('login.php','_self')</script>";
+    <div class="row"><!-- 1 row Starts -->
 
-}
+        <div class="col-lg-12"><!-- col-lg-12 Starts -->
 
-else {
+            <ol class="breadcrumb"><!-- breadcrumb Starts -->
 
-?>
+                <li class="active">
 
-<div class="row" ><!-- 1 row Starts -->
+                    <i class="fa fa-dashboard"></i> Dashboard / View Admins
 
-<div class="col-lg-12" ><!-- col-lg-12 Starts -->
+                </li>
 
-<ol class="breadcrumb" ><!-- breadcrumb Starts -->
+            </ol><!-- breadcrumb Ends -->
 
-<li class="active" >
 
-<i class="fa fa-dashboard" ></i> Dashboard / View Users
+        </div><!-- col-lg-12 Ends -->
 
-</li>
+    </div><!-- 1 row Ends -->
 
-</ol><!-- breadcrumb Ends -->
 
+    <div class="row"><!-- 2 row Starts -->
 
-</div><!-- col-lg-12 Ends -->
+        <div class="col-lg-12"><!-- col-lg-12 Starts -->
 
-</div><!-- 1 row Ends -->
+            <div class="panel panel-default"><!-- panel panel-default Starts -->
 
+                <div class="panel-heading"><!-- panel-heading Starts -->
 
-<div class="row" ><!-- 2 row Starts -->
+                    <h3 class="panel-title"><!-- panel-title Starts -->
 
-<div class="col-lg-12" ><!-- col-lg-12 Starts -->
+                        <i class="fa fa-money fa-fw"></i> View Admins
 
-<div class="panel panel-default" ><!-- panel panel-default Starts -->
+                    </h3><!-- panel-title Ends -->
 
-<div class="panel-heading" ><!-- panel-heading Starts -->
 
-<h3 class="panel-title" ><!-- panel-title Starts -->
+                </div><!-- panel-heading Ends -->
 
-<i class="fa fa-money fa-fw" ></i> View Users
+                <div class="panel-body"><!-- panel-body Starts -->
 
-</h3><!-- panel-title Ends -->
+                    <div class="table-responsive"><!-- table-responsive Starts -->
 
+                        <table class="table table-bordered table-hover table-striped">
+                            <!-- table table-bordered table-hover table-striped Starts -->
 
-</div><!-- panel-heading Ends -->
+                            <thead><!-- thead Starts -->
 
-<div class="panel-body" ><!-- panel-body Starts -->
+                                <tr>
 
-<div class="table-responsive" ><!-- table-responsive Starts -->
+                                    <th>Admin ID:</th>
 
-<table class="table table-bordered table-hover table-striped" ><!-- table table-bordered table-hover table-striped Starts -->
+                                    <th>Admin Name:</th>
 
-<thead><!-- thead Starts -->
+                                    <th>Admin Email:</th>
 
-<tr>
+                                    <th>Admin Contact:</th>
 
-<th>User Name:</th>
+                                    <th>Admin Country:</th>
 
-<th>User Email:</th>
+                                    <th>Admin Job:</th>
 
-<th>User Image:</th>
+                                    <th>About Admin:</th>
 
-<th>User Country:</th>
+                                    <th>Admin Photo:</th>
 
-<th>User Job:</th>
+                                    <th>Delete Admin:</th>
 
-<th>Delete User:</th>
 
+                                </tr>
 
-</tr>
+                            </thead><!-- thead Ends -->
 
-</thead><!-- thead Ends -->
+                            <tbody><!-- tbody Starts -->
 
-<tbody><!-- tbody Starts -->
+                                <?php
 
-<?php
+                                $get_admin = "select * from admins WHERE admin_job ='admin'";
 
-$get_admin = "select * from admins";
+                                $run_admin = mysqli_query($con, $get_admin);
 
-$run_admin = mysqli_query($con,$get_admin);
+                                while ($row_admin = mysqli_fetch_array($run_admin)) {
 
-while($row_admin = mysqli_fetch_array($run_admin)){
+                                    $admin_id = $row_admin['admin_id'];
 
-$admin_id = $row_admin['admin_id'];
+                                    $admin_name = $row_admin['admin_name'];
 
-$admin_name = $row_admin['admin_name'];
+                                    $admin_email = $row_admin['admin_email'];
 
-$admin_email = $row_admin['admin_email'];
+                                    $admin_contact = $row_admin['admin_contact'];
 
-$admin_image = $row_admin['admin_image'];
+                                    $admin_country = $row_admin['admin_country'];
 
-$admin_country = $row_admin['admin_country'];
+                                    $admin_job = $row_admin['admin_job'];
 
-$admin_job = $row_admin['admin_job'];
+                                    $admin_about = $row_admin['admin_about'];
 
+                                    $admin_image = $row_admin['admin_image'];
 
 
 
 
-?>
 
-<tr>
+                                    ?>
 
-<td><?php echo $admin_name; ?></td>
+                                    <tr>
 
-<td><?php echo $admin_email; ?></td>
+                                        <td><?php echo $admin_id; ?></td>
 
-<td><img src="admin_images/<?php echo $admin_image; ?>" width="60" height="60" ></td>
+                                        <td><?php echo $admin_name; ?></td>
 
-<td><?php echo $admin_country; ?></td>
+                                        <td><?php echo $admin_email; ?></td>
 
-<td><?php echo $admin_job; ?></td>
+                                        <td><?php echo $admin_contact; ?></td>
 
-<td>
+                                        <td><?php echo $admin_country; ?></td>
 
-<a href="index.php?user_delete=<?php echo $admin_id; ?>" >
+                                        <td><?php echo $admin_job; ?></td>
 
-<i class="fa fa-trash-o" ></i> Delete
+                                        <td><?php echo $admin_about; ?></td>
 
-</a>
+                                        <td><img src="admin_images/<?php echo $admin_image; ?>" width="60" height="60"></td>
 
-</td>
+                                        <td>
 
+                                            <a
+                                                href="index.php?admin_delete=<?php echo $admin_id; ?>&admin_image=<?php echo $row_admin['admin_image']; ?>">
 
-</tr>
+                                                <i class="fa fa-trash-o"></i> Delete
+
+                                            </a>
+
+                                        </td>
+                                    </tr>
+
+
+                                <?php } ?>
+
+                            </tbody><!-- tbody Ends -->
+
+
+
+                        </table><!-- table table-bordered table-hover table-striped Ends -->
+
+                    </div><!-- table-responsive Ends -->
+
+
+                </div><!-- panel-body Ends -->
+
+
+            </div><!-- panel panel-default Ends -->
+
+
+        </div><!-- col-lg-12 Ends -->
+
+
+
+    </div><!-- 2 row Ends -->
+
+
+
 
 
 <?php } ?>
+<?php
 
-</tbody><!-- tbody Ends -->
+if (isset($_GET['admin_delete'])) {
+    $delete_id = $_GET['admin_delete'];
 
+    $delete_admin = "delete from admins where admin_id='$delete_id'";
+    $run_delete = mysqli_query($con, $delete_admin);
 
-
-</table><!-- table table-bordered table-hover table-striped Ends -->
-
-</div><!-- table-responsive Ends -->
-
-
-</div><!-- panel-body Ends -->
-
-
-</div><!-- panel panel-default Ends -->
-
-
-</div><!-- col-lg-12 Ends -->
+    if ($run_delete) {
+        echo "<script>alert('Admin Has Been Deleted')</script>";
+        echo "<script>window.open('index.php?view_admins','_self')</script>";
+    } else {
+        echo "Error: " . mysqli_error($con);
+    }
+}
 
 
-
-</div><!-- 2 row Ends -->
-
-
-
-
-
-<?php }  ?>
+?>

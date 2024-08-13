@@ -4,7 +4,7 @@
 
 if(!isset($_SESSION['admin_email'])){
 
-echo "<script>window.open('login.php','_self')</script>";
+echo "<script>window.open('../login.php','_self')</script>";
 
 }
 
@@ -21,7 +21,7 @@ if(isset($_GET['customer_delete'])){
 
 $delete_id = $_GET['customer_delete'];
 
-$delete_customer = "delete from customers where customer_id='$delete_id'";
+$delete_customer = "delete from admins where admin_id='$delete_id'";
 
 $run_delete = mysqli_query($con,$delete_customer);
 
