@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 30, 2024 at 06:43 PM
+-- Generation Time: Aug 17, 2024 at 04:11 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,7 +44,9 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_id`, `admin_name`, `admin_email`, `admin_pass`, `admin_image`, `admin_contact`, `admin_country`, `admin_job`, `admin_about`) VALUES
-(1, 'het', 'admin', 'admin', '', '9427961426', 'India', 'admin', 'founder');
+(1, 'het', 'admin', 'admin', 'IMG_20230513_122559_281.jpg', '9427961426', 'India', 'admin', '    founder    '),
+(3, 'akshat', 'akshatjshah@gmail.com', 'admin', '', '9825079765', 'India', 'admin', 'admin'),
+(4, 'nilaxi', 'nilaxi@gmail.com', 'admin', '', '6353009720', 'India', 'admin', 'admin');
 
 -- --------------------------------------------------------
 
@@ -72,6 +74,13 @@ CREATE TABLE `categories` (
   `cat_top` text NOT NULL,
   `cat_image` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`cat_id`, `cat_title`, `cat_top`, `cat_image`) VALUES
+(1, 'watch', 'yes', 'marble-product-backdrop-with-blank-space_53876-104163.avif');
 
 -- --------------------------------------------------------
 
@@ -122,6 +131,13 @@ CREATE TABLE `customers` (
   `customer_confirm_code` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Dumping data for table `customers`
+--
+
+INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_email`, `customer_pass`, `customer_country`, `customer_city`, `customer_contact`, `customer_address`, `customer_image`, `customer_ip`, `customer_confirm_code`) VALUES
+(1, 'heet', 'heet@gmail.com', '123', 'india', '', '9427961427', '', '', '', '');
+
 -- --------------------------------------------------------
 
 --
@@ -162,6 +178,13 @@ CREATE TABLE `manufacturers` (
   `manufacturer_top` text NOT NULL,
   `manufacturer_image` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `manufacturers`
+--
+
+INSERT INTO `manufacturers` (`manufacturer_id`, `manufacturer_title`, `manufacturer_top`, `manufacturer_image`) VALUES
+(2, 'noice', 'no', '360_F_567486394_PxcgLM8vtZqyH71fpkcpeKLDZfsbTyHO.jpg');
 
 -- --------------------------------------------------------
 
@@ -222,6 +245,16 @@ CREATE TABLE `products` (
   `status` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Dumping data for table `products`
+--
+
+INSERT INTO `products` (`product_id`, `p_cat_id`, `cat_id`, `manufacturer_id`, `date`, `product_title`, `product_url`, `product_img1`, `product_img2`, `product_img3`, `product_price`, `product_psp_price`, `product_desc`, `product_features`, `product_video`, `product_keywords`, `product_label`, `status`) VALUES
+(2, 1, 1, 2, '2024-08-16 15:44:35', 'watch', 'watch_name', '360_F_567486394_PxcgLM8vtZqyH71fpkcpeKLDZfsbTyHO.jpg', 'BingImageOfTheDay.jpg', 'marble-product-backdrop-with-blank-space_53876-104163.avif', 1000, 600, '\r\n  \r\n  \r\n\r\n\r\n  \r\n  ', '\r\n  \r\n  \r\n\r\n\r\n  \r\n  ', '\r\n  \r\n  \r\n\r\n\r\n  \r\n  ', 'watch', 'watch', 'product'),
+(3, 1, 1, 2, '2024-08-16 15:43:53', 'watch', 'watch_name', 'armani.png', 'armani.png', 'armani.png', 600, 200, '\r\n  \r\n\r\n\r\n  ', '\r\n  \r\n\r\n\r\n  ', '\r\n  \r\n\r\n\r\n  ', 'asd', 'watch', 'product'),
+(4, 1, 1, 2, '2024-08-16 15:59:42', 'het', 'het', 'citizen.png', 'citizen.png', 'citizen.png', 5000, 3000, '\r\n\r\n', '\r\n\r\n', '\r\n\r\n', 'watch', 'watch', 'product'),
+(5, 1, 1, 2, '2024-08-17 12:41:51', 'test', 'test', 'LC06673.362 = 69 EURO-600x660.jpg', 'LC06673.362 = 69 EURO-600x660.jpg', 'LC06673.362 = 69 EURO-600x660.jpg', 5000, 1000, '\r\n\r\nasd', '\r\n\r\n', '\r\n\r\n', 'asd', 'asd', 'product');
+
 -- --------------------------------------------------------
 
 --
@@ -234,6 +267,13 @@ CREATE TABLE `product_categories` (
   `p_cat_top` text NOT NULL,
   `p_cat_image` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `product_categories`
+--
+
+INSERT INTO `product_categories` (`p_cat_id`, `p_cat_title`, `p_cat_top`, `p_cat_image`) VALUES
+(1, 'watch', 'no', 'BingImageOfTheDay.jpg');
 
 -- --------------------------------------------------------
 
@@ -364,13 +404,13 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `cat_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `contact_us`
@@ -388,7 +428,7 @@ ALTER TABLE `coupons`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `customer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `customer_orders`
@@ -406,7 +446,7 @@ ALTER TABLE `enquiry_types`
 -- AUTO_INCREMENT for table `manufacturers`
 --
 ALTER TABLE `manufacturers`
-  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `payments`
@@ -424,13 +464,13 @@ ALTER TABLE `pending_orders`
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `product_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
 --
 ALTER TABLE `product_categories`
-  MODIFY `p_cat_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `p_cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `store`

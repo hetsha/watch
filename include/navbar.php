@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +16,9 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
-<header class="header">
+    <header class="header">
         <div class="container">
             <section class="header--main">
                 <div class="mobile-menu">
@@ -32,16 +34,21 @@
                 </div>
                 <nav class="menu js-menu">
                     <ul class="ul-menu">
-                        <li class="menu-item">
+                        <li class="menu-item <?php if ($currentPage == 'index.php')
+                            echo 'active-n active'; ?>">
                             <a href="index.php">Home</a>
                         </li>
-                        <li class="menu-item menu-item-child">
+                        <li
+                            class="menu-item menu-item-child <?php if ($currentPage == 'products.php')
+                                echo 'active'; ?>">
                             <a href="#" class="js-sub_menu">Products <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
                                 <li class="sub-menu-item"><a href="products.php">All Products</a></li>
                             </ul>
                         </li>
-                        <li class="menu-item menu-item-child">
+                        <li
+                            class="menu-item menu-item-child <?php if ($currentPage == 'blog.php' || $currentPage == 'about.php' || $currentPage == 'contact.php')
+                                echo 'active'; ?>">
                             <a href="#" class="js-sub_menu ">Pages <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
                                 <li class="sub-menu-item"><a href="blog.php">blog</a></li>
@@ -49,7 +56,9 @@
                                 <li class="sub-menu-item"><a href="contact.php">contact Us</a></li>
                             </ul>
                         </li>
-                        <li class="menu-item menu-item-child">
+                        <li
+                            class="menu-item menu-item-child <?php if ($currentPage == 'login.php' || $currentPage == 'sign.php' || $currentPage == 'logout.php')
+                                echo 'active'; ?>">
                             <a href="#" class="js-sub_menu ">login/signup <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
                                 <li class="sub-menu-item"><a href="login.php">login</a></li>
@@ -82,7 +91,7 @@
                     </div>
                     <div class="cart-checkout">
                         <a href="cart.php">
-                        <i class="uil uil-shopping-bag shopping-cart"></i>
+                            <i class="uil uil-shopping-bag shopping-cart"></i>
                         </a>
                     </div>
                     <!-- <i class="fa-solid fa-bars open-nav"></i> -->
@@ -96,4 +105,5 @@
     </header><!-- header-end  -->
 
 </body>
+
 </html>

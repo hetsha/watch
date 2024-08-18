@@ -2,8 +2,7 @@
 session_start(); // Ensure this is the very first line in your PHP script
 require_once "include/db.php";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") 
-{
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['signup'])) {
         // Handle signup logic
         $username = $_POST['signup_username'];
@@ -12,13 +11,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         $country = $_POST['signup_country'];
         $password = $_POST['signup_password'];
         $confirm_password = $_POST['signup_confirm_password'];
-        $job = 'user'; // Add this line
-    
+
         if ($password === $confirm_password) {
-            // Insert the new user into the database
-            $query = "INSERT INTO admins (admin_name, admin_email, admin_contact, admin_country, admin_pass, admin_job) VALUES (?, ?, ?, ?, ?, ?)";
+            // Insert the new customer into the customers table
+            $query = "INSERT INTO customers (customer_name, customer_email, customer_contact, customer_country, customer_pass) VALUES (?, ?, ?, ?, ?)";
             if ($stmt = $con->prepare($query)) {
-                $stmt->bind_param("ssssss", $username, $email, $number, $country, $password, $job); // Add $job to the bind parameters
+                $stmt->bind_param("sssss", $username, $email, $number, $country, $password);
                 $stmt->execute();
                 echo "<script>alert('Registration successful!');</script>";
                 $stmt->close();
@@ -26,45 +24,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
         } else {
             echo "<script>alert('Passwords do not match!');</script>";
         }
-    }
-     elseif (isset($_POST['login'])) 
-    {
+    } elseif (isset($_POST['login'])) {
         // Handle login logic
         $username = $_POST["username"];
         $password = $_POST["password"];
-    
-        // Validate the username and password from admins table
+
+        // First, check in the admins table
         $query = "SELECT * FROM admins WHERE admin_name = ? AND admin_pass = ?";
-        if ($stmt = $con->prepare($query)) 
-        {
+        if ($stmt = $con->prepare($query)) {
             $stmt->bind_param("ss", $username, $password);
             $stmt->execute();
             $result = $stmt->get_result();
-    
-            if ($result->num_rows > 0) 
-            {
+
+            if ($result->num_rows > 0) {
+                // User found in admins table
                 $user = $result->fetch_assoc();
                 $_SESSION['loggedin'] = true;
                 $_SESSION['username'] = $username;
-                $_SESSION['user_job'] = $user['admin_job'];
                 $_SESSION['admin_name'] = $username;
-                $_SESSION['admin_email'] = $user['admin_email']; // Add this line
-                // Store a hashed version of the password in the session
+                $_SESSION['admin_email'] = $user['admin_email'];
                 $_SESSION['admin_pass'] = $password;
-    
-                // Redirect based on user job
-                if ($user['admin_job'] == 'admin')
-                {
-                    header("Location: admin/index.php?dashboard");
-                } 
-                else 
-                {
-                    header("Location: index.php");
-                }
+
+                header("Location: admin/index.php?dashboard");
                 exit;
-            } 
-            else 
-            {
+            }
+            $stmt->close();
+        }
+
+        // If not found in admins, check in the customers table
+        $query = "SELECT * FROM customers WHERE customer_name = ? AND customer_pass = ?";
+        if ($stmt = $con->prepare($query)) {
+            $stmt->bind_param("ss", $username, $password);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result->num_rows > 0) {
+                // User found in customers table
+                $customer = $result->fetch_assoc();
+                $_SESSION['loggedin'] = true;
+                $_SESSION['username'] = $username;
+                $_SESSION['customer_name'] = $username;
+                $_SESSION['customer_email'] = $customer['customer_email'];
+                $_SESSION['customer_pass'] = $password;
+
+                header("Location: index.php");
+                exit;
+            } else {
                 echo "<script>alert('Invalid Username or Password!');</script>";
             }
             $stmt->close();
@@ -72,7 +77,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST")
     }
     $con->close();
 }
-    ?>
+?>
+
 
 <!DOCTYPE html>
 <html lang="en">

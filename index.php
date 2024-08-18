@@ -23,14 +23,22 @@
 
 <body>
 
+
     <?php
-    session_start();
+    session_start(); // Ensure this is the very first line in your PHP script
+
+    include 'include/base.php';
+    // Check if the user is logged in
     if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
-        header("Location: login.php"); // Redirect to login page
+        header("Location: login.php"); // Redirect to login page if not logged in
         exit;
     }
+
+    // Update the last activity time to keep the session alive
+    // $_SESSION['LAST_ACTIVITY'] = time();
     include 'include/navbar.php';
     include 'include/slide.php';
+
     ?>
 
     <section class="products-categories">
@@ -121,198 +129,99 @@
                 <div class="col-md-8">
                     <article class="title text-center">
                         <h2 class="title-sec">Products</h2>
-                        <p class="sub-title">Prefered <i class="uil uil-list-ui-alt"></i></p>
+                        <p class="sub-title">Latest Products <i class="uil uil-list-ui-alt"></i><i
+                                class="uil uil-watch-alt"></i></p>
                     </article>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-25%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/quantum.png" alt="Ore Quantum PWG927.650">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Quantum</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Quantum PWG927.650</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">169.00 &#8360;</span>135.20&#8360;</h4>
-                                </div>
+                <?php
+                // Ensure this is the very first line in your PHP script
 
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
+                // Database connection
+                $connection = new mysqli("localhost", "root", "", "ecom_store");
+
+                // Check for connection errors
+                if ($connection->connect_error) {
+                    die("Connection failed: " . $connection->connect_error);
+                }
+
+                // SQL query to fetch 6 random products and their categories
+                $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category, 
+    p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount, 
+    p.product_img1 AS image, p.product_img1 AS product_image
+FROM products p 
+JOIN categories c ON p.cat_id = c.cat_id
+ORDER BY RAND()
+LIMIT 6";
+
+                $result = $connection->query($sql);
+
+                $displayed_products = []; // Array to store displayed product IDs
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $displayed_products[] = $row['id']; // Add product ID to the array
+                        $old_price = $row['oldPrice'];
+                        $new_price = $row['price'];
+                        $discount_percentage = (($new_price - $old_price) / $new_price) * 100;
+
+                ?>
+                        <!-- HTML for product display -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="product-item discount">
+                                <div class="product-item-inner">
+                                    <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
+                                    <figure class="img-box">
+                                        <?php
+                                        if (!empty($row['product_image'])) {
+                                            $image_path = 'admin/product_images/' . $row['product_image'];
+                                            echo "<img src='$image_path' alt='" . $row['name'] . "'>";
+                                        } else {
+                                            echo "<p>No image available</p>";
+                                        }
+                                        ?>
+                                    </figure>
+                                    <div class="details">
+                                        <span class="cat"><i class="uil uil-tag-alt clr"></i>
+                                            <?php echo $row['category']; ?></span>
+                                        <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
+                                            <h5 class="title"><?php echo $row['name']; ?></h5>
+                                        </a>
+                                        <div class="star">
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star-half-stroke clr"></i>
+                                            <h4><span class="old-prc"><?php echo number_format($row['price'], 2); ?>
+                                                    &#8360;</span><?php echo number_format($row['oldPrice'], 2); ?>&#8360;
+                                            </h4>
+                                        </div>
+                                        <a class="go-to-cart" onclick="addToCart(<?php echo $row['id']; ?>)">
+                                            <i class="uil uil-shopping-bag shopping-cart cart"></i>
+                                        </a>
+                                        <!-- View Details Button -->
+                                        <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
+                                            <i class="uil uil-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-15%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/quantum2.png" alt="Ore Quantum HNG949.652">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Quantum</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Quantum HNG949.652</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">179.00&#8360;</span>143.00&#8360;</h4>
-                                </div>
+                <?php
+                    }
+                } else {
+                    echo "<p>No products found.</p>";
+                }
 
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-50%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/armani.png" alt="Ore Armani AR5886">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Emporio Armani</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Armani AR5886</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">279.00&#8360;</span>139.50&#8360;</h4>
-                                </div>
+                // Close the database connection
+                $connection->close();
+                ?>
 
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-10%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Ore_Gant_G121004.jpg" alt="Gant G121004">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Gant</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Gant G121004</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">229.00&#8360;</span>183.20&#8360;</h4>
-                                </div>
-
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-25%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Ore_Lee_Cooper_LC06713.740.jpg"
-                                        alt="Lee Cooper LC06713.740">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Lee Cooper</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Lee Cooper LC06713.740</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">229.00&#8360;</span>183.20&#8360;</h4>
-                                </div>
-
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-15%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Lee_Cooper_LC07200.651.jpg"
-                                        alt="Lee Cooper LC07200.651">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Lee Cooper</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Lee Cooper LC07200.651</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">229.00&#8360;</span>183.20&#8360;</h4>
-                                </div>
-
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div><!-- products-end  -->
-        </div>
-        <div class="row">
-            <div class="col-12 text-center mt-5 mx-auto">
-                <a href="products.php" class="btn btn-theme">View All Products <i
-                        class="uil uil-arrow-circle-right"></i></a>
             </div>
         </div>
-        </div>
-    </section><!-- products-end  -->
-
+    </section>
     <section class="product-support">
         <div class="container">
             <div class="row justify-content-center align-items-center">
@@ -331,199 +240,99 @@
                 <div class="col-md-8">
                     <article class="title text-center">
                         <h2 class="title-sec">Products</h2>
-                        <p class="sub-title">Latest <i class="uil uil-list-ui-alt"></i><i class="uil uil-watch-alt"></i>
-                        </p>
+                        <p class="sub-title">Latest Products <i class="uil uil-list-ui-alt"></i><i
+                                class="uil uil-watch-alt"></i></p>
                     </article>
                 </div>
             </div>
             <div class="row">
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-50%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Ore_Lee_Cooper_LC06713.741.jpg"
-                                        alt="Lee Cooper LC06713.740">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Lee Cooper</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Lee Cooper LC06713.741</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">150.00&#8360;</span>80.00&#8360;</h4>
-                                </div>
+                <?php
+                // Database connection
+                $connection = new mysqli("localhost", "root", "", "ecom_store");
 
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
+                // Check for connection errors
+                if ($connection->connect_error) {
+                    die("Connection failed: " . $connection->connect_error);
+                }
+
+                // SQL query to fetch 6 more random products excluding the ones already displayed
+                $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
+                $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category, 
+                    p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount, 
+                    p.product_img1 AS image, p.product_img1 AS product_image
+                FROM products p 
+                JOIN categories c ON p.cat_id = c.cat_id
+                WHERE p.product_id NOT IN ($placeholders)
+                ORDER BY RAND()
+                LIMIT 6";
+
+                $stmt = $connection->prepare($sql);
+                $types = str_repeat('i', count($displayed_products));
+                $stmt->bind_param($types, ...$displayed_products);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        $old_price = $row['oldPrice'];
+                        $new_price = $row['price'];
+                        $discount_percentage = (($new_price - $old_price) / $new_price) * 100;
+
+                ?>
+                        <!-- HTML for product display -->
+                        <div class="col-md-6 col-lg-4">
+                            <div class="product-item discount">
+                                <div class="product-item-inner">
+                                    <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
+                                    <figure class="img-box">
+                                        <?php
+                                        if (!empty($row['product_image'])) {
+                                            $image_path = 'admin/product_images/' . $row['product_image'];
+                                            echo "<img src='$image_path' alt='" . $row['name'] . "'>";
+                                        } else {
+                                            echo "<p>No image available</p>";
+                                        }
+                                        ?>
+                                    </figure>
+                                    <div class="details">
+                                        <span class="cat"><i class="uil uil-tag-alt clr"></i>
+                                            <?php echo $row['category']; ?></span>
+                                        <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
+                                            <h5 class="title"><?php echo $row['name']; ?></h5>
+                                        </a>
+                                        <div class="star">
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star clr"></i>
+                                            <i class="fa-solid fa-star-half-stroke clr"></i>
+                                            <h4><span class="old-prc"><?php echo number_format($row['price'], 2); ?>
+                                                    &#8360;</span><?php echo number_format($row['oldPrice'], 2); ?>&#8360;
+                                            </h4>
+                                        </div>
+                                        <a class="go-to-cart" onclick="addToCart(<?php echo $row['id']; ?>)">
+                                            <i class="uil uil-shopping-bag shopping-cart cart"></i>
+                                        </a>
+                                        <!-- View Details Button -->
+                                        <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
+                                            <i class="uil uil-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-50%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Lee_Cooper_LC07200.652.jpg"
-                                        alt="Lee Cooper LC07200.651">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Lee Cooper</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Lee Cooper LC07200.652</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">189.00&#8360;</span>89.00&#8360;</h4>
-                                </div>
+                <?php
+                    }
+                } else {
+                    echo "<p>No products found.</p>";
+                }
 
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-50%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/LC06673.362 = 69 EURO-600x660.jpg"
-                                        alt="Lee Cooper LC06846.040">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Lee Cooper</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Lee Cooper LC06846.040</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">199.00&#8360;</span>100.00&#8360;</h4>
-                                </div>
-
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-25%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Ore_Quantum_ADG950.090.jpg" alt="Quantum ADG950.090">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Quantum</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Quantum ADG950.090</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <i class="uil uil-favorite"></i>
-                                    <h4><span class="old-prc">149.00&#8360;</span>119.20&#8360;</h4>
-                                </div>
-
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-25%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Ore_Quantum_ADG679.990.jpg" alt="Quantum ADG679.990">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Quantum</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Quantum ADG679.990</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <i class="uil uil-favorite"></i>
-                                    <h4><span class="old-prc">149.00&#8360;</span>119.20&#8360;</h4>
-                                </div>
-
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-                <div class="col-lg-4 col-md-6">
-                    <div class="product-item discount">
-                        <div class="product-item-inner">
-                            <span class="discount">-25%</span>
-                            <a href="products.php" class="link">
-                                <figure class="img-box">
-                                    <img src="assets/img/products/Ore_Quantum_ADG679.090.jpg"
-                                        alt="Ore Quantum ADG679.090">
-                                </figure>
-                            </a>
-                            <div class="details">
-                                <span class="cat"><i class="uil uil-tag-alt"></i> Quantum</span>
-                                <a href="products.php" class="link">
-                                    <h5 class="title">Ore Quantum ADG679.090</h5>
-                                </a>
-                                <div class="star">
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star"></i>
-                                    <i class="fa-solid fa-star-half-stroke"></i>
-                                    <h4><span class="old-prc">149.00&#8360;</span>119.20&#8360;</h4>
-                                </div>
-
-                                <a href="products.php" class="go-to-cart"><i
-                                        class="uil uil-shopping-bag shopping-cart cart"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div><!-- products-end  -->
-            </div>
-            <div class="row">
-                <div class="col-12 text-center mt-5 mx-auto">
-                    <a href="products.php" class="btn btn-theme">View All Products <i
-                            class="uil uil-arrow-circle-right"></i></a>
-                </div>
+                // Close the database connection
+                $connection->close();
+                ?>
             </div>
         </div>
-    </section><!-- products-end  -->
+    </section>
 
     <section class="banner">
         <div class="container">
