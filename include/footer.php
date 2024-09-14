@@ -34,11 +34,11 @@
 
                 <div class="col-md-6 col-lg-2 contact3">
                     <h4>My Account</h4>
-                    <a href="sign-in.php">Sign In</a>
-                    <a href="#">View Cart</a>
-                    <a href="#">My Wishlist</a>
-                    <a href="#">My Order</a>
-                    <a href="help.php">Help?</a>
+                    <a href="login.php?action=register">Sign In</a>
+                    <a href="cart.php">View Cart</a>
+                    <!-- <a href="#">My Wishlist</a> -->
+                    <a href="cart.php">My Order</a>
+                    <a href="contact.php">Help?</a>
                 </div>
 
                 <div class="col-lg-4 col-md-6 install">

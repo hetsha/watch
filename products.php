@@ -18,7 +18,7 @@
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <<link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
@@ -64,10 +64,10 @@
                     $offset = ($page - 1) * $products_per_page;
 
                     // SQL query to fetch products with limit and offset
-                    $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category, 
-                       p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount, 
+                    $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
+                       p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount,
                        p.product_img1 AS image, p.product_img1 AS product_image
-                    FROM products p 
+                    FROM products p
                     JOIN categories c ON p.cat_id = c.cat_id
                     LIMIT $products_per_page OFFSET $offset";
 

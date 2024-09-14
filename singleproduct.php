@@ -45,10 +45,10 @@
 
     // SQL query to fetch product details
     $sql = "
-    SELECT products.*, product_categories.p_cat_title 
-    FROM products 
-    JOIN product_categories 
-    ON products.p_cat_id = product_categories.p_cat_id 
+    SELECT products.*, product_categories.p_cat_title
+    FROM products
+    JOIN product_categories
+    ON products.p_cat_id = product_categories.p_cat_id
     WHERE product_id = '$productID'
 ";
 
@@ -89,9 +89,9 @@
                             <h6>Home / <?php echo $row['p_cat_title']; ?></h6>
                             <h4><?php echo $row['product_title']; ?></h4>
                             <h2><?php echo $row['product_price']; ?>&#8360;</h2>
-
                             <input type="number" min="1" max="10" value="1">
                             <button class="btn-normal">Add to Cart</button>
+                            <button class="btn-normal" onclick="buyNow(<?php echo $row['product_id']; ?>)">Buy Now</button>
                             <h4>Product Details</h4>
                             <span>
                                 <?php echo $row['product_desc']; ?>
@@ -123,10 +123,10 @@
                         }
 
                         // SQL query to fetch 3 random products and their categories
-                        $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category, 
-                       p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount, 
+                        $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
+                       p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount,
                        p.product_img1 AS image, p.product_img1 AS product_image
-                    FROM products p 
+                    FROM products p
                     JOIN categories c ON p.cat_id = c.cat_id
                     ORDER BY RAND()
                     LIMIT 3";
@@ -194,45 +194,62 @@
                 </div>
             </section>
 
-
             <section class="newsletter">
                 <div class="container">
                     <div class="row align-items-center">
-                        <div class="col-md-6 col-lg-8">
-                            <div class="newstext">
-                                <h4>Sign Up For Newsletters!</h4>
-                                <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-lg-4">
-                            <div class="n-form">
-                                <input type="text" placeholder="Your E-Mail Address...">
-                                <button class="btn-normal">Sign Up</button>
+                        <div class="col-md-6 col-lg-6">
+                            <div class="newsletter-inner">
+                                <div class="news-txt">
+                                    <h3>Sign Up For Our Newsletter</h3>
+                                    <p>Get the latest updates and offers!</p>
+                                </div>
+                                <div class="news-form">
+                                    <form>
+                                        <input type="email" class="form-control" placeholder="Your email address" required>
+                                        <button type="submit" class="btn-normal">Subscribe</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section><!-- newsletter-end -->
-
+            </section>
         </main>
 
+        <?php include 'include/footer.php'; ?>
     <?php
     } else {
-        echo "Product not found.";
+        echo "<p>Product not found.</p>";
     }
 
     $conn->close();
     ?>
 
-    <?php include 'include/footer.php'; ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
-        integrity="sha384-B4GTfOoP11sGkOeZOhxLCopdl6b4kA3yO4jv9TI+TOOuvxk5V5YnkPP6v9vFLYnl"
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
-        integrity="sha384-QJHtvGhmr9b+ZXI+KnuPp2r5R7mD2e37O7Ueb2mCZV6pP4HA6+M8PaCblV9sgoYl"
-        crossorigin="anonymous"></script>
+    <script src="assets/js/script.js"></script>
+    <script>
+    function buyNow(productId) {
+        // Create a form element
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = 'add_to_cart.php';
 
+        // Create an input element to hold the product ID
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'product_id';
+        input.value = productId;
+
+        // Add the input to the form
+        form.appendChild(input);
+
+        // Add the form to the body and submit it
+        document.body.appendChild(form);
+        form.submit();
+    }
+    </script>
 </body>
 
 </html>

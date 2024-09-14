@@ -2,6 +2,8 @@
 session_start(); // Ensure this is the very first line in your PHP script
 require_once "include/db.php";
 
+$mode = isset($_GET['action']) && $_GET['action'] === 'register' ? 'sign-up-mode' : '';
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['signup'])) {
         // Handle signup logic
@@ -18,6 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if ($stmt = $con->prepare($query)) {
                 $stmt->bind_param("sssss", $username, $email, $number, $country, $password);
                 $stmt->execute();
+                $customer_id = $con->insert_id;
+                $_SESSION['customer_id'] = $customer_id;
+                $_SESSION['cart'] = array();
                 echo "<script>alert('Registration successful!');</script>";
                 $stmt->close();
             }
@@ -66,6 +71,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $_SESSION['customer_name'] = $username;
                 $_SESSION['customer_email'] = $customer['customer_email'];
                 $_SESSION['customer_pass'] = $password;
+                $_SESSION['customer_id'] = $customer['customer_id'];
 
                 header("Location: index.php");
                 exit;
@@ -80,6 +86,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,7 +98,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="assets/css/fontawesome-free-6.4.0-web/css/all.min.css">
 </head>
 <body>
-    <div class="container <?php if(isset($_POST['signup'])) { echo 'sign-up-mode'; } ?>">
+<div class="container <?php echo $mode; ?>">
         <div class="forms-container">
             <div class="signin-signup">
                 <!-- Sign In Form -->
@@ -199,6 +206,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const sign_in_btn = document.querySelector("#sign-in-btn");
         const sign_up_btn = document.querySelector("#sign-up-btn");
         const container = document.querySelector(".container");
+
+        if ("<?php echo $mode; ?>" === "sign-up-mode"){
+            container.classList.add("sign-up-mode");
+        }
 
         sign_up_btn.addEventListener("click", () => {
             container.classList.add("sign-up-mode");

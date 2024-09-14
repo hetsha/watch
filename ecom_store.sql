@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 18, 2024 at 08:41 AM
+-- Generation Time: Sep 14, 2024 at 07:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,9 +44,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_id`, `admin_name`, `admin_email`, `admin_pass`, `admin_image`, `admin_contact`, `admin_country`, `admin_job`, `admin_about`) VALUES
-(1, 'het', 'admin', 'admin', 'IMG_20230513_122559_281.jpg', '9427961426', 'India', 'admin', '    founder    '),
-(3, 'akshat', 'akshatjshah@gmail.com', 'admin', '', '9825079765', 'India', 'admin', 'admin'),
-(4, 'nilaxi', 'nilaxi@gmail.com', 'admin', '', '6353009720', 'India', 'admin', 'admin');
+(1, 'het', 'hetshah6315@gmail.com', 'admin', 'IMG_20230513_122559_265.jpg', '9427961426', 'India', 'Admin', 'founder  ');
 
 -- --------------------------------------------------------
 
@@ -80,7 +78,8 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`cat_id`, `cat_title`, `cat_top`, `cat_image`) VALUES
-(1, 'watch', 'yes', 'marble-product-backdrop-with-blank-space_53876-104163.avif');
+(1, 'Quantum / watch', 'no', ''),
+(2, 'watch', '', '');
 
 -- --------------------------------------------------------
 
@@ -136,7 +135,7 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_email`, `customer_pass`, `customer_country`, `customer_city`, `customer_contact`, `customer_address`, `customer_image`, `customer_ip`, `customer_confirm_code`) VALUES
-(1, 'heet', 'heet@gmail.com', '123', 'india', '', '9427961427', '', '', '', '');
+(1, 'het', 'hetshah6315@gmail.com', '123', 'india', '', '9427961426', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -154,6 +153,14 @@ CREATE TABLE `customer_orders` (
   `order_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `order_status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `customer_orders`
+--
+
+INSERT INTO `customer_orders` (`order_id`, `customer_id`, `due_amount`, `invoice_no`, `qty`, `size`, `order_date`, `order_status`) VALUES
+(1, 1, 5000, 0, 0, '', '2024-08-18 11:20:02', 'Pending'),
+(2, 1, 5000, 0, 0, '', '2024-09-14 02:02:39', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -184,7 +191,11 @@ CREATE TABLE `manufacturers` (
 --
 
 INSERT INTO `manufacturers` (`manufacturer_id`, `manufacturer_title`, `manufacturer_top`, `manufacturer_image`) VALUES
-(2, 'noice', 'no', '360_F_567486394_PxcgLM8vtZqyH71fpkcpeKLDZfsbTyHO.jpg');
+(1, 'ORA', 'no', ''),
+(2, 'Audemars Piguet', 'no', ''),
+(3, 'Breguet', '', ''),
+(4, 'Breitling', '', ''),
+(5, 'Rolex', '', '');
 
 -- --------------------------------------------------------
 
@@ -202,6 +213,14 @@ CREATE TABLE `payments` (
   `payment_date` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Dumping data for table `payments`
+--
+
+INSERT INTO `payments` (`payment_id`, `invoice_no`, `amount`, `payment_mode`, `ref_no`, `code`, `payment_date`) VALUES
+(1, 1, 5000, 'credit_card', 0, 0, ''),
+(2, 2, 5000, 'paypal', 0, 0, '');
+
 -- --------------------------------------------------------
 
 --
@@ -217,6 +236,14 @@ CREATE TABLE `pending_orders` (
   `size` text NOT NULL,
   `order_status` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `pending_orders`
+--
+
+INSERT INTO `pending_orders` (`order_id`, `customer_id`, `invoice_no`, `product_id`, `qty`, `size`, `order_status`) VALUES
+(1, 1, 0, '1', 1, '', ''),
+(2, 1, 0, '2', 1, '', '');
 
 -- --------------------------------------------------------
 
@@ -252,16 +279,8 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `p_cat_id`, `cat_id`, `manufacturer_id`, `date`, `product_title`, `product_url`, `product_img1`, `product_img2`, `product_img3`, `product_img4`, `product_img5`, `product_price`, `product_psp_price`, `product_desc`, `product_features`, `product_video`, `product_keywords`, `product_label`, `status`) VALUES
-(2, 1, 1, 2, '2024-08-17 16:14:33', 'watch', 'watch_name', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 1000, 600, '\r\n      \r\n      Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/\r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', 'watch', 'watch', 'product'),
-(3, 1, 1, 2, '2024-08-17 15:56:46', 'watch', 'watch_name', 'armani.png', 'armani.png', 'armani.png', '', '', 600, 200, 'Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/', '\r\n  \r\n  \r\n\r\n\r\n  \r\n  ', '\r\n  \r\n  \r\n\r\n\r\n  \r\n  ', 'asd', 'watch', 'product'),
-(4, 1, 1, 2, '2024-08-17 15:56:53', 'het', 'het', 'citizen.png', 'citizen.png', 'citizen.png', '', '', 5000, 3000, 'Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/', '\r\n  \r\n\r\n\r\n  ', '\r\n  \r\n\r\n\r\n  ', 'watch', 'watch', 'product'),
-(5, 1, 1, 2, '2024-08-17 15:56:59', 'test', 'test', 'LC06673.362 = 69 EURO-600x660.jpg', 'LC06673.362 = 69 EURO-600x660.jpg', 'LC06673.362 = 69 EURO-600x660.jpg', '', '', 5000, 1000, 'Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/', '\r\n  \r\n\r\n\r\n  ', '\r\n  \r\n\r\n\r\n  ', 'asd', 'asd', 'product'),
-(6, 1, 1, 2, '2024-08-17 16:14:33', 'watch', 'watch_name', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 1000, 600, '\r\n      \r\n      Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/\r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', 'watch', 'watch', 'product'),
-(7, 1, 1, 2, '2024-08-17 15:56:53', 'het', 'het', 'citizen.png', 'citizen.png', 'citizen.png', '', '', 5000, 3000, 'Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/', '\r\n  \r\n\r\n\r\n  ', '\r\n  \r\n\r\n\r\n  ', 'watch', 'watch', 'product'),
-(8, 1, 1, 2, '2024-08-17 15:56:46', 'watch', 'watch_name', 'armani.png', 'armani.png', 'armani.png', '', '', 600, 200, 'Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/', '\r\n  \r\n  \r\n\r\n\r\n  \r\n  ', '\r\n  \r\n  \r\n\r\n\r\n  \r\n  ', 'asd', 'watch', 'product'),
-(9, 1, 1, 2, '2024-08-17 16:14:33', 'watch', 'watch_name', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 1000, 600, '\r\n      \r\n      Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/\r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', 'watch', 'watch', 'product'),
-(10, 1, 1, 2, '2024-08-17 15:56:59', 'test', 'test', 'LC06673.362 = 69 EURO-600x660.jpg', 'LC06673.362 = 69 EURO-600x660.jpg', 'LC06673.362 = 69 EURO-600x660.jpg', '', '', 5000, 1000, 'Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/', '\r\n  \r\n\r\n\r\n  ', '\r\n  \r\n\r\n\r\n  ', 'asd', 'asd', 'product'),
-(11, 1, 1, 2, '2024-08-17 16:14:33', 'watch', 'watch_name', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 'Ore_Lee_Cooper_LC06713.740.jpg', 1000, 600, '\r\n      \r\n      Original wristwatch from the world famous brand QUANTUM.\r\nHigh quality and unique Italian design make Quantum watches stand out from the others.\r\nThe watch comes with the original box and warranty card for 2 Years.\r\nQUANTUM - The Big Time.\r\nTo try it out and take a closer look you can visit us in our stores.\r\nhttps://orawatch.netlify.app/\r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', '\r\n      \r\n      \r\n  \r\n  \r\n  \r\n\r\n\r\n  \r\n  \r\n  \r\n      \r\n      ', 'watch', 'watch', 'product');
+(1, 3, 2, 3, '2024-08-18 14:46:14', 'Breguet ', 'Breguet', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '002_2497781c.jpg', '001_08b7b78b.jpg', '002_2497781c.jpg', 5000, 3000, 'A watch is a portable timepiece that is designed to be worn on the wrist or carried in the pocket. The movement of a watch is driven either by a spring or by electricity. Along with clocks, watches are the most common devices for measuring time.A watch is a portable timepiece that is designed to be worn on the wrist or carried in the pocket. The movement of a watch is driven either by a spring or by electricity. Along with clocks, watches are the most common devices for measuring time.A watch is a portable timepiece that is designed to be worn on the wrist or carried in the pocket. The movement of a watch is driven either by a spring or by electricity. Along with clocks, watches are the most common devices for measuring time.', '\r\n\r\n    ', '\r\n\r\n    ', 'watch', 'watch', 'product'),
+(2, 3, 2, 3, '2024-08-18 14:48:51', 'Breguet zxwe-km', 'Breguet zxwe-km', '011_7f5ac369.jpg', '010_e78c7f30.jpg', '012_3c899e6e.jpg', '009_6982b6e3.jpg', '008_cef4e301.jpg', 5000, 3599, 'Elegance in Every Tick – The Classic Elite Watch combines sophistication with functionality. Its sleek stainless steel case and elegant leather strap make it perfect for any occasion. Featuring a precise quartz movement, it ensures you stay on time and in style. The minimalist dial with Roman numerals offers a timeless look, while the date window adds practicality. This watch is water-resistant up to 50 meters, making it both stylish and durable. Whether at a formal event or a casual outing, this timepiece is sure to impress.', '\r\n\r\n    ', '\r\n\r\n    ', 'watch', 'watch', 'product');
 
 -- --------------------------------------------------------
 
@@ -281,7 +300,9 @@ CREATE TABLE `product_categories` (
 --
 
 INSERT INTO `product_categories` (`p_cat_id`, `p_cat_title`, `p_cat_top`, `p_cat_image`) VALUES
-(1, 'watch', 'no', 'BingImageOfTheDay.jpg');
+(1, 'Quantum', 'no', ''),
+(2, 'Rolex', '', ''),
+(3, 'Breguet', '', '');
 
 -- --------------------------------------------------------
 
@@ -412,13 +433,13 @@ ALTER TABLE `wishlist`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `contact_us`
@@ -430,7 +451,7 @@ ALTER TABLE `contact_us`
 -- AUTO_INCREMENT for table `coupons`
 --
 ALTER TABLE `coupons`
-  MODIFY `coupon_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `coupon_id` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `customers`
@@ -442,7 +463,7 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `customer_orders`
 --
 ALTER TABLE `customer_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `enquiry_types`
@@ -454,31 +475,31 @@ ALTER TABLE `enquiry_types`
 -- AUTO_INCREMENT for table `manufacturers`
 --
 ALTER TABLE `manufacturers`
-  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `pending_orders`
 --
 ALTER TABLE `pending_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `product_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
 --
 ALTER TABLE `product_categories`
-  MODIFY `p_cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `p_cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `store`

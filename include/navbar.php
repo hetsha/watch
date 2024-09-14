@@ -62,7 +62,7 @@
                             <a href="#" class="js-sub_menu ">login/signup <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
                                 <li class="sub-menu-item"><a href="login.php">login</a></li>
-                                <li class="sub-menu-item"><a href="sign.php">sign up</a></li>
+                                <li class="sub-menu-item"><a href="login.php?action=register">sign up</a></li>
                                 <li class="sub-menu-item"><a href="logout.php">logout</a></li>
                             </ul>
                         </li>
