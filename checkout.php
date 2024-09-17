@@ -35,24 +35,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if customer_id is set
     if (isset($_SESSION['customer_id']) && !empty($_SESSION['customer_id'])) {
+        // Insert payment method into the payments table first
+        $stmt = $con->prepare("INSERT INTO payments (amount, payment_mode) VALUES (?, ?)");
+        $stmt->bind_param("ds", $total, $payment_method);
+        if (!$stmt->execute()) {
+            echo "Error: " . $stmt->error;
+            exit();
+        }
+        $invoice_no = $stmt->insert_id; // Get the last inserted ID
+
         // Insert customer order into the customer_orders table
-        $stmt = $con->prepare("INSERT INTO customer_orders (customer_id, order_date, due_amount, order_status) VALUES (?, ?, ?, ?)");
+        $stmt = $con->prepare("INSERT INTO customer_orders (customer_id, order_date, due_amount, invoice_no, order_status) VALUES (?, ?, ?, ?, ?)");
         $order_date = date('Y-m-d H:i:s');
         $order_status = 'Pending';
-        $stmt->bind_param("isss", $_SESSION['customer_id'], $order_date, $total, $order_status);
+        $stmt->bind_param("issis", $_SESSION['customer_id'], $order_date, $total, $invoice_no, $order_status);
         if (!$stmt->execute()) {
             echo "Error: " . $stmt->error;
             exit();
         }
         $order_id = $stmt->insert_id;
-
-        // Insert payment method into the payments table
-        $stmt = $con->prepare("INSERT INTO payments (invoice_no, amount, payment_mode) VALUES (?, ?, ?)");
-        $stmt->bind_param("ids", $order_id, $total, $payment_method);
-        if (!$stmt->execute()) {
-            echo "Error: " . $stmt->error;
-            exit();
-        }
 
         // Insert order items into the pending_orders table
         foreach ($_SESSION['cart'] as $product) {
@@ -100,6 +101,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Checkout - ORA</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <?php include'include/fav.php'?>
 </head>
 <body>
 

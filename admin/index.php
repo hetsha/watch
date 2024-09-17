@@ -75,8 +75,9 @@ if (!isset($_SESSION['admin_email'])) {
         <link href="css/style.css" rel="stylesheet">
 
         <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet">
-        <link rel="shortcut icon" href="//cdn.shopify.com/s/files/1/2484/9148/files/SDQSDSQ_32x32.png?v=1511436147"
-            type="image/png">
+        <link rel="icon" href="../assets/img/favicon.png" sizes="32x32" />
+    <link rel="icon" href="../assets/img/favicon.png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="../assets/img/favicon.png" />
 
     </head>
 
