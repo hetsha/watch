@@ -9,22 +9,17 @@
     <meta name="description" content="ORA - Watches &amp; Jewelry | Products">
     <meta name="author" content="Author Name">
     <meta name="keywords" content="Or&euml; Dore, Syze, Bizhuteri, Aksesore, Outlet etc..." />
-    <?php include'include/fav.php'?>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <?php include 'include/fav.php' ?>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
 
 <body>
 
-    <?php include 'include/navbar.php';
-
-    include 'include/base.php';
-    ?>
+    <?php include 'include/navbar.php'; ?>
+    <?php include 'include/base.php'; ?>
 
     <main class="wrapper">
         <section class="hero">
@@ -34,7 +29,7 @@
                     <p>Save more with coupons &amp; up to 70% off!</p>
                 </div>
             </div>
-        </section><!-- hero  -->
+        </section><!-- hero -->
 
         <section class="products pm">
             <div class="container">
@@ -63,38 +58,40 @@
 
                     // SQL query to fetch products with limit and offset
                     $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-                       p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount,
-                       p.product_img1 AS image, p.product_img1 AS product_image
-                    FROM products p
-                    JOIN categories c ON p.cat_id = c.cat_id
-                    LIMIT $products_per_page OFFSET $offset";
+                            p.product_psp_price AS newPrice, p.product_price AS oldPrice,
+                            p.product_img1 AS image
+                            FROM products p
+                            JOIN categories c ON p.cat_id = c.cat_id
+                            LIMIT $offset, $products_per_page";
 
                     $result = $connection->query($sql);
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $old_price = $row['oldPrice'];
-                            $new_price = $row['price'];
-                            $discount_percentage = (($new_price - $old_price) / $new_price) * 100;
+                            $old_price = isset($row['oldPrice']) ? $row['oldPrice'] : 0;
+                            $new_price = $row['newPrice'];
+                            $discount_percentage = ($old_price > 0) ? (($old_price - $new_price) / $old_price) * 100 : 0;
                     ?>
                             <div class="col-md-6 col-lg-4">
-                                <div class="product-item discount">
+                                <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>">
                                     <div class="product-item-inner">
-                                        <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
+                                        <?php if ($discount_percentage > 0): ?>
+                                            <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
+                                        <?php endif; ?>
                                         <figure class="img-box">
                                             <?php
-                                            if (!empty($row['product_image'])) {
-                                                $image_path = 'admin/product_images/' . $row['product_image'];
-                                                echo "<img src='$image_path' alt='" . $row['name'] . "'>";
+                                            if (!empty($row['image'])) {
+                                                $image_path = 'admin/product_images/' . $row['image'];
+                                                echo "<img src='$image_path' alt='" . htmlspecialchars($row['name']) . "'>";
                                             } else {
                                                 echo "<p>No image available</p>";
                                             }
                                             ?>
                                         </figure>
                                         <div class="details">
-                                            <span class="cat"><i class="uil uil-tag-alt clr"></i> <?php echo $row['category']; ?></span>
+                                            <span class="cat"><i class="uil uil-tag-alt clr"></i> <?php echo htmlspecialchars($row['category']); ?></span>
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
-                                                <h5 class="title"><?php echo $row['name']; ?></h5>
+                                                <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
                                             </a>
                                             <div class="star">
                                                 <i class="fa-solid fa-star clr"></i>
@@ -102,8 +99,11 @@
                                                 <i class="fa-solid fa-star clr"></i>
                                                 <i class="fa-solid fa-star clr"></i>
                                                 <i class="fa-solid fa-star-half-stroke clr"></i>
-                                                <h4><span class="old-prc"><?php echo number_format($row['price'], 2); ?> &#8360;</span>
-                                                    <?php echo number_format($row['oldPrice'], 2); ?> &#8360;
+                                                <h4>
+                                                    <?php if ($old_price > 0): ?>
+                                                        <span class="old-prc">&#8360;<?php echo number_format($old_price, 2); ?></span>
+                                                    <?php endif; ?>
+                                                    <span class="new-prc">&#8360;<?php echo number_format($new_price, 2); ?></span>
                                                 </h4>
                                             </div>
                                             <a class="go-to-cart" onclick="addToCart(<?php echo $row['id']; ?>)">
@@ -156,7 +156,6 @@
             </div>
         </section>
 
-
         <section class="product-support">
             <div class="container">
                 <div class="row">
@@ -176,72 +175,34 @@
                         <div class="c-box">
                             <h4>Crazy Deals</h4>
                             <h2>Buy 1 get 1 Free</h2>
-                            <span>The best class watch is on sale at Ora Watches &amp; Jewelery.</span>
+                            <span>The best class watch is on sale at Ora Watches &amp; Jewelry.</span>
                             <button class="btn-coll">Learn More</button>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-6 c-box-img">
                         <div class="c-box">
-                            <h4>Spring / Summer</h4>
-                            <h2>Upcoming Season</h2>
-                            <span>The best class watch is on sale at Ora Watches &amp; Jewelery.</span>
-                            <button class="btn-coll">Collection</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="container xs-c-oll">
-                <div class="row">
-                    <div class="col-md-6 col-lg-4 c-box-img">
-                        <div class="c-box">
-                            <h4>SEASONAL SALE</h4>
-                            <h2>Men Watches, Jewelry & Accessories</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 c-box-img">
-                        <div class="c-box">
-                            <h4>SEASONAL SALE</h4>
-                            <h2>Women Watches, Jewelry & Accessories</h2>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4 c-box-img">
-                        <div class="c-box">
-                            <h4>SEASONAL SALE</h4>
-                            <h2>Child Watches & Accessories</h2>
+                            <h4>Special Offers</h4>
+                            <h2>50% Discount</h2>
+                            <span>Limited Time Offer!</span>
+                            <button class="btn-coll">Learn More</button>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+    </main>
 
-        <section class="newsletter">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 col-lg-8">
-                        <div class="newstext">
-                            <h4>Sign Up For Newsletters!</h4>
-                            <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="n-form">
-                            <input type="text" placeholder="Your E-Mail Address...">
-                            <button class="btn-normal">Sign Up</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section><!-- newsletter-end -->
-
-    </main><!-- main-body-end  -->
     <?php include 'include/footer.php'; ?>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
-        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-0tGVGICmc0ctn5HTcTQhb9hx6M1Kuj/kh8U6+KkR+a0gRI0CPvJ18HPyb5hE2nGe" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-6OQmq9Yh9FgaRAZ0Ejs4x8W0/29Pi96TMyU7UZXDpt3ePHksYx6aK90aTPcZfuL8" crossorigin="anonymous"></script>
     <script src="assets/js/script.js"></script>
-    <script src="count.js"></script>
-    <script src="cart.js"></script>
+    <script>
+        function addToCart(productId) {
+            // Handle the add to cart functionality here
+            alert("Product " + productId + " added to cart!");
+        }
+    </script>
 </body>
 
 </html>

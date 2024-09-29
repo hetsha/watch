@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 17, 2024 at 06:57 PM
+-- Generation Time: Sep 29, 2024 at 11:22 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -53,11 +53,14 @@ INSERT INTO `admins` (`admin_id`, `admin_name`, `admin_email`, `admin_pass`, `ad
 --
 
 CREATE TABLE `cart` (
-  `p_id` int(10) NOT NULL,
-  `ip_add` varchar(255) NOT NULL,
+  `cart_id` int(10) NOT NULL,
+  `customer_id` int(10) NOT NULL,
+  `product_id` int(10) NOT NULL,
   `qty` int(10) NOT NULL,
-  `p_price` varchar(255) NOT NULL,
-  `size` text NOT NULL
+  `p_price` decimal(10,2) NOT NULL,
+  `size` varchar(50) DEFAULT NULL,
+  `status` varchar(50) DEFAULT 'active',
+  `added_on` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
@@ -146,21 +149,11 @@ INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_email`, `cust
 CREATE TABLE `customer_orders` (
   `order_id` int(10) NOT NULL,
   `customer_id` int(10) NOT NULL,
-  `due_amount` int(100) NOT NULL,
-  `invoice_no` int(100) NOT NULL,
-  `qty` int(10) NOT NULL,
-  `size` text NOT NULL,
-  `order_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `order_status` text NOT NULL
+  `due_amount` decimal(10,2) NOT NULL,
+  `invoice_no` varchar(100) NOT NULL,
+  `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `order_status` varchar(255) NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `customer_orders`
---
-
-INSERT INTO `customer_orders` (`order_id`, `customer_id`, `due_amount`, `invoice_no`, `qty`, `size`, `order_date`, `order_status`) VALUES
-(1, 1, 5000, 0, 0, '', '2024-08-18 11:20:02', 'Pending'),
-(2, 1, 5000, 0, 0, '', '2024-09-14 02:02:39', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -257,30 +250,26 @@ CREATE TABLE `products` (
   `cat_id` int(10) NOT NULL,
   `manufacturer_id` int(10) NOT NULL,
   `date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `product_title` text NOT NULL,
+  `product_title` varchar(255) NOT NULL,
   `product_url` text NOT NULL,
   `product_img1` text NOT NULL,
   `product_img2` text NOT NULL,
   `product_img3` text NOT NULL,
   `product_img4` text NOT NULL,
   `product_img5` text NOT NULL,
-  `product_price` int(10) NOT NULL,
-  `product_psp_price` int(100) NOT NULL,
+  `product_price` decimal(10,2) NOT NULL,
   `product_desc` text NOT NULL,
-  `product_features` text NOT NULL,
-  `product_video` text NOT NULL,
-  `product_keywords` text NOT NULL,
-  `product_label` text NOT NULL,
-  `status` varchar(255) NOT NULL
+  `product_psp_price` decimal(10,2) NOT NULL,
+  `status` varchar(50) NOT NULL DEFAULT 'product'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`product_id`, `p_cat_id`, `cat_id`, `manufacturer_id`, `date`, `product_title`, `product_url`, `product_img1`, `product_img2`, `product_img3`, `product_img4`, `product_img5`, `product_price`, `product_psp_price`, `product_desc`, `product_features`, `product_video`, `product_keywords`, `product_label`, `status`) VALUES
-(1, 3, 2, 3, '2024-08-18 14:46:14', 'Breguet ', 'Breguet', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '002_2497781c.jpg', '001_08b7b78b.jpg', '002_2497781c.jpg', 5000, 3000, 'A watch is a portable timepiece that is designed to be worn on the wrist or carried in the pocket. The movement of a watch is driven either by a spring or by electricity. Along with clocks, watches are the most common devices for measuring time.A watch is a portable timepiece that is designed to be worn on the wrist or carried in the pocket. The movement of a watch is driven either by a spring or by electricity. Along with clocks, watches are the most common devices for measuring time.A watch is a portable timepiece that is designed to be worn on the wrist or carried in the pocket. The movement of a watch is driven either by a spring or by electricity. Along with clocks, watches are the most common devices for measuring time.', '\r\n\r\n    ', '\r\n\r\n    ', 'watch', 'watch', 'product'),
-(2, 3, 2, 3, '2024-08-18 14:48:51', 'Breguet zxwe-km', 'Breguet zxwe-km', '011_7f5ac369.jpg', '010_e78c7f30.jpg', '012_3c899e6e.jpg', '009_6982b6e3.jpg', '008_cef4e301.jpg', 5000, 3599, 'Elegance in Every Tick – The Classic Elite Watch combines sophistication with functionality. Its sleek stainless steel case and elegant leather strap make it perfect for any occasion. Featuring a precise quartz movement, it ensures you stay on time and in style. The minimalist dial with Roman numerals offers a timeless look, while the date window adds practicality. This watch is water-resistant up to 50 meters, making it both stylish and durable. Whether at a formal event or a casual outing, this timepiece is sure to impress.', '\r\n\r\n    ', '\r\n\r\n    ', 'watch', 'watch', 'product');
+INSERT INTO `products` (`product_id`, `p_cat_id`, `cat_id`, `manufacturer_id`, `date`, `product_title`, `product_url`, `product_img1`, `product_img2`, `product_img3`, `product_img4`, `product_img5`, `product_price`, `product_desc`, `product_psp_price`, `status`) VALUES
+(1, 1, 1, 1, '2024-09-29 08:46:54', 'watch', 'ads', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '001_08b7b78b.jpg', 20000.00, '', 1220.00, 'product'),
+(2, 1, 1, 1, '2024-09-29 08:47:53', 'watch', 'ads', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '001_08b7b78b.jpg', '001_08b7b78b.jpg', 20000.00, '', 1220.00, 'product');
 
 -- --------------------------------------------------------
 
@@ -345,7 +334,9 @@ ALTER TABLE `admins`
 -- Indexes for table `cart`
 --
 ALTER TABLE `cart`
-  ADD PRIMARY KEY (`p_id`);
+  ADD PRIMARY KEY (`cart_id`),
+  ADD KEY `customer_id` (`customer_id`),
+  ADD KEY `product_id` (`product_id`);
 
 --
 -- Indexes for table `categories`
@@ -375,7 +366,8 @@ ALTER TABLE `customers`
 -- Indexes for table `customer_orders`
 --
 ALTER TABLE `customer_orders`
-  ADD PRIMARY KEY (`order_id`);
+  ADD PRIMARY KEY (`order_id`),
+  ADD KEY `customer_id` (`customer_id`);
 
 --
 -- Indexes for table `enquiry_types`
@@ -405,7 +397,8 @@ ALTER TABLE `pending_orders`
 -- Indexes for table `products`
 --
 ALTER TABLE `products`
-  ADD PRIMARY KEY (`product_id`);
+  ADD PRIMARY KEY (`product_id`),
+  ADD KEY `manufacturer_id` (`manufacturer_id`);
 
 --
 -- Indexes for table `product_categories`
@@ -436,6 +429,12 @@ ALTER TABLE `admins`
   MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT for table `cart`
+--
+ALTER TABLE `cart`
+  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
@@ -463,7 +462,7 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `customer_orders`
 --
 ALTER TABLE `customer_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `enquiry_types`
@@ -512,6 +511,29 @@ ALTER TABLE `store`
 --
 ALTER TABLE `wishlist`
   MODIFY `wishlist_id` int(10) NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `cart`
+--
+ALTER TABLE `cart`
+  ADD CONSTRAINT `cart_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`),
+  ADD CONSTRAINT `cart_ibfk_2` FOREIGN KEY (`product_id`) REFERENCES `products` (`product_id`);
+
+--
+-- Constraints for table `customer_orders`
+--
+ALTER TABLE `customer_orders`
+  ADD CONSTRAINT `customer_orders_ibfk_1` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`);
+
+--
+-- Constraints for table `products`
+--
+ALTER TABLE `products`
+  ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`manufacturer_id`) REFERENCES `manufacturers` (`manufacturer_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
