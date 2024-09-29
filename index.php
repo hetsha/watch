@@ -10,6 +10,7 @@
     <meta name="author" content="Author Name">
     <meta name="keywords" content="Or&euml; Dore, Syze, Bizhuteri, Aksesore, Outlet etc..." />
     <?php include 'include/fav.php' ?>
+    <?php include'include/fav.php'?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -58,12 +59,12 @@
 
                 // SQL query to fetch 6 random products and their categories
                 $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-                        p.product_price AS old_price, p.product_psp_price AS new_price,
-                        p.product_img1 AS image
-                        FROM products p
-                        JOIN categories c ON p.cat_id = c.cat_id
-                        ORDER BY RAND()
-                        LIMIT 6";
+    p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount,
+    p.product_img1 AS image, p.product_img1 AS product_image
+FROM products p
+JOIN categories c ON p.cat_id = c.cat_id
+ORDER BY RAND()
+LIMIT 6";
 
                 $result = $connection->query($sql);
 
@@ -163,19 +164,16 @@
                     die("Connection failed: " . $connection->connect_error);
                 }
 
-                // SQL query to fetch 6 random products excluding the ones already displayed
-                $placeholders = !empty($displayed_products) ? implode(',', array_fill(0, count($displayed_products), '?')) : 'NULL';
-                $sql = "SELECT p.product_id AS id,
-                               p.product_title AS name,
-                               c.cat_title AS category,
-                               p.product_price AS old_price,
-                               p.product_psp_price AS new_price,
-                               p.product_img1 AS image
-                        FROM products p
-                        JOIN categories c ON p.cat_id = c.cat_id
-                        WHERE p.product_id NOT IN ($placeholders)
-                        ORDER BY RAND()
-                        LIMIT 6";
+                // SQL query to fetch 6 more random products excluding the ones already displayed
+                $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
+                $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
+                    p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount,
+                    p.product_img1 AS image, p.product_img1 AS product_image
+                FROM products p
+                JOIN categories c ON p.cat_id = c.cat_id
+                WHERE p.product_id NOT IN ($placeholders)
+                ORDER BY RAND()
+                LIMIT 6";
 
                 $stmt = $connection->prepare($sql);
                 if (!empty($displayed_products)) {
