@@ -12,7 +12,6 @@ if (empty($_SESSION['cart'])) {
     header("Location: cart.php");
     exit();
 }
-{}
 
 $total = 0;
 
