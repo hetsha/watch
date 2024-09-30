@@ -62,6 +62,7 @@
                             p.product_img1 AS image
                             FROM products p
                             JOIN categories c ON p.cat_id = c.cat_id
+                            ORDER BY RAND()
                             LIMIT $offset, $products_per_page";
 
                     $result = $connection->query($sql);
@@ -190,6 +191,24 @@
                 </div>
             </div>
         </section>
+        <section class="newsletter">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6 col-lg-8">
+                    <div class="newstext">
+                        <h4>Sign Up For Newsletters!</h4>
+                        <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="n-form">
+                        <input type="text" placeholder="Your E-Mail Address...">
+                        <button class="btn-normal">Sign Up</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
     </main>
 
     <?php include 'include/footer.php'; ?>

@@ -9,7 +9,7 @@
     <meta name="description" content="ORA - Watches &amp; Jewelry | Products">
     <meta name="author" content="Author Name">
     <meta name="keywords" content="Or&euml; Dore, Syze, Bizhuteri, Aksesore, Outlet etc..." />
-    <?php include 'include/fav.php' ?>
+    <?php include 'include/fav.php'; ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -58,13 +58,12 @@
 
                 // SQL query to fetch 6 random products and their categories
                 $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-    p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount,
-    p.product_img1 AS image, p.product_img1 AS product_image
-FROM products p
-JOIN categories c ON p.cat_id = c.cat_id
-ORDER BY RAND()
-LIMIT 6";
-
+                p.product_psp_price AS price, p.product_price AS oldPrice,
+                p.product_img1 AS image
+                FROM products p
+                JOIN categories c ON p.cat_id = c.cat_id
+                 ORDER BY p.product_id DESC
+            LIMIT 3";
                 $result = $connection->query($sql);
 
                 $displayed_products = []; // Array to store displayed product IDs
@@ -72,8 +71,8 @@ LIMIT 6";
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $displayed_products[] = $row['id']; // Add product ID to the array
-                        $old_price = $row['old_price'];
-                        $new_price = $row['new_price'];
+                        $old_price = $row['oldPrice'];
+                        $new_price = $row['price'];
                 ?>
                         <!-- HTML for product display -->
                         <div class="col-md-6 col-lg-4">
@@ -83,7 +82,7 @@ LIMIT 6";
                                         <?php
                                         if (!empty($row['image'])) {
                                             $image_path = 'admin/product_images/' . $row['image'];
-                                            echo "<img src='$image_path' alt='" . $row['name'] . "'>";
+                                            echo "<img src='$image_path' alt='" . htmlspecialchars($row['name']) . "'>";
                                         } else {
                                             echo "<p>No image available</p>";
                                         }
@@ -91,9 +90,9 @@ LIMIT 6";
                                     </figure>
                                     <div class="details">
                                         <span class="cat"><i class="uil uil-tag-alt clr"></i>
-                                            <?php echo $row['category']; ?></span>
+                                            <?php echo htmlspecialchars($row['category']); ?></span>
                                         <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
-                                            <h5 class="title"><?php echo $row['name']; ?></h5>
+                                            <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
                                         </a>
                                         <div class="star">
                                             <i class="fa-solid fa-star clr"></i>
@@ -136,7 +135,7 @@ LIMIT 6";
                 <div class="col-md-6 col-lg-12">
                     <h4>Repair &amp; Support - Services</h4>
                     <h2>Up to <span>50% off</span> - All Watches &amp; Accessories</h2>
-                    <button class="btn-normal">Explore More</button>
+                    <button class="btn-normal"><a href="products.php">Explore More</a></button>
                 </div>
             </div>
         </div>
@@ -166,12 +165,12 @@ LIMIT 6";
                 // SQL query to fetch 6 more random products excluding the ones already displayed
                 $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
                 $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-                    p.product_price AS price, p.product_psp_price AS oldPrice, p.product_label AS discount,
-                    p.product_img1 AS image, p.product_img1 AS product_image
+                p.product_psp_price AS price, p.product_price AS oldPrice,
+                p.product_img1 AS image
                 FROM products p
                 JOIN categories c ON p.cat_id = c.cat_id
                 WHERE p.product_id NOT IN ($placeholders)
-                ORDER BY RAND()
+                 ORDER BY p.product_id ASC
                 LIMIT 6";
 
                 $stmt = $connection->prepare($sql);
@@ -184,9 +183,9 @@ LIMIT 6";
 
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
-                        $old_price = $row['old_price'];
-                        $new_price = $row['new_price'];
-                        ?>
+                        $old_price = $row['oldPrice'];
+                        $new_price = $row['price'];
+                ?>
                         <!-- HTML for more product display -->
                         <div class="col-md-6 col-lg-4">
                             <div class="product-item">
@@ -195,7 +194,7 @@ LIMIT 6";
                                         <?php
                                         if (!empty($row['image'])) {
                                             $image_path = 'admin/product_images/' . $row['image'];
-                                            echo "<img src='$image_path' alt='" . $row['name'] . "'>";
+                                            echo "<img src='$image_path' alt='" . htmlspecialchars($row['name']) . "'>";
                                         } else {
                                             echo "<p>No image available</p>";
                                         }
@@ -203,9 +202,9 @@ LIMIT 6";
                                     </figure>
                                     <div class="details">
                                         <span class="cat"><i class="uil uil-tag-alt clr"></i>
-                                            <?php echo $row['category']; ?></span>
+                                            <?php echo htmlspecialchars($row['category']); ?></span>
                                         <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
-                                            <h5 class="title"><?php echo $row['name']; ?></h5>
+                                            <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
                                         </a>
                                         <div class="star">
                                             <i class="fa-solid fa-star clr"></i>
@@ -240,20 +239,24 @@ LIMIT 6";
                 $connection->close();
                 ?>
             </div>
+            <div class="row">
+                    <div class="col-12 text-center mt-5 mx-auto">
+                        <a href="products.php" class="btn btn-theme">View All Products <i class="uil uil-arrow-circle-right"></i></a>
+                    </div>
+                </div>
         </div>
-    </section>
+    </section><!-- products end -->
 
-    <?php include 'include/footer.php' ?>
+
+    <?php
+    include 'other.php';
+    include 'include/footer.php'; ?>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/61g4e8e+rbG8IhV7U+8OBZ4ycEGE2rKl4eovtQ4" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-Piv4xVNRyMGpqkC7DgnZ6cx2kKfH4/JB0B67Vq9s69fGnF9j5SQklJfOpl2CEg1L"
-        crossorigin="anonymous"></script>
+        integrity="sha384-2mhtjks7TO7UjWVoqk0LY3ndztj1s4L0SCw3RguQ7EDsB3k3xHjF4gR98gB1g0yo" crossorigin="anonymous"></script>
     <script src="assets/js/script.js"></script>
-    <script>
-        function addToCart(productId) {
-            // Implement your add to cart logic here
-            alert("Added product " + productId + " to cart!");
-        }
-    </script>
 </body>
 
 </html>

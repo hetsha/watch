@@ -113,7 +113,7 @@
                 <div class="col-md-6 col-lg-12">
                     <h4>Repair &amp; Support - Services</h4>
                     <h2>Up to <span>50% off</span> - All Watches &amp; Accessories</h2>
-                    <button class="btn-normal">Explore More</button>
+                    <button class="btn-normal"><a href="products.php">Explore More</a></button>
                 </div>
             </div>
         </div>
