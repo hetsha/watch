@@ -98,9 +98,12 @@
                                                 <span class="new-prc"><?php echo number_format($new_price, 2); ?> &#8360;</span>
                                             </h4>
                                         </div>
-                                        <a class="go-to-cart" onclick="addToCart(<?php echo $row['id']; ?>)">
-                                            <i class="uil uil-shopping-bag shopping-cart cart"></i>
-                                        </a>
+                                        <form action="add_to_cart.php" method="POST" class="d-inline-block" id="cartForm">
+                                                <input type="hidden" name="product_id" value="<?php echo $row['id']; ?>">
+                                                <a href="#" class="btn-link p-0 cart-button" onclick="document.getElementById('cartForm').submit();">
+                                                    <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
+                                                </a>
+                                            </form>
                                         <!-- View Details Button -->
                                         <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
                                             <i class="uil uil-eye"></i>

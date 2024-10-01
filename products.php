@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -14,9 +15,12 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
-    <?php include 'include/navbar.php'; ?>
-    <?php include 'include/base.php'; ?>
+    <?php
+    session_start();
+    include 'include/base.php';
+    include 'include/navbar.php';?>
     <main class="wrapper">
         <section class="hero">
             <div class="container-fluid">
@@ -36,7 +40,7 @@
                         </article>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row ">
                     <?php
                     // Database connection
                     $connection = new mysqli("localhost", "root", "", "ecom_store");
@@ -97,12 +101,20 @@
                                                     <span class="new-prc">&#8360;<?php echo number_format($new_price, 2); ?></span>
                                                 </h4>
                                             </div>
-                                            <a class="go-to-cart" onclick="addToCart(<?php echo $row['id']; ?>)">
-                                                <i class="uil uil-shopping-bag shopping-cart cart"></i>
-                                            </a>
+                                            <form action="add_to_cart.php" method="POST" class="d-inline-block" id="cartForm">
+                                                <input type="hidden" name="product_id" value="<?php echo $row['id']; ?>">
+                                                <a href="#" class="btn-link p-0 cart-button" onclick="document.getElementById('cartForm').submit();">
+                                                    <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
+                                                </a>
+                                            </form>
+
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
-                                                <i class="uil uil-eye"></i>
+                                                <i class="uil uil-eye" title="View Details"></i>
                                             </a>
+
+
+
+
                                         </div>
                                     </div>
                                 </div>
@@ -160,48 +172,41 @@
                             <h4>Crazy Deals</h4>
                             <h2>Buy 1 get 1 Free</h2>
                             <span>The best class watch is on sale at Ora Watches &amp; Jewelry.</span>
-                            <button class="btn-coll">Learn More</button>
+                            <button class="btn-normal">Explore</button>
                         </div>
                     </div>
                     <div class="col-md-6 col-lg-6 c-box-img">
                         <div class="c-box">
-                            <h4>Special Offers</h4>
-                            <h2>50% Discount</h2>
-                            <span>Limited Time Offer!</span>
-                            <button class="btn-coll">Learn More</button>
+                            <h4>Crazy Deals</h4>
+                            <h2>Buy 1 get 1 Free</h2>
+                            <span>The best class watch is on sale at Ora Watches &amp; Jewelry.</span>
+                            <button class="btn-normal">Explore</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </section><!-- collection-end -->
         <section class="newsletter">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-md-6 col-lg-8">
-                    <div class="newstext">
-                        <h4>Sign Up For Newsletters!</h4>
-                        <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
-                    </div>
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6 col-lg-8">
+                <div class="newstext">
+                    <h4>Sign Up For Newsletters!</h4>
+                    <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
                 </div>
-                <div class="col-lg-4 col-md-6">
-                    <div class="n-form">
-                        <input type="text" placeholder="Your E-Mail Address...">
-                        <button class="btn-normal">Sign Up</button>
-                    </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="n-form">
+                    <input type="text" placeholder="Your E-Mail Address...">
+                    <button class="btn-normal">Sign Up</button>
                 </div>
             </div>
         </div>
-    </section>
-    </main>
+    </div>
+</section>
+    </main><!-- wrapper -->
     <?php include 'include/footer.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-0tGVGICmc0ctn5HTcTQhb9hx6M1Kuj/kh8U6+KkR+a0gRI0CPvJ18HPyb5hE2nGe" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-6OQmq9Yh9FgaRAZ0Ejs4x8W0/29Pi96TMyU7UZXDpt3ePHksYx6aK90aTPcZfuL8" crossorigin="anonymous"></script>
-    <script src="assets/js/script.js"></script>
-    <script>
-        function addToCart(productId) {
-            // Handle the add to cart functionality here
-            alert("Product " + productId + " added to cart!");
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-3rS3or13byPL7vLy1F6W3Je3tmAEUbvvfL4tM3nbhWrVgQ6ewvcTxjqKh+S9gVIF8" crossorigin="anonymous"></script>
 </body>
+
 </html>

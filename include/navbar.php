@@ -1,3 +1,29 @@
+<?php
+include 'db.php'; // Make sure this includes the database connection
+
+// Check if the customer is logged in
+if (isset($_SESSION['customer_id'])) {
+    $customerID = (int)$_SESSION['customer_id']; // Get the customer ID from session
+
+    // Query to count the number of items in the cart for this customer
+    $cartCountQuery = $con->prepare("SELECT SUM(qty) as total_items FROM cart WHERE customer_id = ?");
+    $cartCountQuery->bind_param("i", $customerID);
+    $cartCountQuery->execute();
+    $cartCountResult = $cartCountQuery->get_result();
+
+    // Get the count
+    $cartCount = 0; // Default to 0 if no items found
+    if ($cartCountResult->num_rows > 0) {
+        $row = $cartCountResult->fetch_assoc();
+        $cartCount = $row['total_items']; // Get the total items in the cart
+    }
+
+    $cartCountQuery->close(); // Close the prepared statement
+} else {
+    $cartCount = 0; // No customer logged in, default count to 0
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,57 +58,45 @@
                 </div>
                 <nav class="menu js-menu">
                     <ul class="ul-menu">
-                        <li class="menu-item <?php if ($currentPage == 'index.php')
-                            echo 'active-n active'; ?>">
+                        <li class="menu-item <?php if ($currentPage == 'index.php') echo 'active-n active'; ?>">
                             <a href="index.php">Home</a>
                         </li>
-                        <li
-                            class="menu-item menu-item-child <?php if ($currentPage == 'products.php')
-                                echo 'active'; ?>">
+                        <li class="menu-item menu-item-child <?php if ($currentPage == 'products.php') echo 'active'; ?>">
                             <a href="#" class="js-sub_menu">Products <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
                                 <li class="sub-menu-item"><a href="products.php">All Products</a></li>
                             </ul>
                         </li>
-                        <li
-                            class="menu-item menu-item-child <?php if ($currentPage == 'blog.php' || $currentPage == 'about.php' || $currentPage == 'contact.php')
-                                echo 'active'; ?>">
-                            <a href="#" class="js-sub_menu ">Pages <i class="fa-solid fa-angle-down"></i></a>
+                        <li class="menu-item menu-item-child <?php if ($currentPage == 'blog.php' || $currentPage == 'about.php' || $currentPage == 'contact.php') echo 'active'; ?>">
+                            <a href="#" class="js-sub_menu">Pages <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
-                                <li class="sub-menu-item"><a href="blog.php">blog</a></li>
-                                <li class="sub-menu-item"><a href="about.php">about Us</a></li>
-                                <li class="sub-menu-item"><a href="contact.php">contact Us</a></li>
+                                <li class="sub-menu-item"><a href="blog.php">Blog</a></li>
+                                <li class="sub-menu-item"><a href="about.php">About Us</a></li>
+                                <li class="sub-menu-item"><a href="contact.php">Contact Us</a></li>
                             </ul>
                         </li>
-                        <li
-                            class="menu-item menu-item-child <?php if ($currentPage == 'login.php' || $currentPage == 'sign.php' || $currentPage == 'logout.php')
-                                echo 'active'; ?>">
-                            <a href="#" class="js-sub_menu ">login/signup <i class="fa-solid fa-angle-down"></i></a>
+                        <li class="menu-item menu-item-child <?php if ($currentPage == 'login.php' || $currentPage == 'sign.php' || $currentPage == 'logout.php') echo 'active'; ?>">
+                            <a href="#" class="js-sub_menu">Login/Signup <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
-                                <li class="sub-menu-item"><a href="login.php">login</a></li>
-                                <li class="sub-menu-item"><a href="login.php?action=register">sign up</a></li>
-                                <li class="sub-menu-item"><a href="logout.php">logout</a></li>
+                                <li class="sub-menu-item"><a href="login.php">Login</a></li>
+                                <li class="sub-menu-item"><a href="login.php?action=register">Sign Up</a></li>
+                                <li class="sub-menu-item"><a href="logout.php">Logout</a></li>
                             </ul>
                         </li>
                     </ul>
                 </nav>
                 <div class="darkLight-searchBox">
                     <div class="dark-light">
-                        <!-- <i class="fa-solid fa-moon moon"></i> -->
-                        <!-- <i class="fa-solid fa-sun"></i> -->
                         <i class="uil uil-moon moon"></i>
                         <i class="fa-regular fa-sun sun"></i>
                     </div>
                     <div class="searchBox">
                         <div class="searchToggle">
-                            <!-- <i class="fa-solid fa-xmark cancel"></i> -->
-                            <!-- <i class="fa-solid fa-magnifying-glass search"></i> -->
                             <i class="uil uil-times cancel"></i>
                             <i class="uil uil-search search"></i>
                         </div>
                         <div class="search-field">
                             <input type="text" placeholder="Search..." />
-                            <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
                             <i class="uil uil-search-alt"></i>
                         </div>
                     </div>
@@ -91,9 +105,8 @@
                             <i class="uil uil-shopping-bag shopping-cart"></i>
                         </a>
                     </div>
-                    <!-- <i class="fa-solid fa-bars open-nav"></i> -->
                     <div class="mcart">
-                        <i>(<span id="cartCount">0</span>)</i>
+                        <i>(<span id="cartCount"><?php echo $cartCount; ?></span>)</i> <!-- Display cart count -->
                     </div>
                 </div>
             </section>
