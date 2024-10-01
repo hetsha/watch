@@ -1,20 +1,16 @@
 <?php
 session_start();
 include 'include/db.php'; // Ensure you include your DB connection here
-
 // Initialize cart if not set
 if (!isset($_SESSION['cart']) || !is_array($_SESSION['cart'])) {
     $_SESSION['cart'] = array();
 }
-
 // Redirect if cart is empty
 if (empty($_SESSION['cart'])) {
     header("Location: cart.php");
     exit();
 }
-
 $total = 0;
-
 // Calculate total
 foreach ($_SESSION['cart'] as $product) {
     if (isset($product['price']) && isset($product['quantity'])) {
@@ -25,14 +21,12 @@ foreach ($_SESSION['cart'] as $product) {
         exit();
     }
 }
-
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $_POST['name'];
     $email = $_POST['email'];
     $address = $_POST['address'];
     $payment_method = $_POST['payment_method'];
-
     // Check if customer_id is set
     if (isset($_SESSION['customer_id']) && !empty($_SESSION['customer_id'])) {
         // Insert payment method into the payments table first
@@ -43,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
         $invoice_no = $stmt->insert_id; // Get the last inserted ID
-
         // Insert customer order into the customer_orders table
         $stmt = $con->prepare("INSERT INTO customer_orders (customer_id, order_date, due_amount, invoice_no, order_status) VALUES (?, ?, ?, ?, ?)");
         $order_date = date('Y-m-d H:i:s');
@@ -54,7 +47,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             exit();
         }
         $order_id = $stmt->insert_id;
-
         // Insert order items into the pending_orders table
         foreach ($_SESSION['cart'] as $productID => $product) {
             if (isset($product['id']) && isset($product['quantity'])) {
@@ -70,10 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 exit();
             }
         }
-
         // Clear the cart
         unset($_SESSION['cart']);
-
         // Redirect to a confirmation page or display order details
         header("Location: confirmation.php?order_id=$order_id");
         exit();
@@ -83,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -96,9 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 
 <body>
-
     <?php include 'include/navbar.php'; ?>
-
     <main class="wrapper">
         <section class="hero blog-hero">
             <div class="container-fluid">
@@ -108,7 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             </div>
         </section>
-
         <section class="checkout">
             <div class="container">
                 <form method="POST" action="">
@@ -148,7 +135,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
                     </div>
                 </form>
-
                 <h3>Order Summary</h3>
                 <table class="table table-striped">
                     <thead>
@@ -163,14 +149,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <?php
                         foreach ($_SESSION['cart'] as $productID => $product) {
                             $subtotal = $product['price'] * $product['quantity'];
-                            ?>
+                        ?>
                             <tr>
                                 <td><?php echo $product['title']; ?></td>
                                 <td><?php echo number_format($product['price'], 2); ?>&#8360;</td>
                                 <td><?php echo $product['quantity']; ?></td>
                                 <td><?php echo number_format($subtotal, 2); ?>&#8360;</td>
                             </tr>
-                            <?php
+                        <?php
                         }
                         ?>
                     </tbody>
@@ -184,9 +170,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </section>
     </main>
-
     <?php include 'include/footer.php'; ?>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="assets/js/script.js"></script>
 </body>

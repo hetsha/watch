@@ -9,7 +9,7 @@
     <meta name="description" conten="ORA - Watches &amp; Jewelry | About">
     <meta name="author" content="Author Name">
     <meta name="keywords" content="Or&euml; Dore, Syze, Bizhuteri, Aksesore, Outlet etc..." />
-    <?php include'include/fav.php'?>
+    <?php include 'include/fav.php' ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -20,9 +20,8 @@
 </head>
 
 <body>
-
     <?php
-        include 'include/navbar.php';
+    include 'include/navbar.php';
     ?>
     <main class="wrapper">
         <section class="hero about-hero">
@@ -35,7 +34,6 @@
                 </div>
             </div>
         </section><!-- hero  -->
-
         <section class="about">
             <div class="container">
                 <div class="row">
@@ -62,19 +60,15 @@
                                     <div class="accordion-body">
                                         We are ORA n.t.p – Specialized Enterprise for sale and servicing of
                                         watches.<br><br>
-
                                         We offer fine watches and jewelry from a various worldwide famous brands
                                         like:<br>
                                         CITIZEN, JACQUES LEMANS, PIERRE CARDIN, GANT, ROAMER, LEE COOPER, QUANTUM,
                                         ADORA, DANISH DESIGN, POLICE, ESPRIT, ARMANI, GUESS, FOSSIL, DIESEL, MICHAEL
                                         KORS etc. <br><br>
-
                                         Our products can be bought on Our Stores or online in our website:
                                         https://orawatch.netlify.app/ .<br><br>
-
                                         For our products we offer 2 years warranty, continuous service and ongoing after
                                         sale support.<br><br>
-
                                         We are dedicated to offer choices for everyone.
                                     </div>
                                 </div>
@@ -149,7 +143,6 @@
                 </div>
             </div>
         </section>
-
         <section class="product-support">
             <div class="container">
                 <div class="row">
@@ -161,7 +154,6 @@
                 </div>
             </div>
         </section><!-- product support-end -->
-
         <section class="collection my-5">
             <div class="container">
                 <div class="row">
@@ -206,7 +198,6 @@
                 </div>
             </div>
         </section>
-
         <section class="newsletter">
             <div class="container">
                 <div class="row align-items-center">
@@ -226,9 +217,8 @@
             </div>
         </section>
     </main><!-- main-body-end  -->
-
     <?php include 'include/footer.php';
-?>
+    ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>

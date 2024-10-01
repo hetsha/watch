@@ -1,5 +1,4 @@
 let domain = ".";
-
 const body = document.querySelector("body"),
 loader = document.querySelector(".loader"),
 header = document.querySelector(".header"),
@@ -12,7 +11,6 @@ navClose = document.querySelector(".close-nav"),
 navLogo = document.querySelector(".nav-logo"),
 footerLogo = document.querySelector(".footer-logo"),
 year = document.getElementById("year");
-
 window.onscroll = () => {
     if (window.scrollY > 20) {
         header.classList.add("f-nav");
@@ -20,13 +18,11 @@ window.onscroll = () => {
         header.classList.remove("f-nav");
     }
 };
-
 window.onload = () => {
     if(window.location.href.includes("/")) {
         // domain = "..";
-    
-        let imgDir = document.querySelectorAll('img');
 
+        let imgDir = document.querySelectorAll('img');
         imgDir.forEach(item => {
             if(item.getAttribute('src').indexOf('./assets/') < 1) {
                 const nItem = item.getAttribute('src').replace('./assets', '../assets');
@@ -34,22 +30,18 @@ window.onload = () => {
             }
         });
     }
-
-
     // Dark & Light Mode -> On Load
     let modeOnload = localStorage.getItem("mode");
     checkBgMode(modeOnload);
-    
+
     // Welcome
     const welcome = document.querySelector(".welcome-alert"),
     welcomeCls = document.querySelector(".welcome");
-
     let welcomeOnload = localStorage.getItem("welcome");
-                    
+
     if(welcomeOnload && welcomeOnload == "d-none") {
         welcome.classList.add("d-none");
     }
-
     welcomeCls.addEventListener("click", e => {
         let touch = e.target;
         if(touch.classList.contains("welcome")) {
@@ -60,7 +52,6 @@ window.onload = () => {
         }
     });
 }
-
 const checkBgMode = (mode) => {
     if(mode) {
         switch(mode) {
@@ -78,28 +69,27 @@ const checkBgMode = (mode) => {
         }
     }
 }
-
 // Light & Dark mode, Real Time | Localstorage Changes
 const modeLD = (() => {
     let httpRequest;
     modeToggle.addEventListener('click', makeRequest);
-    
+
     function makeRequest() {
         httpRequest = new XMLHttpRequest();
-    
+
         if (!httpRequest) {
             console.log('Cannot create an XMLHTTP instance');
             return false;
         }
-        
+
         httpRequest.onreadystatechange = showContents;
-        
+
         let path = window.location.pathname;
         let page = path.split("/").pop();
         httpRequest.open('GET', `${page}`);
         httpRequest.send();
     }
-    
+
     function showContents() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
@@ -111,39 +101,29 @@ const modeLD = (() => {
         }
     }
 })();
-
-// dark and light mode   
+// dark and light mode
 modeToggle.addEventListener("click", () => {
     body.classList.toggle("dark");
     modeToggle.classList.toggle("active");
     if(!window.location.host) window.location.href=window.location.href;
-
     if(!body.classList.contains("dark")) {
         localStorage.setItem("mode", "light-mode");
     } else {
         localStorage.setItem("mode", "dark-mode");
     }
 });
-
-
 // searchBox
 searchToggle.addEventListener("click", () => {
     searchToggle.classList.toggle("active");
 });
-
 // Checkout
 const checkOut = document.querySelector(".shopping-cart");
 checkOut.onclick = () => {
     location.href = `${domain}/cart.php`;
 };
-
-
 // mobile nav
 navOpen.addEventListener("click", () => {
     nav.classList.toggle("active");
 });
-
-
-
 // // Year
 year.innerText = new Date().getFullYear();

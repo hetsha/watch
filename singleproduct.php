@@ -23,27 +23,21 @@
 </head>
 
 <body>
-
     <?php
     include 'include/navbar.php';
     include 'include/base.php';
-
     // Database connection
     $servername = "localhost";
     $username = "root";
     $password = "";
     $dbname = "ecom_store";
-
     $conn = new mysqli($servername, $username, $password, $dbname);
-
     // Check connection
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);
     }
-
     // Get product ID from URL
     $productID = $_GET['id'];
-
     // SQL query to fetch product details
     $sql = "
     SELECT products.*, product_categories.p_cat_title
@@ -52,13 +46,10 @@
     ON products.p_cat_id = product_categories.p_cat_id
     WHERE product_id = '$productID'
     ";
-
     $result = $conn->query($sql);
-
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
     ?>
-
         <main class="wrapper">
             <section class="product-details">
                 <div class="container-fluid">
@@ -84,18 +75,15 @@
                                 ?>
                             </div>
                         </div>
-
                         <div class="col-md-12 col-lg-5 mx-auto single-details">
                             <h6>Home / <?php echo $row['p_cat_title']; ?></h6>
                             <h4><?php echo $row['product_title']; ?></h4>
                             <h2><?php echo number_format($row['product_psp_price'], 2); ?> &#8360;</h2> <!-- Changed to product_psp_price -->
-
                             <form action="add_to_cart.php" method="POST">
                                 <input type="number" name="quantity" min="1" max="10" value="1" required>
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                                 <button type="submit" class="btn-normal">Add to Cart</button>
                             </form>
-
                             <button class="btn-normal" onclick="buyNow(<?php echo $row['product_id']; ?>)">Buy Now</button>
                             <h4>Product Details</h4>
                             <span>
@@ -105,7 +93,6 @@
                     </div>
                 </div>
             </section>
-
             <section class="products pm">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -123,7 +110,6 @@
                         if ($connection->connect_error) {
                             die("Connection failed: " . $connection->connect_error);
                         }
-
                         // Updated SQL query to use product_psp_price
                         $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
         p.product_psp_price AS price, p.product_price AS oldPrice,
@@ -132,10 +118,7 @@
         JOIN categories c ON p.cat_id = c.cat_id
         ORDER BY RAND()
         LIMIT 3";
-
-
                         $result = $connection->query($sql);
-
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 $old_price = $row['price'];
@@ -193,16 +176,13 @@
                 </div>
             </section>
         </main>
-
         <?php include 'include/footer.php'; ?>
     <?php
     } else {
         echo "<p>Product not found.</p>";
     }
-
     $conn->close();
     ?>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
         crossorigin="anonymous"></script>

@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,12 +14,9 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
-
 <body>
-
     <?php include 'include/navbar.php'; ?>
     <?php include 'include/base.php'; ?>
-
     <main class="wrapper">
         <section class="hero">
             <div class="container-fluid">
@@ -30,7 +26,6 @@
                 </div>
             </div>
         </section><!-- hero -->
-
         <section class="products pm">
             <div class="container">
                 <div class="row justify-content-center">
@@ -45,17 +40,14 @@
                     <?php
                     // Database connection
                     $connection = new mysqli("localhost", "root", "", "ecom_store");
-
                     // Check for connection errors
                     if ($connection->connect_error) {
                         die("Connection failed: " . $connection->connect_error);
                     }
-
                     // Pagination setup
                     $products_per_page = 9;
                     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
                     $offset = ($page - 1) * $products_per_page;
-
                     // SQL query to fetch products with limit and offset
                     $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
                             p.product_psp_price AS newPrice, p.product_price AS oldPrice,
@@ -64,9 +56,7 @@
                             JOIN categories c ON p.cat_id = c.cat_id
                             ORDER BY RAND()
                             LIMIT $offset, $products_per_page";
-
                     $result = $connection->query($sql);
-
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             $old_price = isset($row['oldPrice']) ? $row['oldPrice'] : 0;
@@ -122,20 +112,17 @@
                     } else {
                         echo "<p>No products found.</p>";
                     }
-
                     // Calculate the total number of pages
                     $total_products_sql = "SELECT COUNT(*) AS total FROM products";
                     $total_result = $connection->query($total_products_sql);
                     $total_row = $total_result->fetch_assoc();
                     $total_pages = ceil($total_row['total'] / $products_per_page);
-
                     // Close the database connection
                     $connection->close();
                     ?>
                 </div>
             </div>
         </section>
-
         <!-- Pagination Section -->
         <section class="pagination">
             <div class="container">
@@ -144,11 +131,9 @@
                         <?php if ($page > 1): ?>
                             <a href="?page=<?php echo $page - 1; ?>"><i class="uil uil-arrow-left"></i></a>
                         <?php endif; ?>
-
                         <?php for ($i = 1; $i <= $total_pages; $i++): ?>
                             <a href="?page=<?php echo $i; ?>" class="<?php if ($i == $page) echo 'active'; ?>"><?php echo $i; ?></a>
                         <?php endfor; ?>
-
                         <?php if ($page < $total_pages): ?>
                             <a href="?page=<?php echo $page + 1; ?>"><i class="uil uil-arrow-right"></i></a>
                         <?php endif; ?>
@@ -156,7 +141,6 @@
                 </div>
             </div>
         </section>
-
         <section class="product-support">
             <div class="container">
                 <div class="row">
@@ -168,7 +152,6 @@
                 </div>
             </div>
         </section><!-- product support-end -->
-
         <section class="collection my-5">
             <div class="container">
                 <div class="row">
@@ -210,9 +193,7 @@
         </div>
     </section>
     </main>
-
     <?php include 'include/footer.php'; ?>
-
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js" integrity="sha384-0tGVGICmc0ctn5HTcTQhb9hx6M1Kuj/kh8U6+KkR+a0gRI0CPvJ18HPyb5hE2nGe" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" integrity="sha384-6OQmq9Yh9FgaRAZ0Ejs4x8W0/29Pi96TMyU7UZXDpt3ePHksYx6aK90aTPcZfuL8" crossorigin="anonymous"></script>
     <script src="assets/js/script.js"></script>
@@ -223,5 +204,4 @@
         }
     </script>
 </body>
-
 </html>

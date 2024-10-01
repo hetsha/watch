@@ -1,7 +1,6 @@
 <?php
 session_start();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,9 +15,7 @@ session_start();
 </head>
 
 <body>
-
     <?php include 'include/navbar.php'; ?>
-
     <main class="wrapper">
         <section class="hero blog-hero">
             <div class="container-fluid">
@@ -28,7 +25,6 @@ session_start();
                 </div>
             </div>
         </section>
-
         <section class="cart">
             <div class="container">
                 <div class="row">
@@ -46,12 +42,11 @@ session_start();
                         <tbody id="cart">
                             <?php
                             $total = 0;
-
                             if (isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
                                 foreach ($_SESSION['cart'] as $productID => $product) {
                                     $subtotal = $product['price'] * $product['quantity'];
                                     $total += $subtotal;
-                                    ?>
+                            ?>
                                     <tr>
                                         <td>
                                             <a href="remove_from_cart.php?id=<?php echo $productID; ?>">Remove</a>
@@ -64,7 +59,7 @@ session_start();
                                         <td><?php echo $product['quantity']; ?></td>
                                         <td><?php echo number_format($subtotal, 2); ?>&#8360;</td>
                                     </tr>
-                                    <?php
+                            <?php
                                 }
                             } else {
                                 echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
@@ -81,7 +76,6 @@ session_start();
                 </div>
             </div>
         </section>
-
         <section class="cart-add">
             <div class="container">
                 <div class="row">
@@ -111,7 +105,6 @@ session_start();
                 </div>
             </div>
         </section>
-
         <section class="newsletter">
             <div class="container">
                 <div class="row align-items-center">
@@ -133,9 +126,7 @@ session_start();
             </div>
         </section>
     </main>
-
     <?php include 'include/footer.php'; ?>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script src="assets/js/script.js"></script>
 </body>

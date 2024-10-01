@@ -22,19 +22,16 @@
 <body>
     <?php
     session_start(); // Ensure this is the very first line in your PHP script
-
     include 'include/base.php';
     // Check if the user is logged in
     if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
         header("Location: login.php"); // Redirect to login page if not logged in
         exit;
     }
-
     include 'include/navbar.php';
     include 'include/slide.php';
     include 'catagory.php';
     ?>
-
     <section class="products pm">
         <div class="container">
             <div class="row justify-content-center">
@@ -50,12 +47,10 @@
                 <?php
                 // Database connection
                 $connection = new mysqli("localhost", "root", "", "ecom_store");
-
                 // Check for connection errors
                 if ($connection->connect_error) {
                     die("Connection failed: " . $connection->connect_error);
                 }
-
                 // SQL query to fetch 6 random products and their categories
                 $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
                 p.product_psp_price AS price, p.product_price AS oldPrice,
@@ -65,9 +60,7 @@
                  ORDER BY p.product_id DESC
             LIMIT 3";
                 $result = $connection->query($sql);
-
                 $displayed_products = []; // Array to store displayed product IDs
-
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $displayed_products[] = $row['id']; // Add product ID to the array
@@ -121,14 +114,12 @@
                 } else {
                     echo "<p>No products found.</p>";
                 }
-
                 // Close the database connection
                 $connection->close();
                 ?>
             </div>
         </div>
     </section>
-
     <section class="product-support">
         <div class="container">
             <div class="row justify-content-center align-items-center">
@@ -140,7 +131,6 @@
             </div>
         </div>
     </section><!-- product support-end -->
-
     <section class="products pm">
         <div class="container">
             <div class="row justify-content-center">
@@ -156,12 +146,10 @@
                 <?php
                 // Database connection
                 $connection = new mysqli("localhost", "root", "", "ecom_store");
-
                 // Check for connection errors
                 if ($connection->connect_error) {
                     die("Connection failed: " . $connection->connect_error);
                 }
-
                 // SQL query to fetch 6 more random products excluding the ones already displayed
                 $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
                 $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
@@ -172,7 +160,6 @@
                 WHERE p.product_id NOT IN ($placeholders)
                  ORDER BY p.product_id ASC
                 LIMIT 6";
-
                 $stmt = $connection->prepare($sql);
                 if (!empty($displayed_products)) {
                     $types = str_repeat('i', count($displayed_products));
@@ -180,7 +167,6 @@
                 }
                 $stmt->execute();
                 $result = $stmt->get_result();
-
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         $old_price = $row['oldPrice'];
@@ -233,25 +219,21 @@
                 } else {
                     echo "<p>No more products found.</p>";
                 }
-
                 // Close the database connection
                 $stmt->close();
                 $connection->close();
                 ?>
             </div>
             <div class="row">
-                    <div class="col-12 text-center mt-5 mx-auto">
-                        <a href="products.php" class="btn btn-theme">View All Products <i class="uil uil-arrow-circle-right"></i></a>
-                    </div>
+                <div class="col-12 text-center mt-5 mx-auto">
+                    <a href="products.php" class="btn btn-theme">View All Products <i class="uil uil-arrow-circle-right"></i></a>
                 </div>
+            </div>
         </div>
     </section><!-- products end -->
-
-
     <?php
     include 'other.php';
     include 'include/footer.php'; ?>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/61g4e8e+rbG8IhV7U+8OBZ4ycEGE2rKl4eovtQ4" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"

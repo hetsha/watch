@@ -1,8 +1,6 @@
 <footer class="page-footer">
-
 	<div class="footer-nav">
 		<div class="container clearfix">
-
 			<div class="footer-nav__col footer-nav__col--info">
 				<div class="footer-nav__heading">Information</div>
 				<ul class="footer-nav__list">
@@ -23,7 +21,6 @@
 					</li>
 				</ul>
 			</div>
-
 			<div class="footer-nav__col footer-nav__col--whybuy">
 				<div class="footer-nav__heading">Why buy from us</div>
 				<ul class="footer-nav__list">
@@ -44,7 +41,6 @@
 					</li>
 				</ul>
 			</div>
-
 			<div class="footer-nav__col footer-nav__col--account">
 				<div class="footer-nav__heading">Your account</div>
 				<ul class="footer-nav__list">
@@ -68,7 +64,6 @@
 					</li>
 				</ul>
 			</div>
-
 			<div class="footer-nav__col footer-nav__col--lookbook">
 				<div class="footer-nav__heading">Lookbook</div>
 				<ul class="footer-nav__list">
@@ -92,7 +87,6 @@
 					</li>
 				</ul>
 			</div>
-
 			<div class="footer-nav__col footer-nav__col--contacts">
 				<div class="footer-nav__heading">Contact details</div>
 				<address class="address">
@@ -108,17 +102,13 @@
 					<a href="mailto:support@yourwebsite.com" class="email__addr">support@yourwebsite.com</a>
 				</div>
 			</div>
-
 		</div>
 	</div>
-
 	<div class="banners">
 		<div class="container clearfix">
-
 			<div class="banner-award">
 				<span>Award winner</span><br> Fashion awards 2016
 			</div>
-
 			<div class="banner-social">
 				<a href="#" class="banner-social__link">
 				<i class="icon-facebook"></i>
@@ -133,21 +123,16 @@
 				<i class="icon-pinterest-circled"></i>
 			</a>
 			</div>
-
 		</div>
 	</div>
-
 	<div class="page-footer__subline">
 		<div class="container clearfix">
-
 			<div class="copyright">
 				&copy; 2016 Avenue Fashion&trade;
 			</div>
-
 			<div class="developer">
 				Dev by Loremipsum.com
 			</div>
-
 			<div class="designby">
 				Design by RobbyDesigns.com
 			</div>

@@ -1,50 +1,29 @@
 <?php
-
 if (!isset($_SESSION['admin_email'])) {
     echo "<script>window.open('login.php','_self')</script>";
 } else {
-
 ?>
-
 <div class="row"><!-- 1 row Starts -->
-
     <div class="col-lg-12"><!-- col-lg-12 Starts -->
-
         <ol class="breadcrumb"><!-- breadcrumb Starts  --->
-
             <li class="active">
                 <i class="fa fa-dashboard"></i> Dashboard / View Orders
             </li>
-
         </ol><!-- breadcrumb Ends  --->
-
     </div><!-- col-lg-12 Ends -->
-
 </div><!-- 1 row Ends -->
-
-
 <div class="row"><!-- 2 row Starts -->
-
     <div class="col-lg-12"><!-- col-lg-12 Starts -->
-
         <div class="panel panel-default"><!-- panel panel-default Starts -->
-
             <div class="panel-heading"><!-- panel-heading Starts -->
-
                 <h3 class="panel-title">
                     <i class="fa fa-money fa-fw"></i> View Orders
                 </h3>
-
             </div><!-- panel-heading Ends -->
-
             <div class="panel-body"><!-- panel-body Starts -->
-
                 <div class="table-responsive"><!-- table-responsive Starts -->
-
                     <table class="table table-bordered table-hover table-striped"><!-- table table-bordered table-hover table-striped Starts -->
-
                         <thead><!-- thead Starts -->
-
                         <tr>
                             <th>Order No:</th>
                             <th>Customer Email:</th>
@@ -57,16 +36,10 @@ if (!isset($_SESSION['admin_email'])) {
                             <th>Order Status:</th>
                             <th>Delete Order:</th>
                         </tr>
-
                         </thead><!-- thead Ends -->
-
-
                         <tbody><!-- tbody Starts -->
-
                         <?php
-
                         $i = 0;
-
                         // Debugging: print the query
                         $get_orders = "
                             SELECT
@@ -78,17 +51,13 @@ if (!isset($_SESSION['admin_email'])) {
                             JOIN customers c ON po.customer_id = c.customer_id
                             JOIN products p ON po.product_id = p.product_id
                         ";
-
                         // Debugging: output the query for inspection
                         echo "<p>SQL Query: " . htmlspecialchars($get_orders) . "</p>";
-
                         $run_orders = mysqli_query($con, $get_orders);
-
                         if (!$run_orders) {
                             // Debugging: print MySQL error
                             echo "<p>Error: " . mysqli_error($con) . "</p>";
                         }
-
                         while ($row_orders = mysqli_fetch_array($run_orders)) {
                             $i++;
                             $order_id = $row_orders['order_id'];
@@ -100,11 +69,9 @@ if (!isset($_SESSION['admin_email'])) {
                             $order_date = $row_orders['order_date'];
                             $due_amount = $row_orders['due_amount'];
                             $order_status = $row_orders['order_status'];
-
                             // Debugging log to check if invoice_no is fetched correctly
                             echo "<script>console.log('Invoice No for Order $order_id: " . $invoice_no . "');</script>";
                         ?>
-
                         <tr>
                             <td><?php echo $i; ?></td>
                             <td><?php echo $customer_email; ?></td>
@@ -123,22 +90,12 @@ if (!isset($_SESSION['admin_email'])) {
                                 </a>
                             </td>
                         </tr>
-
                         <?php } ?>
-
                         </tbody><!-- tbody Ends -->
-
                     </table><!-- table table-bordered table-hover table-striped Ends -->
-
                 </div><!-- table-responsive Ends -->
-
             </div><!-- panel-body Ends -->
-
         </div><!-- panel panel-default Ends -->
-
     </div><!-- col-lg-12 Ends -->
-
 </div><!-- 2 row Ends -->
-
-
 <?php } ?>

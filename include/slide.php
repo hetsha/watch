@@ -82,7 +82,6 @@
                             <!-- <p></p> -->
                         </div>
                     </div>
-
                     <div class="carousel-item">
                         <img src="assets/img/slider/9.jpg" class="d-block w-100">
                         <div class="carousel-caption d-none d-md-block text-white">
@@ -90,7 +89,6 @@
                             <!-- <p></p> -->
                         </div>
                     </div>
-
                     <div class="carousel-item">
                         <img src="assets/img/slider/10.jpg" class="d-block w-100">
                         <div class="carousel-caption d-none d-md-block text-white">
@@ -98,7 +96,6 @@
                             <!-- <p></p> -->
                         </div>
                     </div>
-
                     <div class="carousel-item">
                         <img src="assets/img/slider/11.jpg" class="d-block w-100">
                         <div class="carousel-caption d-none d-md-block text-white">

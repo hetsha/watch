@@ -1,30 +1,24 @@
 <?php
 session_start();
-
 // Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "ecom_store";
-
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 // Check if product ID is received from POST request
 if (isset($_POST['product_id'])) {
     // Use prepared statements to prevent SQL injection
     $productID = (int)$_POST['product_id']; // Cast to integer to avoid SQL injection
-
     // Check if the cart session exists
     if (!isset($_SESSION['cart'])) {
         $_SESSION['cart'] = [];
     }
-
     // Check if the product is already in the cart
     if (isset($_SESSION['cart'][$productID])) {
         // Increase the quantity if the product already exists
@@ -35,7 +29,6 @@ if (isset($_POST['product_id'])) {
         $stmt->bind_param("i", $productID);
         $stmt->execute();
         $result = $stmt->get_result();
-
         if ($result->num_rows > 0) {
             $product = $result->fetch_assoc();
             // Add the product to the cart session
@@ -51,10 +44,8 @@ if (isset($_POST['product_id'])) {
             echo "Product not found.";
             exit();
         }
-
         $stmt->close(); // Close the prepared statement
     }
-
     // Optional: Return a response or confirmation
     echo json_encode(['status' => 'success', 'message' => 'Product added to cart!']);
     // Redirect to the cart page
@@ -63,6 +54,4 @@ if (isset($_POST['product_id'])) {
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Invalid product ID.']);
 }
-
 $conn->close(); // Close the database connection
-?>

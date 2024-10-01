@@ -1,76 +1,57 @@
 <?php
-
 if (!isset($_SESSION['admin_email'])) {
   echo "<script>window.open('login.php','_self')</script>";
 } else {
-
   if (isset($_GET['edit_product'])) {
-
     $edit_id = $_GET['edit_product'];
-
     $get_p = "SELECT * FROM products WHERE product_id='$edit_id'";
     $run_edit = mysqli_query($con, $get_p);
     $row_edit = mysqli_fetch_array($run_edit);
-
     $p_id = $row_edit['product_id'];
     $p_title = $row_edit['product_title'];
     $p_cat = $row_edit['p_cat_id'];
     $cat = $row_edit['cat_id'];
     $m_id = $row_edit['manufacturer_id'];
-
     $p_image1 = $row_edit['product_img1'];
     $p_image2 = $row_edit['product_img2'];
     $p_image3 = $row_edit['product_img3'];
     $p_image4 = $row_edit['product_img4'];
     $p_image5 = $row_edit['product_img5'];
-
-    $new_p_image1 = $row_edit['product_img1'];
-    $new_p_image2 = $row_edit['product_img2'];
-    $new_p_image3 = $row_edit['product_img3'];
-    $new_p_image4 = $row_edit['product_img4'];
-    $new_p_image5 = $row_edit['product_img5'];
-
+    $new_p_image1 = $p_image1;
+    $new_p_image2 = $p_image2;
+    $new_p_image3 = $p_image3;
+    $new_p_image4 = $p_image4;
+    $new_p_image5 = $p_image5;
     $p_price = $row_edit['product_price'];
-    $p_desc = $row_edit['product_desc'];
-    $p_keywords = $row_edit['product_keywords'];
     $psp_price = $row_edit['product_psp_price'];
-    $p_label = $row_edit['product_label'];
+    $p_desc = $row_edit['product_desc'];
     $p_url = $row_edit['product_url'];
-    $p_features = $row_edit['product_features'];
-    $p_video = $row_edit['product_video'];
   }
-
   $get_manufacturer = "SELECT * FROM manufacturers WHERE manufacturer_id='$m_id'";
   $run_manufacturer = mysqli_query($con, $get_manufacturer);
   $row_manfacturer = mysqli_fetch_array($run_manufacturer);
   $manufacturer_id = $row_manfacturer['manufacturer_id'];
   $manufacturer_title = $row_manfacturer['manufacturer_title'];
-
   $get_p_cat = "SELECT * FROM product_categories WHERE p_cat_id='$p_cat'";
   $run_p_cat = mysqli_query($con, $get_p_cat);
   $row_p_cat = mysqli_fetch_array($run_p_cat);
   $p_cat_title = $row_p_cat['p_cat_title'];
-
   $get_cat = "SELECT * FROM categories WHERE cat_id='$cat'";
   $run_cat = mysqli_query($con, $get_cat);
   $row_cat = mysqli_fetch_array($run_cat);
   $cat_title = $row_cat['cat_title'];
-
 ?>
-
   <!DOCTYPE html>
   <html>
-
   <head>
     <title>Edit Products</title>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
     <script>
       tinymce.init({
-        selector: '#product_desc,#product_features'
+        selector: '#product_desc'
       });
     </script>
   </head>
-
   <body>
     <div class="row">
       <div class="col-lg-12">
@@ -202,33 +183,13 @@ if (!isset($_SESSION['admin_email'])) {
               <div class="form-group">
                 <label class="col-md-3 control-label">Product Sale Price</label>
                 <div class="col-md-6">
-                  <input type="text" name="psp_price" class="form-control" value="<?php echo $psp_price; ?>">
+                  <input type="text" name="psp_price" class="form-control" required value="<?php echo $psp_price; ?>">
                 </div>
               </div>
               <div class="form-group">
-                <label class="col-md-3 control-label">Product Keywords</label>
+                <label class="col-md-3 control-label">Product Description</label>
                 <div class="col-md-6">
-                  <input type="text" name="product_keywords" class="form-control" required value="<?php echo $p_keywords; ?>">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-md-3 control-label">Product Label</label>
-                <div class="col-md-6">
-                  <input type="text" name="product_label" class="form-control" required value="<?php echo $p_label; ?>">
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-md-3 control-label">Product Features</label>
-                <div class="col-md-6">
-                  <textarea name="product_features" class="form-control" id="product_features">
-                    <?php echo $p_features; ?>
-                  </textarea>
-                </div>
-              </div>
-              <div class="form-group">
-                <label class="col-md-3 control-label">Product Video</label>
-                <div class="col-md-6">
-                  <input type="text" name="product_video" class="form-control" value="<?php echo $p_video; ?>">
+                  <textarea name="product_desc" id="product_desc" cols="19" rows="6" class="form-control"><?php echo $p_desc; ?></textarea>
                 </div>
               </div>
               <div class="form-group">
@@ -242,70 +203,68 @@ if (!isset($_SESSION['admin_email'])) {
         </div>
       </div>
     </div>
-
-  <?php
-
-  if (isset($_POST['update'])) {
-
-    $product_title = $_POST['product_title'];
-    $product_cat = $_POST['product_cat'];
-    $cat = $_POST['cat'];
-    $manufacturer_id = $_POST['manufacturer'];
-    $product_price = $_POST['product_price'];
-    $psp_price = $_POST['psp_price'];
-    $product_desc = $_POST['product_desc'];
-    $product_keywords = $_POST['product_keywords'];
-    $product_label = $_POST['product_label'];
-    $product_url = $_POST['product_url'];
-    $product_features = $_POST['product_features'];
-    $product_video = $_POST['product_video'];
-
-    $product_img1 = $_FILES['product_img1']['name'];
-    $product_img2 = $_FILES['product_img2']['name'];
-    $product_img3 = $_FILES['product_img3']['name'];
-    $product_img4 = $_FILES['product_img4']['name'];
-    $product_img5 = $_FILES['product_img5']['name'];
-
-    $temp_name1 = $_FILES['product_img1']['tmp_name'];
-    $temp_name2 = $_FILES['product_img2']['tmp_name'];
-    $temp_name3 = $_FILES['product_img3']['tmp_name'];
-    $temp_name4 = $_FILES['product_img4']['tmp_name'];
-    $temp_name5 = $_FILES['product_img5']['tmp_name'];
-
-    if (empty($product_img1)) {
-      $product_img1 = $new_p_image1;
+    <?php
+    if (isset($_POST['update'])) {
+      $product_title = $_POST['product_title'];
+      $product_cat = $_POST['product_cat'];
+      $cat = $_POST['cat'];
+      $manufacturer_id = $_POST['manufacturer'];
+      $product_price = $_POST['product_price'];
+      $psp_price = $_POST['psp_price'];
+      $product_desc = $_POST['product_desc'];
+      $product_url = $_POST['product_url'];
+      $product_img1 = $_FILES['product_img1']['name'];
+      $product_img2 = $_FILES['product_img2']['name'];
+      $product_img3 = $_FILES['product_img3']['name'];
+      $product_img4 = $_FILES['product_img4']['name'];
+      $product_img5 = $_FILES['product_img5']['name'];
+      $temp_name1 = $_FILES['product_img1']['tmp_name'];
+      $temp_name2 = $_FILES['product_img2']['tmp_name'];
+      $temp_name3 = $_FILES['product_img3']['tmp_name'];
+      $temp_name4 = $_FILES['product_img4']['tmp_name'];
+      $temp_name5 = $_FILES['product_img5']['tmp_name'];
+      if (empty($product_img1)) {
+        $product_img1 = $new_p_image1;
+      }
+      if (empty($product_img2)) {
+        $product_img2 = $new_p_image2;
+      }
+      if (empty($product_img3)) {
+        $product_img3 = $new_p_image3;
+      }
+      if (empty($product_img4)) {
+        $product_img4 = $new_p_image4;
+      }
+      if (empty($product_img5)) {
+        $product_img5 = $new_p_image5;
+      }
+      move_uploaded_file($temp_name1, "product_images/$product_img1");
+      move_uploaded_file($temp_name2, "product_images/$product_img2");
+      move_uploaded_file($temp_name3, "product_images/$product_img3");
+      move_uploaded_file($temp_name4, "product_images/$product_img4");
+      move_uploaded_file($temp_name5, "product_images/$product_img5");
+      $update_product = "UPDATE products SET
+                        product_title='$product_title',
+                        p_cat_id='$product_cat',
+                        cat_id='$cat',
+                        manufacturer_id='$manufacturer_id',
+                        product_img1='$product_img1',
+                        product_img2='$product_img2',
+                        product_img3='$product_img3',
+                        product_img4='$product_img4',
+                        product_img5='$product_img5',
+                        product_price='$product_price',
+                        product_psp_price='$psp_price',
+                        product_desc='$product_desc',
+                        product_url='$product_url'
+                        WHERE product_id='$p_id'";
+      $run_product = mysqli_query($con, $update_product);
+      if ($run_product) {
+        echo "<script>alert('Product has been updated successfully')</script>";
+        echo "<script>window.open('index.php?view_products','_self')</script>";
+      }
     }
-    if (empty($product_img2)) {
-      $product_img2 = $new_p_image2;
-    }
-    if (empty($product_img3)) {
-      $product_img3 = $new_p_image3;
-    }
-    if (empty($product_img4)) {
-      $product_img4 = $new_p_image4;
-    }
-    if (empty($product_img5)) {
-      $product_img5 = $new_p_image5;
-    }
-
-    move_uploaded_file($temp_name1, "product_images/$product_img1");
-    move_uploaded_file($temp_name2, "product_images/$product_img2");
-    move_uploaded_file($temp_name3, "product_images/$product_img3");
-    move_uploaded_file($temp_name4, "product_images/$product_img4");
-    move_uploaded_file($temp_name5, "product_images/$product_img5");
-
-    $update_product = "UPDATE products SET p_cat_id='$product_cat', cat_id='$cat', date=NOW(), product_title='$product_title', product_url='$product_url', manufacturer_id='$manufacturer_id', product_img1='$product_img1', product_img2='$product_img2', product_img3='$product_img3', product_img4='$product_img4', product_img5='$product_img5', product_price='$product_price', product_psp_price='$psp_price', product_desc='$product_desc', product_features='$product_features', product_video='$product_video', product_keywords='$product_keywords', product_label='$product_label' WHERE product_id='$p_id'";
-
-    $run_product = mysqli_query($con, $update_product);
-
-    if ($run_product) {
-      echo "<script>alert('Product has been updated successfully')</script>";
-      echo "<script>window.open('index.php?view_products','_self')</script>";
-    }
-  }
-}
-  ?>
-
+    ?>
   </body>
-
   </html>
+<?php } ?>

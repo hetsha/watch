@@ -4,23 +4,19 @@ function showPopupMessage(message) {
   popup.className = "popup";
   popup.textContent = message;
   document.body.appendChild(popup);
-
   // Remove the popup after some time (e.g., 3 seconds)
   setTimeout(() => {
     popup.remove();
   }, 1000);
 }
-
 document.addEventListener("DOMContentLoaded", function () {
   // Fetch products from JSON file
   fetch("products.json")
     .then((response) => response.json())
     .then((products) => {
       const productContainer = document.getElementById("row");
-
       // Initialize an empty string to store the HTML for all products
       let productsHTML = "";
-
       // Loop through each product and generate HTML
       products.forEach((product) => {
         productsHTML += `
@@ -65,12 +61,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                 `;
       });
-
       // Insert the generated HTML into the container element
       productContainer.innerHTML = productsHTML;
     })
     .catch((error) => console.error("Error fetching products:", error));
-
   window.addToCart = function (productId) {
     console.log("Adding product with ID:", productId);
     fetch("products.json")
@@ -81,7 +75,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log("Found product:", product);
         if (product) {
           let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
           // Check if the product is already in the cart
           const existingProductIndex = cart.findIndex(
             (p) => parseInt(p.id) === productId
@@ -96,9 +89,7 @@ document.addEventListener("DOMContentLoaded", function () {
             product.quantity = 1;
             cart.push(product);
           }
-
           localStorage.setItem("cart", JSON.stringify(cart));
-
           // Show popup message
           showPopupMessage("Item added to cart");
         } else {
@@ -110,24 +101,20 @@ document.addEventListener("DOMContentLoaded", function () {
       });
   };
 });
-
 document.addEventListener("DOMContentLoaded", function () {
   // Fetch products from JSON file
   fetch("products.json")
     .then((response) => response.json())
     .then((products) => {
       const productList = document.getElementById("product-list");
-
       // Loop through each product and generate HTML
       products.forEach((product) => {
         const productItem = document.createElement("div");
         productItem.classList.add("product-item");
-
         // Create a link to the singleproduct.php page with product ID as a query parameter
         const productLink = document.createElement("a");
         productLink.href = `singleproduct.php?id=${product.id}`;
         productLink.textContent = product.name;
-
         productItem.appendChild(productLink);
         productList.appendChild(productItem);
       });

@@ -50,7 +50,6 @@
     --btn-coll-border: 1px solid #ffffff;
     --footer-border: 1.1px solid #000000;
 }
-
 body.dark {
     --body-bg-color: hsl(var(--hue-1), 0%, 0%, .97);
     --nav-color: hsl(0, 0%, 0%, .80);

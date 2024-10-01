@@ -22,7 +22,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="col-md-6 col-lg-2 contact2">
                     <h4>About</h4>
                     <a href="about.php">About Us</a>
@@ -31,7 +30,6 @@
                     <a href="#">Terms&amp;Conditions</a>
                     <a href="contact.php">Contact Us</a>
                 </div>
-
                 <div class="col-md-6 col-lg-2 contact3">
                     <h4>My Account</h4>
                     <a href="login.php?action=register">Sign In</a>
@@ -40,7 +38,6 @@
                     <a href="cart.php">My Order</a>
                     <a href="contact.php">Help?</a>
                 </div>
-
                 <div class="col-lg-4 col-md-6 install">
                     <h4>Install App</h4>
                     <p>From App Store or Google Play</p>
@@ -69,6 +66,4 @@
                 </a>
             </div>
         </div>
-
-
     </footer><!-- footer-end  -->

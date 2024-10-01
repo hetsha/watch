@@ -29,7 +29,6 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Error fetching products:", error);
       });
   };
-
   window.updateQuantity = function (productId, newQuantity) {
     console.log(
       "Updating quantity for product ID:",
@@ -37,26 +36,20 @@ document.addEventListener("DOMContentLoaded", function () {
       "New quantity:",
       newQuantity
     );
-
     // Check if productId is a valid number
     if (isNaN(productId)) {
       console.error("Invalid productId:", productId);
       return;
     }
-
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     console.log("Cart contents:", cart);
-
     // Find the index of the product in the cart
     const index = cart.findIndex((p) => parseInt(p.id) === parseInt(productId));
-
     console.log("Index of product in cart:", index);
-
     // Check if the product exists in the cart
     if (index !== -1) {
       const product = cart[index];
       console.log("Found product in cart:", product);
-
       // Ensure newQuantity is a valid number and greater than or equal to 1
       if (!isNaN(newQuantity) && parseInt(newQuantity) >= 1) {
         product.quantity = parseInt(newQuantity);
@@ -71,14 +64,11 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Product not found in cart with ID:", productId);
     }
   };
-
   window.removeFromCart = function (productId) {
     console.log("Removing product with ID:", productId);
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
-
     // Find the index of the product in the cart
     const index = cart.findIndex((p) => parseInt(p.id) === parseInt(productId));
-
     // Check if the product exists in the cart
     if (index !== -1) {
       // Remove the product from the cart array
@@ -90,40 +80,32 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("Product not found in cart with ID:", productId);
     }
   };
-
   // Define function to calculate cart count
   function calculateCartCount() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const uniqueProductIds = new Set(); // Use a Set to store unique product IDs
-
     // Add each product ID to the set
     cart.forEach((product) => {
       if (product && product.id !== undefined) {
         uniqueProductIds.add(product.id);
       }
     });
-
     // The size of the set is the number of unique products
     const cartCount = uniqueProductIds.size;
-
     // Store the cart count in localStorage
     localStorage.setItem("cartcount", cartCount);
-
     return cartCount;
   }
-
   // Define function to render the cart
   function renderCart() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const cartElement = document.getElementById("cart");
     const subtotalElement = document.getElementById("subtotal");
     const cartCountElement = document.getElementById("cartCount");
-
     if (cartElement && subtotalElement && cartCountElement) {
       let cartHtml = "";
       let subtotal = 0;
       let cartCount = 0;
-
       cart.forEach((product) => {
         if (
           product &&
@@ -159,7 +141,6 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error("Invalid product object:", product);
         }
       });
-
       cartElement.innerHTML = cartHtml;
       subtotalElement.innerText = subtotal.toFixed(2);
       cartCountElement.innerText = calculateCartCount();
@@ -169,7 +150,6 @@ document.addEventListener("DOMContentLoaded", function () {
       );
     }
   }
-
   fetch("products.json")
     .then((response) => response.json())
     .then((products) => {
@@ -180,14 +160,11 @@ document.addEventListener("DOMContentLoaded", function () {
     .catch((error) => {
       console.error("Error fetching products:", error);
     });
-
   function generateTableRows(products) {
     const tbody = document.querySelector("tbody");
-
     // Check if tbody element exists
     if (tbody) {
       tbody.innerHTML = "";
-
       products.forEach((product) => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -212,7 +189,6 @@ document.addEventListener("DOMContentLoaded", function () {
       console.error("tbody element not found");
     }
   }
-
   function calculateSubtotal() {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     let subtotal = 0;
@@ -221,12 +197,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     return subtotal;
   }
-
   document
     .querySelector("#chekout")
     .addEventListener("click", function (event) {
       event.preventDefault(); // Prevent the default form submission behavior
-
       // Your code for button click event
       const subtotal = calculateSubtotal();
       const formHTML = `
@@ -266,31 +240,26 @@ document.addEventListener("DOMContentLoaded", function () {
             </form>
         `;
       document.querySelector(".frm").innerHTML = formHTML;
-
       function showAlert(message) {
         const popup = document.createElement("div");
         popup.className = "popupup";
         popup.textContent = message;
         document.body.appendChild(popup);
-
         // Remove the popup after some time (e.g., 3 seconds)
         setTimeout(() => {
           popup.remove();
         }, 3000);
       }
-
       // Handle form submission
       document
         .getElementById("delivery-form")
         .addEventListener("submit", function (event) {
           event.preventDefault();
-
           // Regex patterns for validation
           const namePattern = /^[a-zA-Z\s]+$/;
           const mobilePattern = /^\d{10}$/;
           const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
           const zipcodePattern = /^\d{6}$/;
-
           // Retrieve input field values
           const fullname = document.getElementById("fullname").value.trim();
           const mobile = document.getElementById("mobile").value.trim();
@@ -301,35 +270,29 @@ document.addEventListener("DOMContentLoaded", function () {
           const subtotal = parseFloat(
             document.getElementById("subtotal").value
           );
-
           // Validate Full Name
           if (!fullname.match(namePattern)) {
             showAlert("Please enter a valid full name.");
             return;
           }
-
           // Validate Mobile Number
           if (!mobile.match(mobilePattern)) {
             showAlert("Please enter a valid mobile number.");
             return;
           }
-
           // Validate Email
           if (!email.match(emailPattern)) {
             showAlert("Please enter a valid email address.");
             return;
           }
-
           // Validate Zip Code
           if (!zipcode.match(zipcodePattern)) {
             showAlert("Please enter a valid zip code.");
             return;
           }
-
           // If all fields are valid, proceed with form submission
           localStorage.clear();
           showAlert("Order placed");
-
           // Scroll to the top of the page after a short delay
           setTimeout(function () {
             window.scrollTo({

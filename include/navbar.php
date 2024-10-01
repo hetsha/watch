@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,7 +15,6 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body>
     <header class="header">
         <div class="container">
@@ -82,7 +80,6 @@
                             <i class="uil uil-times cancel"></i>
                             <i class="uil uil-search search"></i>
                         </div>
-
                         <div class="search-field">
                             <input type="text" placeholder="Search..." />
                             <!-- <i class="fa-solid fa-magnifying-glass"></i> -->
@@ -103,7 +100,5 @@
             <div class="progress"></div>
         </div>
     </header><!-- header-end  -->
-
 </body>
-
 </html>
