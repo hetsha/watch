@@ -33,7 +33,6 @@ if (!isset($_SESSION['admin_email'])) {
     ?>
     <!DOCTYPE html>
     <html>
-
     <head>
         <title>Admin Panel</title>
         <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +42,6 @@ if (!isset($_SESSION['admin_email'])) {
         <link rel="icon" href="../assets/img/favicon.png" sizes="192x192" />
         <link rel="apple-touch-icon" href="../assets/img/favicon.png" />
     </head>
-
     <body>
         <div id="wrapper"><!-- wrapper Starts -->
             <?php include("includes/sidebar.php"); ?>
@@ -255,6 +253,5 @@ if (!isset($_SESSION['admin_email'])) {
         <script src="js/jquery.min.js"></script>
         <script src="js/bootstrap.min.js"></script>
     </body>
-
     </html>
 <?php } ?>

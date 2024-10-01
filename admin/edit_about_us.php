@@ -9,7 +9,6 @@ if (!isset($_SESSION['admin_email'])) {
       selector: '#about_desc'
     });
   </script>
-
   <?php
   $get_about_us = "select * from about_us";
   $run_about_us = mysqli_query($con, $get_about_us);

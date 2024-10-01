@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -18,7 +17,6 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body>
     <?php
     session_start(); // Ensure this is the very first line in your PHP script
@@ -243,5 +241,4 @@
         integrity="sha384-2mhtjks7TO7UjWVoqk0LY3ndztj1s4L0SCw3RguQ7EDsB3k3xHjF4gR98gB1g0yo" crossorigin="anonymous"></script>
     <script src="assets/js/script.js"></script>
 </body>
-
 </html>

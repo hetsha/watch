@@ -4,13 +4,11 @@ include("includes/db.php");
 ?>
 <!DOCTYPE HTML>
 <html>
-
 <head>
     <title>Admin Login</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/login.css">
 </head>
-
 <body>
     <div class="container"><!-- container Starts -->
         <form class="form-login" action="" method="post"><!-- form-login Starts -->
@@ -23,7 +21,6 @@ include("includes/db.php");
         </form><!-- form-login Ends -->
     </div><!-- container Ends -->
 </body>
-
 </html>
 <?php
 if (isset($_POST['admin_login'])) {

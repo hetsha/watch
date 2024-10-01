@@ -9,7 +9,6 @@ if (!isset($_SESSION['admin_email'])) {
             selector: 'textarea'
         });
     </script>
-
     <?php
     if (isset($_GET['edit_store'])) {
         $edit_id = $_GET['edit_store'];

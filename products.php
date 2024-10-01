@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -15,7 +14,6 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
-
 <body>
     <?php
     session_start();
@@ -107,14 +105,9 @@
                                                     <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
                                                 </a>
                                             </form>
-
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
                                                 <i class="uil uil-eye" title="View Details"></i>
                                             </a>
-
-
-
-
                                         </div>
                                     </div>
                                 </div>
@@ -208,5 +201,4 @@
     <?php include 'include/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-3rS3or13byPL7vLy1F6W3Je3tmAEUbvvfL4tM3nbhWrVgQ6ewvcTxjqKh+S9gVIF8" crossorigin="anonymous"></script>
 </body>
-
 </html>

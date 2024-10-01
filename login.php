@@ -77,7 +77,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -86,7 +85,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="icon" href="assets/img/favicon.png" sizes="192x192" />
     <link rel="stylesheet" href="assets/css/fontawesome-free-6.4.0-web/css/all.min.css">
 </head>
-
 <body>
     <div class="container <?php echo $mode; ?>">
         <div class="forms-container">
@@ -203,5 +201,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         });
     </script>
 </body>
-
 </html>

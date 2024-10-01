@@ -1607,7 +1607,6 @@ marquee {
     .container-footer div[class^="col"]:nth-child(4) {
         border-bottom: 0px;
     }
-
     .collection .row {
         flex-wrap: wrap !important;
     }
@@ -1748,7 +1747,6 @@ marquee {
         opacity: 1;
         transition: background-color .2s ease;
     }
-
     .menu-item > a:hover {
         color: var(--blue);
         background-color: unset;
@@ -1780,7 +1778,6 @@ marquee {
     #menu__toggle {
         opacity: 0;
     }
-
     #menu__toggle:checked ~ .menu__btn > span {
         transform: rotate(45deg);
     }
@@ -1796,7 +1793,6 @@ marquee {
         visibility: visible;
         left: 0;
     }
-
     .menu__btn {
         display: flex;
         justify-content: baseline;
@@ -1808,7 +1804,6 @@ marquee {
         cursor: pointer;
         z-index: 1;
     }
-
     .menu__btn > span,
     .menu__btn > span::before,
     .menu__btn > span::after {
@@ -1850,7 +1845,6 @@ marquee {
     a.active-n:hover {
         color: unset !important;
     }
-
     .js-sub_menu {
         font-size: 2rem;
     }
@@ -1920,7 +1914,6 @@ marquee {
         grid-template-columns: repeat(1, 1fr);
         grid-template-rows: repeat(3, 25vh);
     }
-
     /* Newsletter */
     .n-form input[type="text"] {
         width: 55%;
@@ -1943,7 +1936,6 @@ marquee {
     .footer h4 {
         font-size: 1.5rem;
     }
-
     .footer p,
     .footer a {
         font-size: 1.2rem;
@@ -1971,7 +1963,6 @@ marquee {
     .details h3 {
         text-align: center;
     }
-
     .map iframe {
         height: 328px !important;
     }
@@ -2018,11 +2009,9 @@ marquee {
     .footer h4 {
         font-size: 1.8rem;
     }
-
     .footer p {
         font-size: 1.2rem;
     }
-
     .container-footer div[class^="col"] a, p {
         margin-bottom: 2rem;
         font-weight: 600;

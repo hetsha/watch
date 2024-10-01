@@ -1,29 +1,24 @@
 <?php
 include 'db.php'; // Make sure this includes the database connection
-
 // Check if the customer is logged in
 if (isset($_SESSION['customer_id'])) {
     $customerID = (int)$_SESSION['customer_id']; // Get the customer ID from session
-
     // Query to count the number of items in the cart for this customer
     $cartCountQuery = $con->prepare("SELECT SUM(qty) as total_items FROM cart WHERE customer_id = ?");
     $cartCountQuery->bind_param("i", $customerID);
     $cartCountQuery->execute();
     $cartCountResult = $cartCountQuery->get_result();
-
     // Get the count
     $cartCount = 0; // Default to 0 if no items found
     if ($cartCountResult->num_rows > 0) {
         $row = $cartCountResult->fetch_assoc();
         $cartCount = $row['total_items']; // Get the total items in the cart
     }
-
     $cartCountQuery->close(); // Close the prepared statement
 } else {
     $cartCount = 0; // No customer logged in, default count to 0
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

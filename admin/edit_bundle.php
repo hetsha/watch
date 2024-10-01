@@ -45,7 +45,6 @@ if (!isset($_SESSION['admin_email'])) {
   ?>
   <!DOCTYPE html>
   <html>
-
   <head>
     <title> Edit Bundle </title>
     <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
@@ -55,7 +54,6 @@ if (!isset($_SESSION['admin_email'])) {
       });
     </script>
   </head>
-
   <body>
     <div class="row"><!-- row Starts -->
       <div class="col-lg-12"><!-- col-lg-12 Starts -->
@@ -242,7 +240,6 @@ $manufacturer_title
       </div><!-- col-lg-12 Ends -->
     </div><!-- 2 row Ends -->
   </body>
-
   </html>
   <?php
   if (isset($_POST['update'])) {

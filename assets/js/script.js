@@ -21,7 +21,6 @@ window.onscroll = () => {
 window.onload = () => {
     if(window.location.href.includes("/")) {
         // domain = "..";
-
         let imgDir = document.querySelectorAll('img');
         imgDir.forEach(item => {
             if(item.getAttribute('src').indexOf('./assets/') < 1) {
@@ -33,12 +32,10 @@ window.onload = () => {
     // Dark & Light Mode -> On Load
     let modeOnload = localStorage.getItem("mode");
     checkBgMode(modeOnload);
-
     // Welcome
     const welcome = document.querySelector(".welcome-alert"),
     welcomeCls = document.querySelector(".welcome");
     let welcomeOnload = localStorage.getItem("welcome");
-
     if(welcomeOnload && welcomeOnload == "d-none") {
         welcome.classList.add("d-none");
     }
@@ -73,23 +70,18 @@ const checkBgMode = (mode) => {
 const modeLD = (() => {
     let httpRequest;
     modeToggle.addEventListener('click', makeRequest);
-
     function makeRequest() {
         httpRequest = new XMLHttpRequest();
-
         if (!httpRequest) {
             console.log('Cannot create an XMLHTTP instance');
             return false;
         }
-
         httpRequest.onreadystatechange = showContents;
-
         let path = window.location.pathname;
         let page = path.split("/").pop();
         httpRequest.open('GET', `${page}`);
         httpRequest.send();
     }
-
     function showContents() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {

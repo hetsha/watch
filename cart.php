@@ -1,33 +1,26 @@
 <?php
 session_start();
-
 // Database connection
 $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "ecom_store";
-
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
-
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-
 // Check if the customer is logged in
 if (!isset($_SESSION['customer_id'])) {
     header("Location: login.php"); // Redirect to login page if not logged in
     exit();
 }
-
 $customerID = (int)$_SESSION['customer_id']; // Ensure customer_id is available in session
 $total = 0;
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -37,7 +30,6 @@ $total = 0;
     <link rel="stylesheet" href="assets/css/style.css">
     <?php include 'include/fav.php'; ?>
 </head>
-
 <body>
     <?php include 'include/navbar.php'; ?>
     <main class="wrapper">
@@ -70,7 +62,6 @@ $total = 0;
     $stmt->bind_param("i", $customerID);
     $stmt->execute();
     $result = $stmt->get_result();
-
     if ($result) {
         if ($result->num_rows > 0) {
             while ($product = $result->fetch_assoc()) {
@@ -170,5 +161,4 @@ $total = 0;
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
-
 </html>

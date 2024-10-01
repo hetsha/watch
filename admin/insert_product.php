@@ -5,7 +5,6 @@ if (!isset($_SESSION['admin_email'])) {
 ?>
     <!DOCTYPE html>
     <html>
-
     <head>
         <title> Insert Products </title>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
@@ -15,7 +14,6 @@ if (!isset($_SESSION['admin_email'])) {
             });
         </script>
     </head>
-
     <body>
         <div class="row">
             <div class="col-lg-12">
@@ -157,7 +155,6 @@ if (!isset($_SESSION['admin_email'])) {
             </div>
         </div>
     </body>
-
     </html>
 <?php
     if (isset($_POST['submit'])) {
