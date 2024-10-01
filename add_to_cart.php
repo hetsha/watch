@@ -55,5 +55,5 @@ if (isset($_POST['product_id'])) {
 }
 // Redirect back to the previous page (not cart.php) after adding to cart
 header("Location: " . $_SERVER['HTTP_REFERER']);
-exit();
-$conn->close(); // Close the database connection
+exit(); // Close the database connection
+?>
