@@ -1,3 +1,8 @@
+<?php
+session_start();
+
+include 'include/db.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,8 +24,6 @@
 </head>
 <body>
     <?php
-    session_start();
-    include 'include/db.php';
     include 'include/navbar.php';
     ?>
     <main class="wrapper">

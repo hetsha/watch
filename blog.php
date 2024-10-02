@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +19,7 @@
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <?php
+<?php
     session_start();
     include 'include/navbar.php';
     ?>
