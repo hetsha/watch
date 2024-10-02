@@ -12,13 +12,13 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
     <?php
     session_start();
     include 'include/base.php';
-    include 'include/navbar.php';?>
+    include 'include/navbar.php'; ?>
     <main class="wrapper">
         <section class="hero">
             <div class="container-fluid">
@@ -38,26 +38,30 @@
                         </article>
                     </div>
                 </div>
-                <div class="row ">
+                <div class="row">
                     <?php
                     // Database connection
                     $connection = new mysqli("localhost", "root", "", "ecom_store");
-                    // Check for connection errors
                     if ($connection->connect_error) {
                         die("Connection failed: " . $connection->connect_error);
                     }
+                    // Category ID from GET request
+                    $category_id = isset($_GET['id']) && is_numeric($_GET['id']) ? (int)$_GET['id'] : null;
                     // Pagination setup
                     $products_per_page = 9;
                     $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
                     $offset = ($page - 1) * $products_per_page;
-                    // SQL query to fetch products with limit and offset
+                    // Base SQL query with category filtering if applicable
                     $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-                            p.product_psp_price AS newPrice, p.product_price AS oldPrice,
-                            p.product_img1 AS image
+                                   p.product_psp_price AS newPrice, p.product_price AS oldPrice, p.product_img1 AS image
                             FROM products p
-                            JOIN categories c ON p.cat_id = c.cat_id
-                            ORDER BY RAND()
-                            LIMIT $offset, $products_per_page";
+                            JOIN categories c ON p.cat_id = c.cat_id";
+                    // If category ID is set, add the WHERE clause
+                    if ($category_id) {
+                        $sql .= " WHERE p.cat_id = $category_id";
+                    }
+                    // Add LIMIT clause for pagination
+                    $sql .= " ORDER BY RAND() LIMIT $offset, $products_per_page";
                     $result = $connection->query($sql);
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -68,7 +72,7 @@
                             <div class="col-md-6 col-lg-4">
                                 <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>">
                                     <div class="product-item-inner">
-                                        <?php if ($discount_percentage > 0): ?>
+                                        <?php if ($discount_percentage > 0) : ?>
                                             <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
                                         <?php endif; ?>
                                         <figure class="img-box">
@@ -93,7 +97,7 @@
                                                 <i class="fa-solid fa-star clr"></i>
                                                 <i class="fa-solid fa-star-half-stroke clr"></i>
                                                 <h4>
-                                                    <?php if ($old_price > 0): ?>
+                                                    <?php if ($old_price > 0) : ?>
                                                         <span class="old-prc">&#8360;<?php echo number_format($old_price, 2); ?></span>
                                                     <?php endif; ?>
                                                     <span class="new-prc">&#8360;<?php echo number_format($new_price, 2); ?></span>
@@ -117,8 +121,11 @@
                     } else {
                         echo "<p>No products found.</p>";
                     }
-                    // Calculate the total number of pages
+                    // Pagination logic: calculate total products
                     $total_products_sql = "SELECT COUNT(*) AS total FROM products";
+                    if ($category_id) {
+                        $total_products_sql .= " WHERE cat_id = $category_id";
+                    }
                     $total_result = $connection->query($total_products_sql);
                     $total_row = $total_result->fetch_assoc();
                     $total_pages = ceil($total_row['total'] / $products_per_page);
@@ -152,11 +159,11 @@
                     <div class="col-md-6 col-lg-12">
                         <h4>Repair &amp; Support - Services</h4>
                         <h2>Up to <span>50% off</span> - All Watches &amp; Accessories</h2>
-                        <button class="btn-normal">Explore More</button>
+                        <button class="btn">Get Support</button>
                     </div>
                 </div>
             </div>
-        </section><!-- product support-end -->
+        </section>
         <section class="collection my-5">
             <div class="container">
                 <div class="row">
@@ -180,25 +187,27 @@
             </div>
         </section><!-- collection-end -->
         <section class="newsletter">
-    <div class="container">
-        <div class="row align-items-center">
-            <div class="col-md-6 col-lg-8">
-                <div class="newstext">
-                    <h4>Sign Up For Newsletters!</h4>
-                    <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6 col-lg-8">
+                        <div class="newstext">
+                            <h4>Sign Up For Newsletters!</h4>
+                            <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6">
+                        <div class="n-form">
+                            <input type="text" placeholder="Your E-Mail Address...">
+                            <button class="btn-normal">Sign Up</button>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-4 col-md-6">
-                <div class="n-form">
-                    <input type="text" placeholder="Your E-Mail Address...">
-                    <button class="btn-normal">Sign Up</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
+        </section>
     </main><!-- wrapper -->
     <?php include 'include/footer.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-3rS3or13byPL7vLy1F6W3Je3tmAEUbvvfL4tM3nbhWrVgQ6ewvcTxjqKh+S9gVIF8" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6jpN/A8mM4yFZfBOPjX3X4U4zI4pF3+0O4Oi5G2" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-0xH9RHG/1sbHRF+IAHz9y9Zh5DkAZJk5wvF6uDHD+aDID4fR5eU5RV3bTf6ItGqJ" crossorigin="anonymous"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 </html>

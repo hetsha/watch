@@ -1,5 +1,5 @@
 <?php
-include 'db.php'; // Make sure this includes the database connection
+include 'db.php'; // Ensure this includes your database connection
 // Check if the customer is logged in
 if (isset($_SESSION['customer_id'])) {
     $customerID = (int)$_SESSION['customer_id']; // Get the customer ID from session
@@ -18,6 +18,12 @@ if (isset($_SESSION['customer_id'])) {
 } else {
     $cartCount = 0; // No customer logged in, default count to 0
 }
+// Fetch categories for the Products menu
+$categoryQuery = $con->prepare("SELECT cat_id, cat_title FROM categories");
+$categoryQuery->execute();
+$categoryResult = $categoryQuery->get_result();
+$categories = $categoryResult->fetch_all(MYSQLI_ASSOC); // Fetch all categories
+$categoryQuery->close(); // Close the prepared statement
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,7 +54,7 @@ if (isset($_SESSION['customer_id'])) {
                 </div>
                 <div class="header--logo">
                     <a href="">
-                        <img src="assets/img/light-logo.png" class="nav-logo" alt="Ora Watches &amp; Jewelery | Logo">
+                        <img src="assets/img/light-logo.png" class="nav-logo" alt="Ora Watches &amp; Jewelry | Logo">
                     </a>
                 </div>
                 <nav class="menu js-menu">
@@ -60,6 +66,13 @@ if (isset($_SESSION['customer_id'])) {
                             <a href="#" class="js-sub_menu">Products <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
                                 <li class="sub-menu-item"><a href="products.php">All Products</a></li>
+                                <?php foreach ($categories as $category): ?>
+                                    <li class="sub-menu-item">
+                                        <a href="products.php?id=<?php echo $category['cat_id']; ?>">
+                                            <?php echo htmlspecialchars($category['cat_title']); ?>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
                             </ul>
                         </li>
                         <li class="menu-item menu-item-child <?php if ($currentPage == 'blog.php' || $currentPage == 'about.php' || $currentPage == 'contact.php') echo 'active'; ?>">
