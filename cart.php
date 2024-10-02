@@ -5,20 +5,55 @@ $servername = "localhost";
 $username = "root";
 $password = "";
 $dbname = "ecom_store";
+
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
+
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
+
 // Check if the customer is logged in
 if (!isset($_SESSION['customer_id'])) {
     header("Location: login.php"); // Redirect to login page if not logged in
     exit();
 }
+
 $customerID = (int)$_SESSION['customer_id']; // Ensure customer_id is available in session
 $total = 0;
+
+// Fetch cart items for the logged-in customer
+$stmt = $conn->prepare("SELECT c.cart_id, c.qty AS quantity, c.p_price AS p_price, p.product_id, p.product_title AS title, p.product_img1 AS image FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.customer_id = ?");
+$stmt->bind_param("i", $customerID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// Initialize cart_id as null
+$cart_id = null;
+
+if ($result && $result->num_rows > 0) {
+    // Get the first product to set the cart_id
+    $firstProduct = $result->fetch_assoc();
+    $cart_id = $firstProduct['cart_id']; // Set cart_id from the first product
+
+    // Rewind the result set to use it in the table
+    $result->data_seek(0); // Go back to the beginning of the result set
+
+    while ($product = $result->fetch_assoc()) {
+        // Check if required data is present
+        if (isset($product['p_price'], $product['quantity'], $product['title'], $product['image'], $product['cart_id'])) {
+            $subtotal = $product['p_price'] * $product['quantity'];
+            $total += $subtotal;
+        }
+    }
+} else {
+    echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+}
+
+$stmt->close(); // Close the prepared statement
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,47 +91,44 @@ $total = 0;
                             </tr>
                         </thead>
                         <tbody id="cart">
-    <?php
-    // Fetch cart items from the database
-    $stmt = $conn->prepare("SELECT c.qty AS quantity, c.p_price AS p_price, c.cart_id, p.product_id, p.product_title AS title, p.product_img1 AS image FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.customer_id = ?");
-    $stmt->bind_param("i", $customerID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($result) {
-        if ($result->num_rows > 0) {
-            while ($product = $result->fetch_assoc()) {
-                $subtotal = $product['p_price'] * $product['quantity'];
-                $total += $subtotal;
-    ?>
-                <tr>
-                    <td>
-                        <a href="remove_from_cart.php?id=<?php echo $product['cart_id']; ?>" class="btn btn-danger btn-sm">Remove</a>
-                    </td>
-                    <td>
-                        <img src="admin/product_images/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['title']); ?>" width="50" class="img-thumbnail">
-                    </td>
-                    <td><?php echo htmlspecialchars($product['title']); ?></td>
-                    <td><?php echo number_format($product['p_price'], 2); ?>&#8360;</td>
-                    <td>
-                        <form action="update_cart.php" method="POST" class="d-flex align-items-center">
-                            <input type="hidden" name="cart_id" value="<?php echo $product['cart_id']; ?>">
-                            <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary btn-sm">-</button>
-                            <input type="number" name="quantity" value="<?php echo htmlspecialchars($product['quantity']); ?>" min="1" class="form-control mx-1" style="width: 60px; text-align: center;" readonly>
-                            <button type="submit" name="action" value="increase" class="btn btn-outline-secondary btn-sm">+</button>
-                        </form>
-                    </td>
-                    <td><?php echo number_format($subtotal, 2); ?>&#8360;</td>
-                </tr>
-    <?php
-            }
-        } else {
-            echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
-        }
-    } else {
-        echo "<tr><td colspan='6'>Error fetching cart items: " . $conn->error . "</td></tr>";
-    }
-    ?>
-</tbody>
+                        <?php
+                        // Re-execute the query to populate the cart table after calculating total
+                        $stmt = $conn->prepare("SELECT c.cart_id, c.qty AS quantity, c.p_price AS p_price, p.product_id, p.product_title AS title, p.product_img1 AS image FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.customer_id = ?");
+                        $stmt->bind_param("i", $customerID);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        while ($product = $result->fetch_assoc()) {
+                            // Check if required data is present
+                            if (isset($product['p_price'], $product['quantity'], $product['title'], $product['image'], $product['cart_id'])) {
+                                $subtotal = $product['p_price'] * $product['quantity'];
+                        ?>
+                                <tr>
+                                    <td>
+                                        <a href="remove_from_cart.php?id=<?php echo $product['cart_id']; ?>" class="btn btn-danger btn-sm">Remove</a>
+                                    </td>
+                                    <td>
+                                        <img src="admin/product_images/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['title']); ?>" width="50" class="img-thumbnail">
+                                    </td>
+                                    <td><?php echo htmlspecialchars($product['title']); ?></td>
+                                    <td><?php echo number_format($product['p_price'], 2); ?>&#8360;</td>
+                                    <td>
+                                        <form action="update_cart.php" method="POST" class="d-flex align-items-center">
+                                            <input type="hidden" name="cart_id" value="<?php echo $product['cart_id']; ?>">
+                                            <button type="submit" name="action" value="decrease" class="btn btn-outline-secondary btn-sm">-</button>
+                                            <input type="number" name="quantity" value="<?php echo htmlspecialchars($product['quantity']); ?>" min="1" class="form-control mx-1" style="width: 60px; text-align: center;" readonly>
+                                            <button type="submit" name="action" value="increase" class="btn btn-outline-secondary btn-sm">+</button>
+                                        </form>
+                                    </td>
+                                    <td><?php echo number_format($subtotal, 2); ?>&#8360;</td>
+                                </tr>
+                        <?php
+                            } else {
+                                echo "<tr><td colspan='6'>Error: Incomplete product data.</td></tr>";
+                            }
+                        }
+                        ?>
+                        </tbody>
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-right">Total:</td>
@@ -131,7 +163,7 @@ $total = 0;
                                 <td>Free</td>
                             </tr>
                         </table>
-                        <a href="checkout.php" class="btn-normal">Proceed to Checkout</a>
+                        <a href="checkout.php?cart_id=<?php echo $cart_id; ?>" class="btn-normal">Proceed to Checkout</a>
                     </div>
                 </div>
             </div>
@@ -162,3 +194,7 @@ $total = 0;
     <script src="assets/js/script.js"></script>
 </body>
 </html>
+
+<?php
+$conn->close(); // Close the database connection
+?>

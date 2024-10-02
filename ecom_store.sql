@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 02, 2024 at 10:13 AM
+-- Generation Time: Oct 02, 2024 at 04:59 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,9 +68,12 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`cart_id`, `customer_id`, `product_id`, `qty`, `p_price`, `size`, `status`, `added_on`) VALUES
-(23, 1, 7, 2, 566.00, NULL, 'active', '2024-10-01 19:12:14'),
 (29, 2, 7, 2, 566.00, NULL, 'active', '2024-10-01 19:24:01'),
-(30, 1, 3, 1, 500.00, NULL, 'active', '2024-10-02 04:58:12');
+(33, 1, 8, 2, 2200.00, NULL, 'active', '2024-10-02 13:56:39'),
+(34, 1, 10, 1, 1213.00, NULL, 'active', '2024-10-02 13:56:41'),
+(35, 1, 4, 1, 20.00, NULL, 'active', '2024-10-02 13:56:50'),
+(36, 1, 5, 3, 232.00, NULL, 'active', '2024-10-02 14:15:35'),
+(37, 1, 2, 1, 1220.00, NULL, 'active', '2024-10-02 14:15:40');
 
 -- --------------------------------------------------------
 
@@ -472,7 +475,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `categories`
