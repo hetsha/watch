@@ -48,7 +48,9 @@ if ($result && $result->num_rows > 0) {
         }
     }
 } else {
-    echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
+   // echo "<script>alert('cart is empty!');</script>";
+    //header("Location: products.php");
+    //echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
 }
 
 $stmt->close(); // Close the prepared statement
@@ -163,7 +165,8 @@ $stmt->close(); // Close the prepared statement
                                 <td>Free</td>
                             </tr>
                         </table>
-                        <a href="checkout.php?cart_id=<?php echo $cart_id; ?>" class="btn-normal">Proceed to Checkout</a>
+                        <a href="checkout.php?customer_id=<?php echo $customerID; ?>" class="btn-normal">Proceed to Checkout</a>
+                        <a href="view_orders.php?customer_id=<?php echo $customerID; ?>" class="btn-normal">view orders </a>
                     </div>
                 </div>
             </div>
