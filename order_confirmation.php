@@ -17,11 +17,15 @@ if ($conn->connect_error) {
 // Get order ID from the URL
 $order_id = (int)$_GET['order_id'];
 
-// Fetch order details
+// Fetch order details along with the invoice number
 $stmt = $conn->prepare("
-    SELECT o.order_id, o.order_total, o.order_date, o.invoice_number, c.customer_name, c.customer_email, c.customer_address, c.customer_city, c.state, c.zip_code, c.customer_contact, c.phone_number
+    SELECT o.order_id, o.order_total, o.order_date, i.invoice_number,
+           c.customer_name, c.customer_email, c.customer_address,
+           c.customer_city, c.state, c.zip_code,
+           c.customer_contact, c.phone_number
     FROM customer_orders o
     JOIN customers c ON o.customer_id = c.customer_id
+    JOIN invoices i ON o.invoice_id = i.invoice_id  -- Join to get invoice number
     WHERE o.order_id = ?
 ");
 $stmt->bind_param("i", $order_id);
@@ -46,7 +50,6 @@ $stmt->bind_param("i", $order_id);
 $stmt->execute();
 $orderItems = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
-
 ?>
 
 <!DOCTYPE html>

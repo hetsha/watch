@@ -52,16 +52,20 @@ $stmt->close(); // Close the prepared statement
 
 // Function to generate a unique 6-digit invoice number
 function generateInvoiceNumber($conn) {
-    $invoiceNumber = rand(100000, 999999); // Generate a random 6-digit number
-    $stmt = $conn->prepare("SELECT COUNT(*) FROM customer_orders WHERE invoice_number = ?");
-    $stmt->bind_param("i", $invoiceNumber);
-    $stmt->execute();
-    $stmt->bind_result($count);
-    $stmt->fetch();
-    $stmt->close();
+    while (true) {
+        $invoiceNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate a random 6-digit number
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM invoices WHERE invoice_number = ?");
+        $stmt->bind_param("s", $invoiceNumber);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->close();
 
-    // If the invoice number already exists, generate a new one
-    return $count > 0 ? generateInvoiceNumber($conn) : $invoiceNumber;
+        // If the invoice number does not exist, return it
+        if ($count == 0) {
+            return $invoiceNumber;
+        }
+    }
 }
 
 // Handle form submission for placing an order
@@ -75,7 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $zip = htmlspecialchars(trim($_POST['zip_code']));
     $contact = htmlspecialchars(trim($_POST['customer_contact']));
     $phone = htmlspecialchars(trim($_POST['phone_number']));
-    $payment_mode = htmlspecialchars(trim($_POST['payment_mode'])); // Updated variable name
+    $payment_mode = htmlspecialchars(trim($_POST['payment_mode']));
 
     // Update customer details in customers table
     $stmt = $conn->prepare("
@@ -93,17 +97,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->bind_param("ssssssssi", $customer_name, $email, $address, $city, $state, $zip, $contact, $phone, $customerID);
     $stmt->execute();
 
+    // Check if the customer exists in the customers table
+    $stmt = $conn->prepare("SELECT COUNT(*) FROM customers WHERE customer_id = ?");
+    $stmt->bind_param("i", $customerID);
+    $stmt->execute();
+    $stmt->bind_result($exists);
+    $stmt->fetch();
+    $stmt->close();
+
+    if ($exists == 0) {
+        echo "Customer does not exist.";
+        exit();
+    }
+
     // Generate a unique invoice number
     $invoice_number = generateInvoiceNumber($conn);
 
+    // Insert invoice into the invoices table with customer_id from customers table
+    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, customer_id, order_date) VALUES (?, ?, NOW())");
+    $stmt->bind_param("si", $invoice_number, $customerID); // Use customerID here
+    if ($stmt->execute()) {
+        $invoice_id = $stmt->insert_id; // Get the last inserted invoice ID
+    } else {
+        echo "Error inserting invoice: " . $stmt->error; // Debugging statement
+        exit();
+    }
+
     // Insert order details into customer_orders
     $stmt = $conn->prepare("
-        INSERT INTO customer_orders (customer_id, order_total, invoice_number, order_date)
+        INSERT INTO customer_orders (customer_id, order_total, invoice_id, order_date)
         VALUES (?, ?, ?, NOW())
     ");
-    $stmt->bind_param("ids", $customerID, $total, $invoice_number);
-    $stmt->execute();
-    $order_id = $stmt->insert_id; // Get the last inserted order ID
+    $stmt->bind_param("idi", $customerID, $total, $invoice_id);
+    if ($stmt->execute()) {
+        $order_id = $stmt->insert_id; // Get the last inserted order ID
+    } else {
+        echo "Error inserting order: " . $stmt->error; // Debugging statement
+        exit();
+    }
 
     // Insert the order into the pending_orders table
     $stmt = $conn->prepare("
@@ -115,11 +146,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Insert payment details into the payments table
     $stmt = $conn->prepare("
-        INSERT INTO payments (amount, payment_mode, ref_no, payment_date)
-        VALUES (?, ?, ?, NOW())
+        INSERT INTO payments (invoice_id, amount, payment_mode, ref_no, payment_date)
+        VALUES (?, ?, ?, ?, NOW())
     ");
     $ref_no = 'REF' . $order_id; // Generate a reference number based on the order ID
-    $stmt->bind_param("dss", $total, $payment_mode, $ref_no);
+    $stmt->bind_param("idss", $invoice_id, $total, $payment_mode, $ref_no);
     $stmt->execute();
 
     // Insert each item from the cart into order_items
@@ -165,80 +196,50 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 </div>
             </div>
         </section>
-        <section class="checkout">
+        <section class="order-details">
             <div class="container">
-                <h3>Order Details</h3>
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Quantity</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($orderItems as $item): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($item['product_title']); ?></td>
-                                <td><?php echo htmlspecialchars($item['qty']); ?></td>
-                                <td><?php echo htmlspecialchars(number_format($item['p_price'], 2)); ?></td>
-                                <td><?php echo htmlspecialchars(number_format($item['p_price'] * $item['qty'], 2)); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        <tr>
-                            <td colspan="3" class="text-end fw-bold">Total:</td>
-                            <td class="fw-bold"><?php echo htmlspecialchars(number_format($total, 2)); ?></td>
-                        </tr>
-                    </tbody>
-                </table>
-
-                <form action="" method="POST">
-                    <h3>Billing Information</h3>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="mb-3">
-                                <label for="customer_name" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="customer_name" name="customer_name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customer_email" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="customer_email" name="customer_email" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customer_address" class="form-label">Address</label>
-                                <input type="text" class="form-control" id="customer_address" name="customer_address" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customer_city" class="form-label">City</label>
-                                <input type="text" class="form-control" id="customer_city" name="customer_city" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="state" class="form-label">State</label>
-                                <input type="text" class="form-control" id="state" name="state" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="zip_code" class="form-label">Zip Code</label>
-                                <input type="text" class="form-control" id="zip_code" name="zip_code" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customer_contact" class="form-label">Contact Number</label>
-                                <input type="text" class="form-control" id="customer_contact" name="customer_contact" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phone_number" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" id="phone_number" name="phone_number" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="payment_mode" class="form-label">Payment Method</label>
-                                <select id="payment_mode" name="payment_mode" class="form-select" required>
-                                    <option value="cod">Cash on Delivery</option>
-                                    <option value="online">Online Payment</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Place Order</button>
-                        </div>
+                <form method="post">
+                    <div class="mb-3">
+                        <label for="customer_name" class="form-label">Name</label>
+                        <input type="text" name="customer_name" class="form-control" required>
                     </div>
+                    <div class="mb-3">
+                        <label for="customer_email" class="form-label">Email</label>
+                        <input type="email" name="customer_email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer_address" class="form-label">Address</label>
+                        <input type="text" name="customer_address" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer_city" class="form-label">City</label>
+                        <input type="text" name="customer_city" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" name="state" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="zip_code" class="form-label">ZIP Code</label>
+                        <input type="text" name="zip_code" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer_contact" class="form-label">Contact Number</label>
+                        <input type="text" name="customer_contact" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="text" name="phone_number" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_mode" class="form-label">Payment Mode</label>
+                        <select name="payment_mode" class="form-select" required>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Net Banking">Net Banking</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Place Order</button>
                 </form>
             </div>
         </section>

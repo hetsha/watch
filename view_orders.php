@@ -23,7 +23,7 @@ if (!isset($_SESSION['customer_id'])) {
 $customerID = (int)$_SESSION['customer_id'];
 
 // Fetch past orders for the logged-in customer
-$stmt = $conn->prepare("SELECT order_id, invoice_number, order_date, order_total, order_status FROM customer_orders WHERE customer_id = ?");
+$stmt = $conn->prepare("SELECT order_id, invoice_id, order_date, order_total, order_status FROM customer_orders WHERE customer_id = ?");
 $stmt->bind_param("i", $customerID);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -58,7 +58,7 @@ $result = $stmt->get_result();
                         <thead>
                             <tr>
                                 <th>Order ID</th>
-                                <th>Invoice Number</th> <!-- New Invoice Number Column -->
+                                <th>Invoice ID</th> <!-- Changed from Invoice Number to Invoice ID -->
                                 <th>Order Date</th>
                                 <th>Total Amount</th>
                                 <th>Status</th>
@@ -70,7 +70,7 @@ $result = $stmt->get_result();
                             while ($order = $result->fetch_assoc()) {
                                 echo "<tr>
                                     <td><a href='order_confirmation.php?order_id={$order['order_id']}' class='text-decoration-none'>{$order['order_id']}</a></td> <!-- Link to Order Confirmation -->
-                                    <td>{$order['invoice_number']}</td>
+                                    <td>{$order['invoice_id']}</td> <!-- Display Invoice ID -->
                                     <td>" . date("Y-m-d H:i:s", strtotime($order['order_date'])) . "</td>
                                     <td>&#8360;" . number_format($order['order_total'], 2) . "</td>
                                     <td>" . htmlspecialchars($order['order_status']) . "</td>

@@ -165,7 +165,7 @@ $stmt->close(); // Close the prepared statement
                                 <td>Free</td>
                             </tr>
                         </table>
-                        <a href="checkout.php?customer_id=<?php echo $customerID; ?>" class="btn-normal">Proceed to Checkout</a>
+                        <a href="checkout.php?customer_id=<?php echo $_SESSION['customer_id']; ?>" class="btn-normal">Proceed to Checkout</a>
                         <a href="view_orders.php?customer_id=<?php echo $customerID; ?>" class="btn-normal">view orders </a>
                     </div>
                 </div>
@@ -201,3 +201,4 @@ $stmt->close(); // Close the prepared statement
 <?php
 $conn->close(); // Close the database connection
 ?>
+
