@@ -24,40 +24,39 @@ $customerID = (int)$_SESSION['customer_id']; // Ensure customer_id is available 
 $total = 0;
 
 // Fetch cart items for the logged-in customer
-$stmt = $conn->prepare("SELECT c.cart_id, c.qty AS quantity, c.p_price AS p_price, p.product_id, p.product_title AS title, p.product_img1 AS image FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.customer_id = ?");
+$stmt = $conn->prepare("
+    SELECT c.cart_id, c.qty AS quantity, c.p_price AS p_price,
+           p.product_id, p.product_title AS title, p.product_img1 AS image
+    FROM cart c
+    JOIN products p ON c.product_id = p.product_id
+    WHERE c.customer_id = ?
+");
 $stmt->bind_param("i", $customerID);
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Initialize cart_id as null
-$cart_id = null;
+$cartItems = []; // Initialize an array to hold cart items
 
 if ($result && $result->num_rows > 0) {
-    // Get the first product to set the cart_id
-    $firstProduct = $result->fetch_assoc();
-    $cart_id = $firstProduct['cart_id']; // Set cart_id from the first product
-
-    // Rewind the result set to use it in the table
-    $result->data_seek(0); // Go back to the beginning of the result set
-
     while ($product = $result->fetch_assoc()) {
         // Check if required data is present
         if (isset($product['p_price'], $product['quantity'], $product['title'], $product['image'], $product['cart_id'])) {
-            $subtotal = $product['p_price'] * $product['quantity'];
-            $total += $subtotal;
+            $subtotal = $product['p_price'] * $product['quantity']; // Use product price for subtotal
+            $total += $subtotal; // Accumulate total
+            $cartItems[] = $product; // Add product to cart items
         }
     }
-} else {
-   // echo "<script>alert('cart is empty!');</script>";
-    //header("Location: products.php");
-    //echo "<tr><td colspan='6'>Your cart is empty.</td></tr>";
 }
+
+// Store the cart total in the session
+$_SESSION['cart_total'] = $total;
 
 $stmt->close(); // Close the prepared statement
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -67,6 +66,7 @@ $stmt->close(); // Close the prepared statement
     <link rel="stylesheet" href="assets/css/style.css">
     <?php include 'include/fav.php'; ?>
 </head>
+
 <body>
     <?php include 'include/navbar.php'; ?>
     <main class="wrapper">
@@ -93,18 +93,7 @@ $stmt->close(); // Close the prepared statement
                             </tr>
                         </thead>
                         <tbody id="cart">
-                        <?php
-                        // Re-execute the query to populate the cart table after calculating total
-                        $stmt = $conn->prepare("SELECT c.cart_id, c.qty AS quantity, c.p_price AS p_price, p.product_id, p.product_title AS title, p.product_img1 AS image FROM cart c JOIN products p ON c.product_id = p.product_id WHERE c.customer_id = ?");
-                        $stmt->bind_param("i", $customerID);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-
-                        while ($product = $result->fetch_assoc()) {
-                            // Check if required data is present
-                            if (isset($product['p_price'], $product['quantity'], $product['title'], $product['image'], $product['cart_id'])) {
-                                $subtotal = $product['p_price'] * $product['quantity'];
-                        ?>
+                            <?php foreach ($cartItems as $product): ?>
                                 <tr>
                                     <td>
                                         <a href="remove_from_cart.php?id=<?php echo $product['cart_id']; ?>" class="btn btn-danger btn-sm">Remove</a>
@@ -122,21 +111,10 @@ $stmt->close(); // Close the prepared statement
                                             <button type="submit" name="action" value="increase" class="btn btn-outline-secondary btn-sm">+</button>
                                         </form>
                                     </td>
-                                    <td><?php echo number_format($subtotal, 2); ?>&#8360;</td>
+                                    <td><?php echo number_format($product['p_price'] * $product['quantity'], 2); ?>&#8360;</td>
                                 </tr>
-                        <?php
-                            } else {
-                                echo "<tr><td colspan='6'>Error: Incomplete product data.</td></tr>";
-                            }
-                        }
-                        ?>
+                            <?php endforeach; ?>
                         </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="5" class="text-right">Total:</td>
-                                <td><?php echo number_format($total, 2); ?>&#8360;</td>
-                            </tr>
-                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -144,15 +122,6 @@ $stmt->close(); // Close the prepared statement
         <section class="cart-add">
             <div class="container">
                 <div class="row">
-                    <div class="col-md-6 col-lg-6 cupon">
-                        <h3>Apply Coupon</h3>
-                        <div>
-                            <form action="apply_coupon.php" method="POST">
-                                <input type="text" name="coupon_code" placeholder="Enter your coupon code" />
-                                <button type="submit" class="btn-normal">Apply</button>
-                            </form>
-                        </div>
-                    </div>
                     <div class="col-md-6 col-lg-6 subtotal">
                         <h3>Cart Total</h3>
                         <table class="table table-striped">
@@ -161,44 +130,23 @@ $stmt->close(); // Close the prepared statement
                                 <td><?php echo number_format($total, 2); ?>&#8360;</td>
                             </tr>
                             <tr>
-                                <td>Shipping:</td>
-                                <td>Free</td>
+                                <td colspan="2">
+                                    <!-- Inside the subtotal section -->
+                                    <a href="checkout.php?customer_id=<?php echo $_SESSION['customer_id']; ?>&total=<?php echo number_format($total, 2); ?>" class="btn-normal">Proceed to Checkout</a>
+                                    <a href="view_orders.php?customer_id=<?php echo $customerID; ?>" class="btn-normal">View Orders</a>
+                                </td>
                             </tr>
                         </table>
-                        <a href="checkout.php?customer_id=<?php echo $_SESSION['customer_id']; ?>" class="btn-normal">Proceed to Checkout</a>
-                        <a href="view_orders.php?customer_id=<?php echo $customerID; ?>" class="btn-normal">view orders </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <section class="newsletter">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 col-lg-8">
-                        <div class="newstext">
-                            <h4>Sign Up For Newsletters!</h4>
-                            <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
-                        </div>
-                    </div>
-                    <div class="col-md-6 col-lg-4">
-                        <div class="n-form">
-                            <form>
-                                <input type="text" placeholder="Your E-Mail Address...">
-                                <button class="btn-normal">Sign Up</button>
-                            </form>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </main>
-    <?php include 'include/footer.php'; ?>
+    <?php
+    include 'include/news.php';
+    include 'include/footer.php';
+    ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/js/script.js"></script>
 </body>
+
 </html>
-
-<?php
-$conn->close(); // Close the database connection
-?>
-

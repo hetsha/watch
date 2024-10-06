@@ -186,24 +186,10 @@
                 </div>
             </div>
         </section><!-- collection-end -->
-        <section class="newsletter">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-md-6 col-lg-8">
-                        <div class="newstext">
-                            <h4>Sign Up For Newsletters!</h4>
-                            <p>Get E-Mail updates about our Latest Products and <span>special offers</span>.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6">
-                        <div class="n-form">
-                            <input type="text" placeholder="Your E-Mail Address...">
-                            <button class="btn-normal">Sign Up</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+
+        <?php
+                include 'include/news.php';
+            ?>
     </main><!-- wrapper -->
     <?php include 'include/footer.php'; ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6jpN/A8mM4yFZfBOPjX3X4U4zI4pF3+0O4Oi5G2" crossorigin="anonymous"></script>

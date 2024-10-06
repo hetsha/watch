@@ -4,6 +4,7 @@ include 'include/db.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,10 +22,12 @@ include 'include/db.php';
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+<?php
+include 'include/navbar.php';
+?>
+
 <body>
-    <?php
-    include 'include/navbar.php';
-    ?>
+
     <main class="wrapper">
         <section class="hero about-hero">
             <div class="container-fluid">
@@ -218,8 +221,12 @@ include 'include/db.php';
                 </div>
             </div>
         </section>
+
+        <?php
+        include 'include/news.php';
+        include 'include/footer.php'
+        ?>
     </main><!-- main-body-end  -->
-    <?php include 'include/footer.php';
     ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
@@ -227,4 +234,5 @@ include 'include/db.php';
     <script src="assets/js/script.js"></script>
     <script src="count.js"></script>
 </body>
+
 </html>

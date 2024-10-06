@@ -39,7 +39,7 @@ if (!isset($_SESSION['admin_email'])) {
                         </a>
                     </li><!-- li Ends -->
                     <li><!-- li Starts -->
-                        <a href="index.php?view_p_cats">
+                        <a href="index.php?view_cats">
                             <i class="fa fa-fw fa-gear"></i> Product Categories
                             <span class="badge"><?php echo $count_p_categories; ?></span>
                         </a>
@@ -89,20 +89,6 @@ if (!isset($_SESSION['admin_email'])) {
                         </li>
                     </ul><!-- ul collapse Ends -->
                 </li><!-- manufacturer li Ends -->
-                <li><!-- li Starts -->
-                    <a href="#" data-toggle="collapse" data-target="#p_cat">
-                        <i class="fa fa-fw fa-pencil"></i> Products Categories
-                        <i class="fa fa-fw fa-caret-down"></i>
-                    </a>
-                    <ul id="p_cat" class="collapse">
-                        <li>
-                            <a href="index.php?insert_p_cat"> Insert Product Category </a>
-                        </li>
-                        <li>
-                            <a href="index.php?view_p_cats"> View Products Categories </a>
-                        </li>
-                    </ul>
-                </li><!-- li Ends -->
                 <li><!-- li Starts -->
                     <a href="#" data-toggle="collapse" data-target="#cat">
                         <i class="fa fa-fw fa-arrows-v"></i> Categories

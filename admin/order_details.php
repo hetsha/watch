@@ -9,32 +9,31 @@ if (!isset($_SESSION['admin_email'])) {
         $order_id = $_GET['order_id'];
 
         // Fetch order details
-        $get_order_details = "
+        $get_orders = "
         SELECT
-            po.order_id, po.order_status,
-            co.invoice_number, co.order_date,
-            c.customer_email, c.customer_name, c.customer_address,
-            c.customer_contact, c.phone_number,
+            po.order_id, po.customer_id, po.order_status,
+            co.invoice_id, co.order_date,
+            c.customer_email,
+            c.customer_name, c.customer_address, c.customer_contact, c.phone_number,
             GROUP_CONCAT(p.product_title SEPARATOR ', ') AS product_titles,
             GROUP_CONCAT(oi.qty SEPARATOR ', ') AS quantities,
-            SUM(oi.qty * oi.price) AS total_amount,
-            py.payment_mode, py.payment_date
+            SUM(oi.qty * oi.price) AS total_amount
         FROM pending_orders po
-        LEFT JOIN customer_orders co ON po.order_id = co.order_id
-        LEFT JOIN customers c ON po.customer_id = c.customer_id
-        LEFT JOIN order_items oi ON po.order_id = oi.order_id
-        LEFT JOIN products p ON oi.product_id = p.product_id
-        LEFT JOIN payments py ON co.invoice_number = py.invoice_no
-        WHERE po.order_id = '$order_id'
+        JOIN customer_orders co ON po.order_id = co.order_id
+        JOIN customers c ON po.customer_id = c.customer_id
+        JOIN order_items oi ON po.order_id = oi.order_id
+        JOIN products p ON oi.product_id = p.product_id
+        WHERE po.order_id = '$order_id'  -- Ensure you're filtering by order_id
         GROUP BY po.order_id
-    ";
+        ";
 
-        $run_order_details = mysqli_query($con, $get_order_details);
+        $run_order_details = mysqli_query($con, $get_orders);
 
         if (mysqli_num_rows($run_order_details) > 0) {
             $row_order_details = mysqli_fetch_array($run_order_details);
 
-            $invoice_number = $row_order_details['invoice_number'] ?? 'N/A';
+            // Use the correct column names from your query
+            $invoice_number = $row_order_details['invoice_id'] ?? 'N/A';  // Update this line if invoice_id is not the right column
             $order_date = $row_order_details['order_date'] ?? 'N/A';
             $customer_email = $row_order_details['customer_email'] ?? 'N/A';
             $customer_name = $row_order_details['customer_name'] ?? 'N/A';
@@ -45,8 +44,8 @@ if (!isset($_SESSION['admin_email'])) {
             $quantities = $row_order_details['quantities'] ?? 'N/A';
             $total_amount = $row_order_details['total_amount'] ?? 0;
             $order_status = $row_order_details['order_status'] ?? 'N/A';
-            $payment_mode = $row_order_details['payment_mode'] ?? 'N/A';
-            $payment_date = $row_order_details['payment_date'] ?? 'N/A';
+            $payment_mode = $row_order_details['payment_mode'] ?? 'N/A';  // Ensure this is included in your SELECT statement
+            $payment_date = $row_order_details['payment_date'] ?? 'N/A';  // Ensure this is included in your SELECT statement
         } else {
             // No order details found
             echo "<script>alert('No order details found for this order ID.');</script>";

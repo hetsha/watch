@@ -1,5 +1,4 @@
 <?php
-
 include 'db.php'; // Ensure this includes your database connection
 
 // Check if the customer is logged in
@@ -132,4 +131,5 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </div>
     </header><!-- header-end  -->
 </body>
+<script src="assets/js/script.js"></script>
 </html>

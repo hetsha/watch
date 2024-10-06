@@ -26,11 +26,10 @@ if (!isset($_SESSION['admin_email'])) {
                             <thead class="thead-dark"><!-- thead Starts -->
                                 <tr>
                                     <th>Payment No:</th>
-                                    <th>Invoice No:</th>
+                                    <th>Invoice ID:</th> <!-- Changed from Invoice No to Invoice ID -->
                                     <th>Amount Paid:</th>
                                     <th>Payment Method:</th>
-                                    <th>Reference No:</th>
-                                    <th>Payment Code:</th>
+                                    <th>Coupon:</th> <!-- New Coupon Column -->
                                     <th>Payment Date:</th>
                                     <th>Delete Payment:</th>
                                 </tr>
@@ -40,23 +39,23 @@ if (!isset($_SESSION['admin_email'])) {
                                 $i = 0;
                                 $get_payments = "SELECT * FROM payments";
                                 $run_payments = mysqli_query($con, $get_payments);
-                                while ($row_payments = mysqli_fetch_array($run_payments)) {
-                                    $payment_id = $row_payments['payment_id'];
-                                    $invoice_no = $row_payments['invoice_no'];
-                                    $amount = $row_payments['amount'];
-                                    $payment_mode = $row_payments['payment_mode'];
-                                    $ref_no = $row_payments['ref_no'];
-                                    $code = $row_payments['code'];
-                                    $payment_date = $row_payments['payment_date'];
-                                    $i++;
+
+                                if ($run_payments) { // Check if the query executed successfully
+                                    while ($row_payments = mysqli_fetch_array($run_payments)) {
+                                        $payment_id = $row_payments['payment_id'];
+                                        $invoice_id = isset($row_payments['invoice_id']) ? $row_payments['invoice_id'] : 'N/A'; // Updated to use invoice_id
+                                        $amount = $row_payments['amount'];
+                                        $payment_mode = $row_payments['payment_mode'];
+                                        $coupon = isset($row_payments['coupon']) ? $row_payments['coupon'] : 'N/A'; // Added Coupon variable
+                                        $payment_date = $row_payments['payment_date'];
+                                        $i++;
                                 ?>
                                     <tr>
                                         <td><?php echo $i; ?></td>
-                                        <td style="background-color: #ffeb3b;"><?php echo $invoice_no ?: 'N/A'; ?></td>
+                                        <td style="background-color: #ffeb3b;"><?php echo $invoice_id; ?></td> <!-- Changed to invoice_id -->
                                         <td>$<?php echo number_format($amount, 2); ?></td>
                                         <td><?php echo ucfirst($payment_mode); ?></td>
-                                        <td><?php echo $ref_no ?: 'N/A'; ?></td>
-                                        <td><?php echo $code ?: 'N/A'; ?></td>
+                                        <td><?php echo $coupon; ?></td> <!-- Added Coupon display -->
                                         <td><?php echo date('Y-m-d H:i:s', strtotime($payment_date)); ?></td>
                                         <td>
                                             <a href="index.php?payment_delete=<?php echo $payment_id; ?>" class="text-danger">
@@ -64,7 +63,12 @@ if (!isset($_SESSION['admin_email'])) {
                                             </a>
                                         </td>
                                     </tr>
-                                <?php } ?>
+                                <?php
+                                    }
+                                } else {
+                                    echo "<tr><td colspan='7'>Error fetching payments: " . mysqli_error($con) . "</td></tr>";
+                                }
+                                ?>
                             </tbody><!-- tbody Ends -->
                         </table><!-- table Ends -->
                     </div><!-- table-responsive Ends -->

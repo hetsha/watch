@@ -210,6 +210,10 @@
                 </div>
             </div>
         </section>
+
+        <?php
+                include 'include/news.php';
+            ?>
     </main><!-- main-body-end  -->
     <?php include 'include/footer.php';
     ?>
