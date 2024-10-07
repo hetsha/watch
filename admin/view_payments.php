@@ -26,10 +26,11 @@ if (!isset($_SESSION['admin_email'])) {
                             <thead class="thead-dark"><!-- thead Starts -->
                                 <tr>
                                     <th>Payment No:</th>
-                                    <th>Invoice ID:</th> <!-- Changed from Invoice No to Invoice ID -->
+                                    <th>Invoice ID:</th>
+                                    <th>Order ID:</th> <!-- Added Order ID column -->
                                     <th>Amount Paid:</th>
                                     <th>Payment Method:</th>
-                                    <th>Coupon:</th> <!-- New Coupon Column -->
+                                    <th>Coupon:</th>
                                     <th>Payment Date:</th>
                                     <th>Delete Payment:</th>
                                 </tr>
@@ -37,36 +38,46 @@ if (!isset($_SESSION['admin_email'])) {
                             <tbody><!-- tbody Starts -->
                                 <?php
                                 $i = 0;
-                                $get_payments = "SELECT * FROM payments";
+                                $get_payments = "
+                                    SELECT payments.*, customer_orders.order_id
+                                    FROM payments
+                                    JOIN customer_orders ON payments.invoice_id = customer_orders.invoice_id"; // Corrected query
+
                                 $run_payments = mysqli_query($con, $get_payments);
 
                                 if ($run_payments) { // Check if the query executed successfully
                                     while ($row_payments = mysqli_fetch_array($run_payments)) {
                                         $payment_id = $row_payments['payment_id'];
-                                        $invoice_id = isset($row_payments['invoice_id']) ? $row_payments['invoice_id'] : 'N/A'; // Updated to use invoice_id
+                                        $invoice_id = isset($row_payments['invoice_id']) ? $row_payments['invoice_id'] : 'N/A';
+                                        $order_id = isset($row_payments['order_id']) ? $row_payments['order_id'] : 'N/A'; // Get order_id
                                         $amount = $row_payments['amount'];
                                         $payment_mode = $row_payments['payment_mode'];
-                                        $coupon = isset($row_payments['coupon']) ? $row_payments['coupon'] : 'N/A'; // Added Coupon variable
+                                        $coupon = isset($row_payments['coupon']) ? $row_payments['coupon'] : 'N/A';
                                         $payment_date = $row_payments['payment_date'];
                                         $i++;
                                 ?>
-                                    <tr>
-                                        <td><?php echo $i; ?></td>
-                                        <td style="background-color: #ffeb3b;"><?php echo $invoice_id; ?></td> <!-- Changed to invoice_id -->
-                                        <td>$<?php echo number_format($amount, 2); ?></td>
-                                        <td><?php echo ucfirst($payment_mode); ?></td>
-                                        <td><?php echo $coupon; ?></td> <!-- Added Coupon display -->
-                                        <td><?php echo date('Y-m-d H:i:s', strtotime($payment_date)); ?></td>
-                                        <td>
-                                            <a href="index.php?payment_delete=<?php echo $payment_id; ?>" class="text-danger">
-                                                <i class="fa fa-trash"></i> Delete
-                                            </a>
-                                        </td>
-                                    </tr>
+                                        <tr>
+                                            <td><?php echo $i; ?></td>
+                                            <td><?php echo $invoice_id; ?></td> <!-- Removed link from Invoice ID -->
+                                            <td>
+                                                <a href="../order_confirmation.php?order_id=<?php echo $order_id; ?>" class="text-primary">
+                                                    <?php echo $order_id; ?>
+                                                </a> <!-- Added link to Order ID -->
+                                            </td>
+                                            <td>$<?php echo number_format($amount, 2); ?></td>
+                                            <td><?php echo ucfirst($payment_mode); ?></td>
+                                            <td><?php echo $coupon; ?></td>
+                                            <td><?php echo date('Y-m-d H:i:s', strtotime($payment_date)); ?></td>
+                                            <td>
+                                                <a href="index.php?payment_delete=<?php echo $payment_id; ?>" class="text-danger">
+                                                    <i class="fa fa-trash"></i> Delete
+                                                </a>
+                                            </td>
+                                        </tr>
                                 <?php
                                     }
                                 } else {
-                                    echo "<tr><td colspan='7'>Error fetching payments: " . mysqli_error($con) . "</td></tr>";
+                                    echo "<tr><td colspan='8'>Error fetching payments: " . mysqli_error($con) . "</td></tr>";
                                 }
                                 ?>
                             </tbody><!-- tbody Ends -->

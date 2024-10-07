@@ -55,7 +55,8 @@ $stmt->close(); // Close the prepared statement
 $_SESSION['cart_total'] = $total; // Store total for later use in checkout
 
 // Function to generate a unique 6-digit invoice number
-function generateInvoiceNumber($conn) {
+function generateInvoiceNumber($conn)
+{
     while (true) {
         $invoiceNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate a random 6-digit number
         $stmt = $conn->prepare("SELECT COUNT(*) FROM invoices WHERE invoice_number = ?");
@@ -179,71 +180,105 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <title>Checkout - ORA</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .btn-primary {
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #004085;
+        }
+
+        input, select {
+            transition: border 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
+        }
+    </style>
 </head>
 
 <body>
     <?php include 'include/navbar.php'; ?>
-    <main class="container">
-        <h2>Checkout</h2>
-        <form method="POST" action="">
-            <div class="mb-3">
-                <label for="customer_address" class="form-label">Address</label>
-                <input type="text" class="form-control" id="customer_address" name="customer_address" required>
+    <main class="wrapper">
+        <section class="hero blog-hero">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-12">
+                        <h1>Checkout</h1>
+                        <p>Please fill in the details to complete your order.</p>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label for="customer_city" class="form-label">City</label>
-                <input type="text" class="form-control" id="customer_city" name="customer_city" required>
-            </div>
-            <div class="mb-3">
-                <label for="state" class="form-label">State</label>
-                <input type="text" class="form-control" id="state" name="state" required>
-            </div>
-            <div class="mb-3">
-                <label for="zip_code" class="form-label">Zip Code</label>
-                <input type="text" class="form-control" id="zip_code" name="zip_code" required>
-            </div>
-            <div class="mb-3">
-                <label for="customer_contact" class="form-label">Contact Number</label>
-                <input type="text" class="form-control" id="customer_contact" name="customer_contact" required>
-            </div>
-            <div class="mb-3">
-                <label for="phone_number" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="phone_number" name="phone_number" required>
-            </div>
-            <div class="mb-3">
-                <label for="payment_mode" class="form-label">Payment Method</label>
-                <select class="form-select" id="payment_mode" name="payment_mode" required>
-                    <option value="credit_card">Credit Card</option>
-                    <option value="debit_card">Debit Card</option>
-                    <option value="net_banking">Net Banking</option>
-                    <option value="cash_on_delivery">Cash on Delivery</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Place Order</button>
-        </form>
-
-        <h3>Order Summary</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Quantity</th>
-                    <th>Price</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($orderItems as $item) : ?>
-                    <tr>
-                        <td><?php echo htmlspecialchars($item['product_title']); ?></td>
-                        <td><?php echo htmlspecialchars($item['quantity']); ?></td>
-                        <td><?php echo htmlspecialchars($item['price']); ?></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
-        <h4>Total Amount: ₹<?php echo htmlspecialchars($total); ?></h4>
+        </section>
+        <div class="container">
+            <h2>Your Cart Total: ₹<?php echo number_format($total, 2); ?></h2>
+            <form action="" method="POST" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="customer_address" class="form-label">Address</label>
+                    <input type="text" class="form-control" id="customer_address" name="customer_address" required>
+                    <div class="invalid-feedback">Please enter your address.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="customer_city" class="form-label">City</label>
+                    <input type="text" class="form-control" id="customer_city" name="customer_city" required>
+                    <div class="invalid-feedback">Please enter your city.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="state" class="form-label">State</label>
+                    <input type="text" class="form-control" id="state" name="state" required>
+                    <div class="invalid-feedback">Please enter your state.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="zip_code" class="form-label">Zip Code</label>
+                    <input type="text" class="form-control" id="zip_code" name="zip_code" required>
+                    <div class="invalid-feedback">Please enter your zip code.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="customer_contact" class="form-label">Contact</label>
+                    <input type="text" class="form-control" id="customer_contact" name="customer_contact" required>
+                    <div class="invalid-feedback">Please enter your contact details.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="phone_number" class="form-label">Phone Number</label>
+                    <input type="text" class="form-control" id="phone_number" name="phone_number" required>
+                    <div class="invalid-feedback">Please enter your phone number.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="payment_mode" class="form-label">Payment Mode</label>
+                    <select class="form-control" id="payment_mode" name="payment_mode" required>
+                        <option value="">Select a payment mode</option>
+                        <option value="COD">Cash on Delivery</option>
+                        <option value="UPI">UPI</option>
+                        <option value="Card">Credit/Debit Card</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a payment mode.</div>
+                </div>
+                <button type="submit" class="btn btn-primary">Place Order</button>
+            </form>
+        </div>
     </main>
     <?php include 'include/footer.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script>
+        // Bootstrap form validation
+        (function () {
+            'use strict'
+            var forms = document.querySelectorAll('.needs-validation')
+            Array.prototype.slice.call(forms).forEach(function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault()
+                        event.stopPropagation()
+                    }
+                    form.classList.add('was-validated')
+                }, false)
+            })
+        })();
+    </script>
 </body>
 
 </html>

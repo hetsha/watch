@@ -74,6 +74,7 @@ $stmt->close();
         </section>
         <section class="order-details">
             <div class="container">
+                <br>
                 <h3>Order Summary</h3>
                 <p><strong>Order ID:</strong> <?php echo htmlspecialchars($orderDetails['order_id']); ?></p>
                 <p><strong>Invoice Number:</strong> <?php echo htmlspecialchars($orderDetails['invoice_number']); ?></p> <!-- Added invoice number -->

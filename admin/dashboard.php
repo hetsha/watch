@@ -128,14 +128,28 @@ if (!isset($_SESSION['admin_email'])) {
                             <tbody><!-- tbody Starts -->
                                 <?php
                                 $i = 0;
-                                $get_order = "SELECT * FROM pending_orders ORDER BY 1 DESC LIMIT 0,5";
+                                $get_order =
+                                "SELECT
+                                    po.order_id, po.customer_id, po.order_status,
+                                    co.invoice_id, co.order_date,
+                                    c.customer_email,
+                                    GROUP_CONCAT(p.product_title SEPARATOR ', ') AS product_titles,
+                                    GROUP_CONCAT(oi.qty SEPARATOR ', ') AS quantities,
+                                    SUM(oi.qty * oi.price) AS total_amount
+                                FROM pending_orders po
+                                JOIN customer_orders co ON po.order_id = co.order_id
+                                JOIN customers c ON po.customer_id = c.customer_id
+                                JOIN order_items oi ON po.order_id = oi.order_id
+                                JOIN products p ON oi.product_id = p.product_id
+                                GROUP BY po.order_id
+                                DESC LIMIT 0,5";
                                 $run_order = mysqli_query($con, $get_order);
                                 while ($row_order = mysqli_fetch_array($run_order)) {
                                     $order_id = $row_order['order_id'];
                                     $c_id = $row_order['customer_id'];
-                                    $invoice_no = isset($row_order['invoice_no']) ? $row_order['invoice_no'] : 'N/A'; // Default value if key doesn't exist
-                                    $product_id = $row_order['product_id'];
-                                    $qty = $row_order['qty'];
+                                    $invoice_no = isset($row_order['invoice_id']) ? $row_order['invoice_id'] : 'N/A'; // Default value if key doesn't exist
+                                    $product_id = $row_order['product_titles'];
+                                    $qty = $row_order['quantities'];
                                     $size = isset($row_order['size']) ? $row_order['size'] : 'N/A'; // Default value if key doesn't exist
                                     $order_status = $row_order['order_status'];
                                     $i++;

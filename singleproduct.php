@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -11,7 +12,7 @@
     <link rel="icon" href="assets/img/favicon.png" sizes="32x32" />
     <link rel="icon" href="assets/img/favicon.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="assets/img/favicon.png" />
-    <?php include 'include/fav.php' ?>
+    <?php include 'include/fav.php'; ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
@@ -20,6 +21,7 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
 </head>
+
 <body>
     <?php
     session_start();
@@ -39,10 +41,9 @@
     $productID = $_GET['id'];
     // SQL query to fetch product details
     $sql = "
-    SELECT products.*, product_categories.p_cat_title
+    SELECT products.*, categories.cat_title
     FROM products
-    JOIN product_categories
-    ON products.p_cat_id = product_categories.p_cat_id
+    JOIN categories ON products.cat_id = categories.cat_id
     WHERE product_id = '$productID'
     ";
     $result = $conn->query($sql);
@@ -50,6 +51,14 @@
         $row = $result->fetch_assoc();
     ?>
         <main class="wrapper">
+            <section class="hero blog-hero">
+                <div class="container-fluid">
+                    <div class="row">
+                        <h2>#product details</h2>
+                        <p>Thank you for choosing ORA, for the product see details below!</p>
+                    </div>
+                </div>
+            </section>
             <section class="product-details">
                 <div class="container-fluid">
                     <div class="row gap-5">
@@ -75,10 +84,10 @@
                             </div>
                         </div>
                         <div class="col-md-12 col-lg-5 mx-auto single-details">
-                            <h6>Home / <?php echo $row['p_cat_title']; ?></h6>
+                            <h6>Home / <?php echo $row['cat_title']; ?></h6>
                             <h4><?php echo $row['product_title']; ?></h4>
-                            <h2><?php echo number_format($row['product_psp_price'], 2); ?> &#8360;</h2> <!-- Changed to product_psp_price -->
-                            <form action="add_to_cart.php" method="POST">
+                            <h2><?php echo number_format($row['product_psp_price'], 2); ?> &#8360;</h2>
+                            <form id="addToCartForm" method="POST" onsubmit="return addToCart(event)">
                                 <input type="number" name="quantity" min="1" max="10" value="1" required>
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                                 <button type="submit" class="btn-normal">Add to Cart</button>
@@ -105,6 +114,7 @@
                     </div>
                     <div class="row">
                         <?php
+                        // Fetch latest products
                         $connection = new mysqli("localhost", "root", "", "ecom_store");
                         if ($connection->connect_error) {
                             die("Connection failed: " . $connection->connect_error);
@@ -112,7 +122,7 @@
                         // Updated SQL query to use product_psp_price
                         $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
         p.product_psp_price AS price, p.product_price AS oldPrice,
-        p.product_img1 AS image, p.product_img1 AS product_image
+        p.product_img1 AS image
         FROM products p
         JOIN categories c ON p.cat_id = c.cat_id
         ORDER BY RAND()
@@ -130,8 +140,8 @@
                                             <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
                                             <figure class="img-box">
                                                 <?php
-                                                if (!empty($row['product_image'])) {
-                                                    $image_path = 'admin/product_images/' . $row['product_image'];
+                                                if (!empty($row['image'])) {
+                                                    $image_path = 'admin/product_images/' . $row['image'];
                                                     echo "<img src='$image_path' alt='" . $row['name'] . "'>";
                                                 } else {
                                                     echo "<p>No image available</p>";
@@ -154,9 +164,9 @@
                                                             &#8360;</span><?php echo number_format($row['price'], 2); ?>&#8360;
                                                     </h4>
                                                 </div>
-                                                <a class="go-to-cart" onclick="addToCart(<?php echo $row['id']; ?>)">
-                                                    <i class="uil uil-shopping-bag shopping-cart cart"></i>
-                                                </a>
+                                                <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">
+                                                <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
+                                            </a>
                                                 <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
                                                     <i class="uil uil-eye"></i>
                                                 </a>
@@ -174,20 +184,38 @@
                     </div>
                 </div>
             </section>
-            <?php
-                include 'include/news.php';
-            ?>
-        </main>
-        <?php include 'include/footer.php'; ?>
-    <?php
+        <?php
     } else {
-        echo "<p>Product not found.</p>";
+        echo "<h3>Product not found.</h3>";
     }
     $conn->close();
-    ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3"
-        crossorigin="anonymous"></script>
-    <script src="assets/js/script.js"></script>
+    include 'include/news.php';
+    include 'include/footer.php';
+        ?>
+
+        <script>
+            function addToCart(event) {
+                event.preventDefault(); // Prevent the default form submission
+                const form = document.getElementById('addToCartForm');
+                const formData = new FormData(form); // Create FormData object from the form
+
+                // Send AJAX request
+                fetch('add_to_cart.php', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        // Handle the response from the server
+                        console.log(data); // Log the response for debugging
+                        alert('Product added to cart!'); // Display a success message
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Failed to add product to cart.'); // Display an error message
+                    });
+            }
+        </script>
 </body>
+
 </html>

@@ -119,3 +119,62 @@ navOpen.addEventListener("click", () => {
 });
 // // Year
 year.innerText = new Date().getFullYear();
+
+$(document).ready(function () {
+    // Animation when Add to Cart is clicked
+    $('.cart-button').on('click', function (event) {
+        event.preventDefault(); // Prevent default link behavior
+
+        // Get the form related to the clicked button
+        const form = $(this).closest('form');
+
+        // Add bounce animation to the cart icon
+        $(this).find('.cart-icon').addClass('clicked');
+
+        // Simulate adding to cart without page reload (using AJAX)
+        $.ajax({
+            url: form.attr('action'),
+            method: form.attr('method'),
+            data: form.serialize(),
+            success: function (response) {
+                // Show popup confirmation
+                showCartPopup();
+
+                // Remove the bounce animation after animation ends
+                setTimeout(() => {
+                    $('.cart-icon').removeClass('clicked');
+                }, 600);
+            },
+            error: function () {
+                alert("There was an error adding the product to the cart.");
+            }
+        });
+    });
+
+    // Animation when View Details is clicked
+    $('.view-details').on('click', function (event) {
+        event.preventDefault(); // Prevent default link behavior
+
+        // Animate the icon (optional: you can add different animation)
+        $(this).addClass('clicked');
+        window.location.href = $(this).attr('href');
+    });
+
+    // Function to show the popup
+    function showCartPopup() {
+        $('#overlay').fadeIn();
+        $('#cartPopup').fadeIn();
+
+        // Close the popup after 3 seconds
+        setTimeout(function () {
+            $('#overlay').fadeOut();
+            $('#cartPopup').fadeOut();
+        }, 3000);
+    }
+
+    // Close popup when clicking the close button
+    $('#cartPopup button').on('click', function () {
+        $('#overlay').fadeOut();
+        $('#cartPopup').fadeOut();
+    });
+});

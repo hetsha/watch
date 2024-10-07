@@ -1,93 +1,140 @@
 <?php
-// Include the DOMPDF library
-require 'vendor/autoload.php'; // If you installed via Composer
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
-// Use the DOMPDF namespace
-use Dompdf\Dompdf;
-use Dompdf\Options;
+include 'include/db.php'; // Include your database connection
+require 'vendor/fpdf/fpdf.php'; // Adjust the path if needed
 
-// Create a new instance of DOMPDF
-$options = new Options();
-$options->set('defaultFont', 'Arial'); // Set a default font (optional)
-$options->set('isHtml5ParserEnabled', true); // Enable HTML5 parser
-$dompdf = new Dompdf($options);
+header('Content-Type: text/html; charset=utf-8'); // Set UTF-8 encoding
 
-// Sample data (replace this with your actual order data)
-$orderDetails = [
-    'order_id' => 33,
-    'customer_name' => 'het',
-    'customer_email' => 'hetshah6315@gmail.com',
-    'order_date' => '2024-10-06 22:26:11',
-    'order_total' => 1856.00,
-    'customer_address' => 'Ahmedabad',
-    'customer_city' => 'Ahmedabad',
-    'state' => 'Gujarat',
-    'zip_code' => '380007'
-];
+$order_id = isset($_GET['order_id']) ? intval($_GET['order_id']) : 0;
 
-$orderItems = [
-    ['product_title' => 'test2', 'qty' => 8, 'price' => 232.00]
-];
+if ($order_id > 0) {
+    // Check database connection
+    if ($con->connect_error) {
+        die("Connection failed: " . $con->connect_error);
+    }
 
-// Create HTML for the PDF
-$html = '
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-        th { background-color: #f2f2f2; }
-    </style>
-</head>
-<body>
-<h2>Invoice</h2>
-<p>Order ID: ' . htmlspecialchars($orderDetails['order_id']) . '</p>
-<p>Customer Name: ' . htmlspecialchars($orderDetails['customer_name']) . '</p>
-<p>Email: ' . htmlspecialchars($orderDetails['customer_email']) . '</p>
-<p>Order Date: ' . htmlspecialchars($orderDetails['order_date']) . '</p>
-<p>Total Amount: ₹' . htmlspecialchars(number_format($orderDetails['order_total'], 2)) . '</p>
-<h3>Shipping Address</h3>
-<p>' . htmlspecialchars($orderDetails['customer_address']) . ', ' . htmlspecialchars($orderDetails['customer_city']) . ', ' . htmlspecialchars($orderDetails['state']) . ', ' . htmlspecialchars($orderDetails['zip_code']) . '</p>
-<h3>Order Items</h3>
-<table>
-    <tr>
-        <th>Product Name</th>
-        <th>Quantity</th>
-        <th>Price</th>
-        <th>Total</th>
-    </tr>';
+    // Fetch order details
+    $orderDetailsQuery = "SELECT o.*, c.customer_name, c.customer_email, c.customer_address, c.customer_city, c.state, c.zip_code, i.invoice_number
+                          FROM customer_orders o
+                          JOIN customers c ON o.customer_id = c.customer_id
+                          JOIN invoices i ON o.order_id = i.order_id
+                          WHERE o.order_id = $order_id";
+    $orderResult = $con->query($orderDetailsQuery);
 
-$total = 0; // Initialize total for calculating the total amount of the invoice
+    // Check for SQL error
+    if (!$orderResult) {
+        die("SQL Error: " . $con->error);
+    }
 
-foreach ($orderItems as $item) {
-    $itemTotal = $item['qty'] * $item['price'];
-    $total += $itemTotal; // Accumulate total
-    $html .= '<tr>
-                <td>' . htmlspecialchars($item['product_title']) . '</td>
-                <td>' . htmlspecialchars($item['qty']) . '</td>
-                <td>₹' . htmlspecialchars(number_format($item['price'], 2)) . '</td>
-                <td>₹' . htmlspecialchars(number_format($itemTotal, 2)) . '</td>
-              </tr>';
+    if ($orderResult->num_rows > 0) {
+        $orderDetails = $orderResult->fetch_assoc();
+
+        // Fetch order items
+        $orderItemsQuery = "SELECT oi.*, p.product_title
+                            FROM order_items oi
+                            JOIN products p ON oi.product_id = p.product_id
+                            WHERE oi.order_id = $order_id";
+        $orderItemsResult = $con->query($orderItemsQuery);
+
+        // Check for SQL error
+        if (!$orderItemsResult) {
+            die("SQL Error: " . $con->error);
+        }
+
+        $orderItems = [];
+        while ($item = $orderItemsResult->fetch_assoc()) {
+            $orderItems[] = $item;
+        }
+
+        if (empty($orderItems)) {
+            echo "No items found for this order.";
+            exit;
+        }
+
+        // Create PDF
+        ob_start(); // Start output buffering
+        $pdf = new FPDF();
+        $pdf->AddPage();
+        $pdf->SetFont('Arial', '', 12); // Set the font to Arial
+
+        // Company Info
+        $pdf->SetFont('Arial', 'B', 14);
+        $pdf->Cell(0, 10, 'ORA WATCH', 0, 1, 'C'); // Replace with your company name
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(0, 10, 'Lorem ipsum dolor, sit amet consectetur adipisicing', 0, 1, 'C'); // Replace with your company address
+        $pdf->Cell(0, 10, 'Phone: +91 8345678906', 0, 1, 'C'); // Replace with your company phone
+        $pdf->Cell(0, 10, 'Email: orawatch@gmail.com', 0, 1, 'C'); // Replace with your company email
+
+        // Logo
+        $pdf->Image('assets/img/other/logo-dark.jpeg', 10, 10, 30); // Adjust path and size as needed
+
+        // Set title
+        $pdf->SetFont('Arial', 'B', 16);
+        $pdf->Cell(0, 10, 'Invoice', 0, 1, 'C');
+
+        // Set font for invoice details
+        $pdf->SetFont('Arial', '', 12);
+        $pdf->Cell(0, 10, 'Order ID: ' . htmlspecialchars($orderDetails['order_id']), 0, 1);
+        $pdf->Cell(0, 10, 'Invoice No: ' . htmlspecialchars($orderDetails['invoice_number'] ?? 'N/A'), 0, 1);
+        $pdf->Cell(0, 10, 'Customer Name: ' . htmlspecialchars($orderDetails['customer_name'] ?? 'N/A'), 0, 1);
+        $pdf->Cell(0, 10, 'Email: ' . htmlspecialchars($orderDetails['customer_email'] ?? 'N/A'), 0, 1);
+        $pdf->Cell(0, 10, 'Order Date: ' . htmlspecialchars($orderDetails['order_date'] ?? 'N/A'), 0, 1);
+        $pdf->Cell(0, 10, 'Total Amount: Rs ' . htmlspecialchars(number_format($orderDetails['order_total'], 2)), 0, 1);
+
+        // Shipping Address
+        $addressLines = [
+            htmlspecialchars($orderDetails['customer_name'] ?? 'N/A'),
+            htmlspecialchars($orderDetails['customer_address'] ?? 'N/A'),
+            htmlspecialchars($orderDetails['customer_city'] ?? 'N/A') . ', ' .
+                htmlspecialchars($orderDetails['state'] ?? 'N/A') . ', ' .
+                htmlspecialchars($orderDetails['zip_code'] ?? 'N/A')
+        ];
+
+        $pdf->MultiCell(0, 10, 'Shipping Address:');
+        foreach ($addressLines as $line) {
+            $pdf->MultiCell(0, 10, $line);
+        }
+
+        // Order Items Table Header
+        $pdf->SetFillColor(200, 220, 255); // Light blue background
+        $pdf->Cell(80, 10, 'Product Name', 1, 0, 'C', true);
+        $pdf->Cell(30, 10, 'Quantity', 1, 0, 'C', true);
+        $pdf->Cell(30, 10, 'Price', 1, 0, 'C', true);
+        $pdf->Cell(30, 10, 'Total', 1, 1, 'C', true);
+
+        $total = 0;
+        foreach ($orderItems as $item) {
+            $itemTotal = $item['qty'] * $item['price'];
+            $total += $itemTotal;
+
+            // Display product title
+            $pdf->Cell(80, 10, htmlspecialchars($item['product_title'] ?? 'N/A'), 1);
+            $pdf->Cell(30, 10, htmlspecialchars($item['qty'] ?? 'N/A'), 1);
+            $pdf->Cell(30, 10, 'Rs ' . htmlspecialchars(number_format($item['price'], 2) ?? 0), 1);
+            $pdf->Cell(30, 10, 'Rs ' . htmlspecialchars(number_format($itemTotal, 2)), 1);
+            $pdf->Ln();
+        }
+
+        $pdf->Cell(140, 10, 'Final Total Amount:', 1);
+        $pdf->Cell(30, 10, 'Rs ' . number_format($total, 2), 1);
+        $pdf->Ln();
+
+        // Thank You Message
+        $pdf->Ln(10); // Add some space
+        $pdf->SetFont('Arial', 'I', 12); // Italic font
+        $pdf->Cell(0, 10, 'Thank you for your purchase!', 0, 1, 'C');
+        $pdf->Cell(0, 10, 'We appreciate your business!', 0, 1, 'C');
+
+        // Output the PDF
+        $pdf->Output('D', 'invoice_' . htmlspecialchars($order_id) . '.pdf');
+        ob_end_flush(); // Flush output buffer
+    } else {
+        echo "No order found for Order ID: $order_id"; // Show order ID in the message
+    }
+
+    $con->close();
+} else {
+    echo "Invalid order ID.";
 }
-
-$html .= '</table>';
-$html .= '<h3>Final Total Amount: ₹' . number_format($total, 2) . '</h3>';
-$html .= '</body></html>';
-
-// Load the HTML content into DOMPDF
-$dompdf->loadHtml($html);
-
-// Set paper size and orientation (A4, portrait)
-$dompdf->setPaper('A4', 'portrait');
-
-// Render the HTML as PDF
-$dompdf->render();
-
-// Output the generated PDF to browser for download
-$dompdf->stream('invoice_' . $orderDetails['order_id'] . '.pdf', ['Attachment' => true]);
-?>
