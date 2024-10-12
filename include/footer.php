@@ -35,7 +35,7 @@
                     <a href="login.php?action=register">Sign In</a>
                     <a href="cart.php">View Cart</a>
                     <!-- <a href="#">My Wishlist</a> -->
-                    <a href="cart.php">My Order</a>
+                    <a href="view_orders.php?customer_id=<?php echo $customerID; ?>">My Order</a>
                     <a href="contact.php">Help?</a>
                 </div>
                 <div class="col-lg-4 col-md-6 install">
