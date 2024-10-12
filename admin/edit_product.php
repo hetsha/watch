@@ -35,7 +35,6 @@ if (!isset($_SESSION['admin_email'])) {
   $get_p_cat = "SELECT * FROM product_categories WHERE p_cat_id='$p_cat'";
   $run_p_cat = mysqli_query($con, $get_p_cat);
   $row_p_cat = mysqli_fetch_array($run_p_cat);
-  $p_cat_title = $row_p_cat['p_cat_title'];
   $get_cat = "SELECT * FROM categories WHERE cat_id='$cat'";
   $run_cat = mysqli_query($con, $get_cat);
   $row_cat = mysqli_fetch_array($run_cat);
