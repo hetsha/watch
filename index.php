@@ -215,6 +215,7 @@
                                                 <i class="fa-solid fa-star-half-stroke clr"></i>
                                                 <h4>
                                                     <span class="old-prc"><?php echo number_format($old_price, 2); ?> &#8360;</span>
+                                                    <br>
                                                     <span class="new-prc"><?php echo number_format($new_price, 2); ?> &#8360;</span>
                                                 </h4>
                                             </div>
@@ -323,6 +324,7 @@
                                                 <i class="fa-solid fa-star-half-stroke clr"></i>
                                                 <h4>
                                                     <span class="old-prc"><?php echo number_format($old_price, 2); ?> &#8360;</span>
+                                                    <br>
                                                     <span class="new-prc"><?php echo number_format($new_price, 2); ?> &#8360;</span>
                                                 </h4>
                                             </div>

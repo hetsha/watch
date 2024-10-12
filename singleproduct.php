@@ -161,7 +161,9 @@
                                                     <i class="fa-solid fa-star clr"></i>
                                                     <i class="fa-solid fa-star-half-stroke clr"></i>
                                                     <h4><span class="old-prc"><?php echo number_format($row['oldPrice'], 2); ?>
-                                                            &#8360;</span><?php echo number_format($row['price'], 2); ?>&#8360;
+                                                            &#8360;
+                                                        <br>
+                                                    </span><?php echo number_format($row['price'], 2); ?>&#8360;
                                                     </h4>
                                                 </div>
                                                 <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">

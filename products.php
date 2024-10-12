@@ -187,17 +187,10 @@ error_reporting(E_ALL);
             </div>
         </section>
 
-        <section class="support">
-            <div class="container">
-                <div class="row">
-                    <h2 class="title-sec">Support</h2>
-                    <p>Need help? Contact us via our support page.</p>
-                </div>
-            </div>
-        </section>
-    </main><!-- wrapper -->
 
-    <?php include 'include/footer.php'; ?>
+    <?php
+    include 'include/news.php';
+    include 'include/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></script>
     <script src="assets/js/script.js"></script>
 </body>
