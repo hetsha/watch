@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 07, 2024 at 10:17 PM
+-- Generation Time: Oct 12, 2024 at 09:55 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -68,7 +68,7 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`cart_id`, `customer_id`, `product_id`, `qty`, `p_price`, `size`, `status`, `added_on`) VALUES
-(16, 2, 2, 2, 2500.00, NULL, 'active', '2024-10-07 20:17:05');
+(26, 1, 2, 1, 2500.00, NULL, 'active', '2024-10-12 06:10:27');
 
 -- --------------------------------------------------------
 
@@ -100,10 +100,18 @@ INSERT INTO `categories` (`cat_id`, `cat_title`, `cat_top`, `cat_image`) VALUES
 
 CREATE TABLE `contact_us` (
   `contact_id` int(10) NOT NULL,
+  `name` varchar(255) NOT NULL,
   `contact_email` text NOT NULL,
   `contact_heading` text NOT NULL,
   `contact_desc` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `contact_us`
+--
+
+INSERT INTO `contact_us` (`contact_id`, `name`, `contact_email`, `contact_heading`, `contact_desc`) VALUES
+(1, 'Het Shah', 'hetshah6315@gmail.com', 'test', 'testing 123');
 
 -- --------------------------------------------------------
 
@@ -132,8 +140,8 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_pass`, `customer_email`, `customer_country`, `customer_city`, `state`, `zip_code`, `customer_contact`, `phone_number`, `customer_address`, `created_at`, `updated_at`) VALUES
-(1, 'het', 'asd', 'hetshah6315@gmail.com', 'india', 'Ahmedabad', 'Gujarat', '380007', '09427961426', '9328738384', 'Ahmedabad Gujarat', '2024-10-06 17:52:29', '2024-10-07 04:43:48'),
-(2, 'het shah', 'het', 'hetshah3156@gmail.com', 'brazil', 'Ahmedabad', 'Gujarat', '380007', '1234567893', '09427961426', 'Ahmedabad Gujarat', '2024-10-07 04:58:58', '2024-10-07 18:42:38');
+(1, 'het', 'asd', 'hetshah6315@gmail.com', 'india', 'Ahmedabad', 'Gujarat', '380007', '1234567893', '09427961426', 'Ahmedabad Gujarat', '2024-10-06 17:52:29', '2024-10-12 05:46:45'),
+(2, 'het shah', 'het', 'hetshah3156@gmail.com', 'brazil', 'Ahmedabad', 'Gujarat', '380007', '1234567893', '09427961426', 'Ahmedabad Gujarat', '2024-10-07 04:58:58', '2024-10-12 05:18:41');
 
 -- --------------------------------------------------------
 
@@ -147,7 +155,7 @@ CREATE TABLE `customer_orders` (
   `customer_id` int(10) NOT NULL,
   `due_amount` decimal(10,2) NOT NULL,
   `order_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `order_status` varchar(255) NOT NULL DEFAULT 'Pending',
+  `order_status` varchar(255) NOT NULL DEFAULT 'Complete',
   `order_total` decimal(10,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
@@ -162,7 +170,16 @@ INSERT INTO `customer_orders` (`order_id`, `invoice_id`, `customer_id`, `due_amo
 (4, 4, 2, 0.00, '2024-10-07 18:07:47', 'Pending', 71000.00),
 (5, 5, 2, 0.00, '2024-10-07 18:14:18', 'Pending', 2500.00),
 (6, 6, 2, 0.00, '2024-10-07 18:19:51', 'Pending', 2500.00),
-(7, 7, 2, 0.00, '2024-10-07 18:42:38', 'Pending', 2500.00);
+(7, 7, 2, 0.00, '2024-10-07 18:42:38', 'Pending', 2500.00),
+(8, 8, 2, 0.00, '2024-10-12 04:59:03', 'Pending', 38000.00),
+(9, 9, 2, 0.00, '2024-10-12 05:04:53', 'Pending', 2500.00),
+(10, 10, 2, 0.00, '2024-10-12 05:10:38', 'Pending', 2500.00),
+(11, 11, 2, 0.00, '2024-10-12 05:17:12', 'Pending', 2500.00),
+(12, 12, 2, 0.00, '2024-10-12 05:18:41', 'Pending', 2500.00),
+(13, 13, 2, 0.00, '2024-10-12 05:24:59', 'Pending', 33000.00),
+(14, 14, 1, 0.00, '2024-10-12 05:26:51', 'Pending', 33000.00),
+(15, 15, 1, 0.00, '2024-10-12 05:40:44', 'Pending', 2500.00),
+(17, 22, 1, 0.00, '2024-10-12 06:03:54', 'Pending', 2500.00);
 
 -- --------------------------------------------------------
 
@@ -175,6 +192,15 @@ CREATE TABLE `enquiry_types` (
   `enquiry_title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Dumping data for table `enquiry_types`
+--
+
+INSERT INTO `enquiry_types` (`enquiry_id`, `enquiry_title`) VALUES
+(2, 'hetshah6315@gmail.com'),
+(3, 'hetshah6315@gmail.com'),
+(4, 'hetshah6315@gmail.com');
+
 -- --------------------------------------------------------
 
 --
@@ -184,7 +210,7 @@ CREATE TABLE `enquiry_types` (
 CREATE TABLE `invoices` (
   `invoice_id` int(11) NOT NULL,
   `invoice_number` varchar(6) NOT NULL,
-  `order_id` int(11) DEFAULT NULL,
+  `order_id` int(11) NOT NULL,
   `customer_id` int(11) DEFAULT NULL,
   `order_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -194,13 +220,22 @@ CREATE TABLE `invoices` (
 --
 
 INSERT INTO `invoices` (`invoice_id`, `invoice_number`, `order_id`, `customer_id`, `order_date`) VALUES
-(1, '957568', 1, 1, '2024-10-07 04:43:48'),
-(2, '789235', 2, 2, '2024-10-07 05:00:31'),
-(3, '065404', 3, 2, '2024-10-07 15:11:06'),
-(4, '219420', NULL, 2, '2024-10-07 18:07:47'),
-(5, '498054', NULL, 2, '2024-10-07 18:14:18'),
-(6, '778263', NULL, 2, '2024-10-07 18:19:51'),
-(7, '591731', NULL, 2, '2024-10-07 18:42:38');
+(1, '957568', 1, 1, '2024-10-06 23:13:48'),
+(2, '789235', 2, 2, '2024-10-06 23:30:31'),
+(3, '065404', 3, 2, '2024-10-07 09:41:06'),
+(4, '219420', 4, 2, '2024-10-07 12:37:47'),
+(5, '498054', 5, 2, '2024-10-07 12:44:18'),
+(6, '778263', 6, 2, '2024-10-07 12:49:51'),
+(7, '591731', 7, 2, '2024-10-07 13:12:38'),
+(8, '311994', 8, 2, '2024-10-11 23:29:03'),
+(9, '961958', 9, 2, '2024-10-11 23:34:53'),
+(10, '289774', 10, 2, '2024-10-11 23:40:38'),
+(11, '378237', 11, 2, '2024-10-11 23:47:12'),
+(12, '945253', 12, 2, '2024-10-11 23:48:41'),
+(13, '069464', 13, 2, '2024-10-11 23:54:59'),
+(14, '268308', 14, 1, '2024-10-11 23:56:51'),
+(15, '113957', 15, 1, '2024-10-12 05:40:44'),
+(22, '962208', 17, 1, '2024-10-12 06:03:54');
 
 -- --------------------------------------------------------
 
@@ -249,7 +284,17 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `qty`, `pr
 (6, 4, 2, 2, 2500.00),
 (7, 5, 2, 1, 2500.00),
 (8, 6, 2, 1, 2500.00),
-(9, 7, 2, 1, 2500.00);
+(9, 7, 2, 1, 2500.00),
+(10, 8, 2, 2, 2500.00),
+(11, 8, 1, 1, 33000.00),
+(12, 9, 2, 1, 2500.00),
+(13, 10, 2, 1, 2500.00),
+(14, 11, 2, 1, 2500.00),
+(15, 12, 2, 1, 2500.00),
+(16, 13, 1, 1, 33000.00),
+(17, 14, 1, 1, 33000.00),
+(18, 15, 2, 1, 2500.00),
+(19, 17, 2, 1, 2500.00);
 
 -- --------------------------------------------------------
 
@@ -278,7 +323,16 @@ INSERT INTO `payments` (`payment_id`, `invoice_id`, `amount`, `payment_mode`, `r
 (4, 4, 71000, 'cash_on_delivery', 0, 0, '2024-10-07 23:37:47'),
 (5, 5, 2500, 'credit_card', 0, 0, '2024-10-07 23:44:18'),
 (6, 6, 2500, 'Cash on Delivery', 0, 0, '2024-10-07 23:49:51'),
-(7, 7, 2500, 'COD', 0, 0, '2024-10-08 00:12:38');
+(7, 7, 2500, 'COD', 0, 0, '2024-10-08 00:12:38'),
+(8, 8, 38000, 'COD', 0, 0, '2024-10-12 10:29:03'),
+(9, 9, 2500, 'COD', 0, 0, '2024-10-12 10:34:53'),
+(10, 10, 2500, 'COD', 0, 0, '2024-10-12 10:40:38'),
+(11, 11, 2500, 'Credit Card', 0, 0, '2024-10-12 10:47:12'),
+(12, 12, 2500, 'COD', 0, 0, '2024-10-12 10:48:41'),
+(13, 13, 33000, 'COD', 0, 0, '2024-10-12 10:54:59'),
+(14, 14, 33000, 'COD', 0, 0, '2024-10-12 10:56:51'),
+(15, 15, 2500, 'COD', 0, 0, '2024-10-12 11:10:44'),
+(16, 22, 2500, 'Credit Card', 0, 0, '2024-10-12 11:33:54');
 
 -- --------------------------------------------------------
 
@@ -304,13 +358,20 @@ CREATE TABLE `pending_orders` (
 --
 
 INSERT INTO `pending_orders` (`order_id`, `customer_id`, `invoice_id`, `product_id`, `qty`, `p_price`, `order_status`, `order_total`, `order_date`, `payment_method`) VALUES
-(1, 1, 0, '', 0, '', '', 5000.00, 99999999.99, 'cash_on_delivery'),
-(2, 2, 0, '', 0, '', '', 111500.00, 99999999.99, 'cash_on_delivery'),
 (3, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'cash_on_delivery'),
 (4, 2, 0, '', 0, '', '', 71000.00, 99999999.99, 'cash_on_delivery'),
 (5, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'credit_card'),
 (6, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'Cash on Delivery'),
-(7, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD');
+(7, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
+(8, 2, 0, '', 0, '', '', 38000.00, 99999999.99, 'COD'),
+(9, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
+(10, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
+(11, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'Credit Card'),
+(12, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
+(13, 2, 0, '', 0, '', '', 33000.00, 99999999.99, 'COD'),
+(14, 1, 0, '', 0, '', '', 33000.00, 99999999.99, 'COD'),
+(15, 1, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
+(17, 1, 0, '', 0, '', '', 2500.00, 99999999.99, 'Credit Card');
 
 -- --------------------------------------------------------
 
@@ -423,7 +484,7 @@ ALTER TABLE `invoices`
   ADD PRIMARY KEY (`invoice_id`),
   ADD UNIQUE KEY `invoice_number` (`invoice_number`),
   ADD KEY `invoices_ibfk_2` (`customer_id`),
-  ADD KEY `fk_order` (`order_id`);
+  ADD KEY `fk_invoices_order` (`order_id`);
 
 --
 -- Indexes for table `manufacturers`
@@ -479,7 +540,7 @@ ALTER TABLE `admins`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -491,7 +552,7 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `contact_us`
 --
 ALTER TABLE `contact_us`
-  MODIFY `contact_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `contact_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `customers`
@@ -503,19 +564,19 @@ ALTER TABLE `customers`
 -- AUTO_INCREMENT for table `customer_orders`
 --
 ALTER TABLE `customer_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `enquiry_types`
 --
 ALTER TABLE `enquiry_types`
-  MODIFY `enquiry_id` int(10) NOT NULL AUTO_INCREMENT;
+  MODIFY `enquiry_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `invoice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `invoice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT for table `manufacturers`
@@ -527,19 +588,19 @@ ALTER TABLE `manufacturers`
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `order_item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `pending_orders`
 --
 ALTER TABLE `pending_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `products`
@@ -575,8 +636,7 @@ ALTER TABLE `customer_orders`
 -- Constraints for table `invoices`
 --
 ALTER TABLE `invoices`
-  ADD CONSTRAINT `fk_order` FOREIGN KEY (`order_id`) REFERENCES `customer_orders` (`order_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `invoices_ibfk_1` FOREIGN KEY (`order_id`) REFERENCES `customer_orders` (`order_id`),
+  ADD CONSTRAINT `fk_invoices_order` FOREIGN KEY (`order_id`) REFERENCES `customer_orders` (`order_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `invoices_ibfk_2` FOREIGN KEY (`customer_id`) REFERENCES `customers` (`customer_id`);
 
 --
