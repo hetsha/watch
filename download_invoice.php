@@ -15,12 +15,17 @@ if ($order_id > 0) {
         die("Connection failed: " . $con->connect_error);
     }
 
-    // Fetch order details
-    $orderDetailsQuery = "SELECT o.*, c.customer_name, c.customer_email, c.customer_address, c.customer_city, c.state, c.zip_code, i.invoice_number
-                          FROM customer_orders o
-                          JOIN customers c ON o.customer_id = c.customer_id
-                          JOIN invoices i ON o.order_id = i.order_id
-                          WHERE o.order_id = $order_id";
+    // Fetch order, customer, invoice, and order items details in a single query
+    $orderDetailsQuery = "
+        SELECT o.*, c.customer_name, c.customer_email, c.customer_address, c.customer_city, c.state, c.zip_code, i.invoice_number,
+               oi.product_id, oi.qty, oi.price, p.product_title
+        FROM customer_orders o
+        JOIN customers c ON o.customer_id = c.customer_id
+        JOIN invoices i ON o.order_id = i.order_id
+        JOIN order_items oi ON o.order_id = oi.order_id
+        JOIN products p ON oi.product_id = p.product_id
+        WHERE o.order_id = $order_id";
+
     $orderResult = $con->query($orderDetailsQuery);
 
     // Check for SQL error
@@ -29,23 +34,10 @@ if ($order_id > 0) {
     }
 
     if ($orderResult->num_rows > 0) {
-        $orderDetails = $orderResult->fetch_assoc();
-
-        // Fetch order items
-        $orderItemsQuery = "SELECT oi.*, p.product_title
-                            FROM order_items oi
-                            JOIN products p ON oi.product_id = p.product_id
-                            WHERE oi.order_id = $order_id";
-        $orderItemsResult = $con->query($orderItemsQuery);
-
-        // Check for SQL error
-        if (!$orderItemsResult) {
-            die("SQL Error: " . $con->error);
-        }
-
         $orderItems = [];
-        while ($item = $orderItemsResult->fetch_assoc()) {
-            $orderItems[] = $item;
+        while ($row = $orderResult->fetch_assoc()) {
+            $orderDetails = $row; // Fetch the main order details (this will be the same for all rows)
+            $orderItems[] = $row; // Fetch the order items (this will be different for each row)
         }
 
         if (empty($orderItems)) {

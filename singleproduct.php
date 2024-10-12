@@ -165,8 +165,8 @@
                                                     </h4>
                                                 </div>
                                                 <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">
-                                                <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
-                                            </a>
+                                                    <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
+                                                </a>
                                                 <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
                                                     <i class="uil uil-eye"></i>
                                                 </a>

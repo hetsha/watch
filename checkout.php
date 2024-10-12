@@ -55,8 +55,7 @@ $stmt->close(); // Close the prepared statement
 $_SESSION['cart_total'] = $total; // Store total for later use in checkout
 
 // Function to generate a unique 6-digit invoice number
-function generateInvoiceNumber($conn)
-{
+function generateInvoiceNumber($conn) {
     while (true) {
         $invoiceNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate a random 6-digit number
         $stmt = $conn->prepare("SELECT COUNT(*) FROM invoices WHERE invoice_number = ?");
@@ -99,12 +98,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
     $stmt->close();
 
+    // Use the session total for the order
+    $total = $_SESSION['cart_total'];
+
+    // Insert order details into customer_orders without invoice_id
+    $stmt = $conn->prepare("
+        INSERT INTO customer_orders (customer_id, order_total, order_date)
+        VALUES (?, ?, NOW())
+    ");
+    $stmt->bind_param("id", $customerID, $total);
+    if ($stmt->execute()) {
+        $order_id = $stmt->insert_id; // Get the last inserted order ID
+    } else {
+        echo "Error inserting order: " . $stmt->error;
+        exit();
+    }
+
     // Generate a unique invoice number
     $invoice_number = generateInvoiceNumber($conn);
 
     // Insert invoice into the invoices table
-    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, customer_id, order_date) VALUES (?, ?, NOW())");
-    $stmt->bind_param("si", $invoice_number, $customerID);
+    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, customer_id, order_id, order_date) VALUES (?, ?, ?, NOW())");
+    $stmt->bind_param("sii", $invoice_number, $customerID, $order_id); // Bind the invoice number, customer ID, and order ID
     if ($stmt->execute()) {
         $invoice_id = $stmt->insert_id; // Get the last inserted invoice ID
     } else {
@@ -112,21 +127,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    // Use the session total for the order
-    $total = $_SESSION['cart_total'];
-
-    // Insert order details into customer_orders
-    $stmt = $conn->prepare("
-        INSERT INTO customer_orders (customer_id, order_total, invoice_id, order_date)
-        VALUES (?, ?, ?, NOW())
-    ");
-    $stmt->bind_param("idi", $customerID, $total, $invoice_id); // Use total from session here
-    if ($stmt->execute()) {
-        $order_id = $stmt->insert_id; // Get the last inserted order ID
-    } else {
-        echo "Error inserting order: " . $stmt->error;
+    // Update the customer_orders table with the invoice_id
+    $stmt = $conn->prepare("UPDATE customer_orders SET invoice_id = ? WHERE order_id = ?");
+    $stmt->bind_param("ii", $invoice_id, $order_id);
+    if (!$stmt->execute()) {
+        echo "Error updating customer_orders with invoice_id: " . $stmt->error;
         exit();
     }
+    $stmt->close();
 
     // Loop through each order item and insert into the order_items table
     foreach ($orderItems as $item) {
@@ -143,7 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         INSERT INTO pending_orders (order_id, customer_id, order_total, order_date, payment_method)
         VALUES (?, ?, ?, NOW(), ?)
     ");
-    $stmt->bind_param("iids", $order_id, $customerID, $total, $payment_mode); // Use total from session here
+    $stmt->bind_param("iids", $order_id, $customerID, $total, $payment_mode);
     $stmt->execute();
 
     // Insert payment details into the payments table
@@ -173,7 +181,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -189,11 +196,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             background-color: #004085;
         }
 
-        input, select {
+        input,
+        select {
             transition: border 0.3s ease;
         }
 
-        input:focus, select:focus {
+        input:focus,
+        select:focus {
             border-color: #007bff;
             box-shadow: 0 0 8px rgba(0, 123, 255, 0.6);
         }
@@ -208,77 +217,71 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <div class="row align-items-center">
                     <div class="col-md-12">
                         <h1>Checkout</h1>
-                        <p>Please fill in the details to complete your order.</p>
+                        <hr>
+                        <h2>Order Summary</h2>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Quantity</th>
+                                    <th>Price</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($orderItems as $item): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($item['product_title']) ?></td>
+                                    <td><?= htmlspecialchars($item['quantity']) ?></td>
+                                    <td>₹ <?= htmlspecialchars(number_format($item['price'], 2)) ?></td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <h3>Total Amount: ₹ <?= htmlspecialchars(number_format($total, 2)) ?></h3>
+                        <form method="POST" action="">
+                            <h3>Billing Information</h3>
+                            <div class="mb-3">
+                                <label for="customer_address" class="form-label">Address</label>
+                                <input type="text" class="form-control" name="customer_address" id="customer_address" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="customer_city" class="form-label">City</label>
+                                <input type="text" class="form-control" name="customer_city" id="customer_city" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="state" class="form-label">State</label>
+                                <input type="text" class="form-control" name="state" id="state" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="zip_code" class="form-label">Zip Code</label>
+                                <input type="text" class="form-control" name="zip_code" id="zip_code" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="customer_contact" class="form-label">Contact Number</label>
+                                <input type="text" class="form-control" name="customer_contact" id="customer_contact" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone_number" class="form-label">Phone Number</label>
+                                <input type="text" class="form-control" name="phone_number" id="phone_number" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="payment_mode" class="form-label">Payment Mode</label>
+                                <select name="payment_mode" class="form-select" required>
+                                    <option value="Credit Card">Credit Card</option>
+                                    <option value="Debit Card">Debit Card</option>
+                                    <option value="Net Banking">Net Banking</option>
+                                    <option value="UPI">UPI</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Place Order</button>
+                        </form>
                     </div>
                 </div>
             </div>
         </section>
-        <div class="container">
-            <h2>Your Cart Total: ₹<?php echo number_format($total, 2); ?></h2>
-            <form action="" method="POST" class="needs-validation" novalidate>
-                <div class="mb-3">
-                    <label for="customer_address" class="form-label">Address</label>
-                    <input type="text" class="form-control" id="customer_address" name="customer_address" required>
-                    <div class="invalid-feedback">Please enter your address.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="customer_city" class="form-label">City</label>
-                    <input type="text" class="form-control" id="customer_city" name="customer_city" required>
-                    <div class="invalid-feedback">Please enter your city.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="state" class="form-label">State</label>
-                    <input type="text" class="form-control" id="state" name="state" required>
-                    <div class="invalid-feedback">Please enter your state.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="zip_code" class="form-label">Zip Code</label>
-                    <input type="text" class="form-control" id="zip_code" name="zip_code" required>
-                    <div class="invalid-feedback">Please enter your zip code.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="customer_contact" class="form-label">Contact</label>
-                    <input type="text" class="form-control" id="customer_contact" name="customer_contact" required>
-                    <div class="invalid-feedback">Please enter your contact details.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="phone_number" class="form-label">Phone Number</label>
-                    <input type="text" class="form-control" id="phone_number" name="phone_number" required>
-                    <div class="invalid-feedback">Please enter your phone number.</div>
-                </div>
-                <div class="mb-3">
-                    <label for="payment_mode" class="form-label">Payment Mode</label>
-                    <select class="form-control" id="payment_mode" name="payment_mode" required>
-                        <option value="">Select a payment mode</option>
-                        <option value="COD">Cash on Delivery</option>
-                        <option value="UPI">UPI</option>
-                        <option value="Card">Credit/Debit Card</option>
-                    </select>
-                    <div class="invalid-feedback">Please select a payment mode.</div>
-                </div>
-                <button type="submit" class="btn btn-primary">Place Order</button>
-            </form>
-        </div>
     </main>
-    <?php include 'include/footer.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
-    <script>
-        // Bootstrap form validation
-        (function () {
-            'use strict'
-            var forms = document.querySelectorAll('.needs-validation')
-            Array.prototype.slice.call(forms).forEach(function (form) {
-                form.addEventListener('submit', function (event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
-                    }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })();
-    </script>
-</body>
 
+    <?php include 'include/footer.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
