@@ -185,6 +185,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checkout - ORA</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
+    <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
@@ -214,74 +222,84 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <main class="wrapper">
         <section class="hero blog-hero">
             <div class="container-fluid">
-                <div class="row align-items-center">
-                    <div class="col-md-12">
-                        <h1>Checkout</h1>
-                        <hr>
-                        <h2>Order Summary</h2>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($orderItems as $item): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($item['product_title']) ?></td>
-                                    <td><?= htmlspecialchars($item['quantity']) ?></td>
-                                    <td>₹ <?= htmlspecialchars(number_format($item['price'], 2)) ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                        <h3>Total Amount: ₹ <?= htmlspecialchars(number_format($total, 2)) ?></h3>
-                        <form method="POST" action="">
-                            <h3>Billing Information</h3>
-                            <div class="mb-3">
-                                <label for="customer_address" class="form-label">Address</label>
-                                <input type="text" class="form-control" name="customer_address" id="customer_address" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customer_city" class="form-label">City</label>
-                                <input type="text" class="form-control" name="customer_city" id="customer_city" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="state" class="form-label">State</label>
-                                <input type="text" class="form-control" name="state" id="state" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="zip_code" class="form-label">Zip Code</label>
-                                <input type="text" class="form-control" name="zip_code" id="zip_code" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="customer_contact" class="form-label">Contact Number</label>
-                                <input type="text" class="form-control" name="customer_contact" id="customer_contact" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="phone_number" class="form-label">Phone Number</label>
-                                <input type="text" class="form-control" name="phone_number" id="phone_number" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="payment_mode" class="form-label">Payment Mode</label>
-                                <select name="payment_mode" class="form-select" required>
-                                    <option value="Credit Card">Credit Card</option>
-                                    <option value="Debit Card">Debit Card</option>
-                                    <option value="Net Banking">Net Banking</option>
-                                    <option value="UPI">UPI</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Place Order</button>
-                        </form>
+                <h2>Checkout</h2>
+                <p>Review your order and enter your billing information.</p>
+            </div>
+        </section>
+        <section class="order-details">
+            <div class="container">
+                <br>
+                <h3>Order Summary</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($orderItems as $item): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($item['product_title']); ?></td>
+                                <td><?php echo htmlspecialchars($item['quantity']); ?></td>
+                                <td>₹<?php echo htmlspecialchars($item['price']); ?></td>
+                                <td>₹<?php echo htmlspecialchars($item['price'] * $item['quantity']); ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                        <tr>
+                            <td colspan="3" class="text-end"><strong>Total Amount</strong></td>
+                            <td><strong>₹<?php echo htmlspecialchars($total); ?></strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>Billing Information</h4>
+                <form method="POST" action="">
+                    <div class="mb-3">
+                        <label for="customer_address" class="form-label">Address</label>
+                        <input type="text" class="form-control" name="customer_address" id="customer_address" required>
                     </div>
-                </div>
+                    <div class="mb-3">
+                        <label for="customer_city" class="form-label">City</label>
+                        <input type="text" class="form-control" name="customer_city" id="customer_city" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="state" class="form-label">State</label>
+                        <input type="text" class="form-control" name="state" id="state" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="zip_code" class="form-label">Zip Code</label>
+                        <input type="text" class="form-control" name="zip_code" id="zip_code" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="customer_contact" class="form-label">Contact Number</label>
+                        <input type="text" class="form-control" name="customer_contact" id="customer_contact" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone_number" class="form-label">Phone Number</label>
+                        <input type="text" class="form-control" name="phone_number" id="phone_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="payment_mode" class="form-label">Payment Mode</label>
+                        <select class="form-select" name="payment_mode" id="payment_mode" required>
+                            <option value="" disabled selected>Select Payment Mode</option>
+                            <option value="Credit Card">Credit Card</option>
+                            <option value="Debit Card">Debit Card</option>
+                            <option value="Net Banking">Net Banking</option>
+                            <option value="UPI">UPI</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Place Order</button>
+                </form>
             </div>
         </section>
     </main>
-
-    <?php include 'include/footer.php'; ?>
+    <br>
+    <?php
+    include 'include/news.php';
+    include 'include/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -110,30 +110,14 @@ if (!isset($_SESSION['admin_email'])) {
                     </a><!-- anchor Ends -->
                     <ul id="contact_us" class="collapse">
                         <li>
-                            <a href="index.php?edit_contact_us"> Edit Contact Us </a>
+                            <a href="index.php?insert_enquiry"> View Newslatters </a>
                         </li>
                         <li>
-                            <a href="index.php?insert_enquiry"> Insert Enquiry Type </a>
-                        </li>
-                        <li>
-                            <a href="index.php?view_enquiry"> View Enquiry Types </a>
+                            <a href="index.php?view_enquiry"> View Contact Inquiries </a>
                         </li>
                     </ul>
                 </li><!-- contact us li Ends -->
-                <li><!-- Coupons Section li Starts -->
-                    <a href="#" data-toggle="collapse" data-target="#coupons"><!-- anchor Starts -->
-                        <i class="fa fa-fw fa-arrows-v"></i> Coupons
-                        <i class="fa fa-fw fa-caret-down"></i>
-                    </a><!-- anchor Ends -->
-                    <ul id="coupons" class="collapse"><!-- ul collapse Starts -->
-                        <li>
-                            <a href="index.php?insert_coupon"> Insert Coupon </a>
-                        </li>
-                        <li>
-                            <a href="index.php?view_coupons"> View Coupons </a>
-                        </li>
-                    </ul><!-- ul collapse Ends -->
-                </li><!-- Coupons Section li Ends -->
+
                 <li>
                     <a href="index.php?view_customers">
                         <i class="fa fa-fw fa-edit"></i> View Customers

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -17,6 +18,7 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
     <?php
     session_start();
@@ -86,16 +88,17 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6 col-lg-6 form">
-                        <form action="">
+                        <form action="contact_process.php" method="POST">
                             <span>Leave a Message</span>
                             <h3>For any request, clarification or criticism you can contact us directly by phone or you
                                 can write to us by e-mail by filling out the following form!</h3>
-                            <input type="text" placeholder="Your Name" />
-                            <input type="text" placeholder="Your E-Mail Address" />
-                            <input type="text" placeholder="Your Subject" />
-                            <textarea name="" id="" cols="30" rows="10"></textarea>
-                            <button class="btn-normal">Submit</button>
+                            <input type="text" name="name" placeholder="Your Name" required />
+                            <input type="email" name="email" placeholder="Your E-Mail Address" required />
+                            <input type="text" name="subject" placeholder="Your Subject" required />
+                            <textarea name="message" cols="30" rows="10" required></textarea>
+                            <button class="btn-normal" type="submit">Submit</button>
                         </form>
+
                     </div>
                     <div class="col-md-6 col-lg-6 people">
                         <div>
@@ -127,8 +130,8 @@
             </div>
         </section>
         <?php
-                include 'include/news.php';
-            ?>
+        include 'include/news.php';
+        ?>
     </main><!-- main-body-end  -->
     <?php include 'include/footer.php';
     ?>
@@ -138,4 +141,5 @@
     <script src="assets/js/script.js"></script>
     <script src="cart.js"></script>
 </body>
+
 </html>

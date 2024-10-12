@@ -29,8 +29,7 @@ if (!isset($_SESSION['admin_email'])) {
                                     <th>Product Title</th>
                                     <th>Product Image</th>
                                     <th>Product Price</th>
-                                    <th>Product Sold</th>
-                                    <th>Product Date</th>
+                                    <th>Product Date</th> <!-- Removed Product Sold Column -->
                                     <th>Product Delete</th>
                                     <th>Product Edit</th>
                                 </tr>
@@ -53,15 +52,7 @@ if (!isset($_SESSION['admin_email'])) {
                                         <td><?php echo $pro_title; ?></td>
                                         <td><img src="product_images/<?php echo $pro_image; ?>" width="60" height="60"></td>
                                         <td>$ <?php echo $pro_price; ?></td>
-                                        <td>
-                                            <?php
-                                            $get_sold = "SELECT * FROM pending_orders WHERE product_id='$pro_id'";
-                                            $run_sold = mysqli_query($con, $get_sold);
-                                            $count = mysqli_num_rows($run_sold);
-                                            echo $count;
-                                            ?>
-                                        </td>
-                                        <td><?php echo $pro_date; ?></td>
+                                        <td><?php echo $pro_date; ?></td> <!-- Updated to remove sold count -->
                                         <td>
                                             <a href="index.php?delete_product=<?php echo $pro_id; ?>">
                                                 <i class="fa fa-trash-o"></i> Delete
