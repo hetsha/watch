@@ -14,12 +14,29 @@
     <link rel="apple-touch-icon" href="assets/img/favicon.png" />
     <?php include 'include/fav.php'; ?>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+        integrity="sha384-1BmEoJj0SHxp6XOPjo1rmqUY9G8NfITfXq2HktId7S1Irt7NuDvu8gozEmI4VhR" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css?v=<?php echo time(); ?>">
+
+    <style>
+        /* CSS for smooth transition */
+        #mainImage {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+            /* Adjust duration for quicker transitions */
+            visibility: visible;
+            /* Ensure visibility is set */
+        }
+
+        .hidden {
+            opacity: 0;
+            visibility: hidden;
+            /* Hide the image from the layout */
+        }
+    </style>
 </head>
 
 <body>
@@ -64,8 +81,7 @@
                     <div class="row gap-5">
                         <div class="col-md-12 col-lg-6 mx-auto single-product-img">
                             <div class="big-product">
-                                <img src="admin/product_images/<?php echo $row['product_img1']; ?>"
-                                    class="pro-img img-fluid" alt="<?php echo $row['product_title']; ?>" />
+                                <img id="mainImage" src="admin/product_images/<?php echo $row['product_img1']; ?>" class="pro-img img-fluid" alt="<?php echo $row['product_title']; ?>" />
                             </div>
                             <div class="img-gr d-flex justify-content-between">
                                 <?php
@@ -74,8 +90,7 @@
                                     if (!empty($row[$imageField])) {
                                 ?>
                                         <div class="col-lg-3 img-col">
-                                            <img src="admin/product_images/<?php echo $row[$imageField]; ?>" class="img-sm"
-                                                alt="<?php echo $row['product_title']; ?>" />
+                                            <img src="admin/product_images/<?php echo $row[$imageField]; ?>" class="img-sm" alt="<?php echo $row['product_title']; ?>" onmouseover="changeImage('admin/product_images/<?php echo $row[$imageField]; ?>')" onmouseout="resetImage()" />
                                         </div>
                                 <?php
                                     }
@@ -87,12 +102,21 @@
                             <h6>Home / <?php echo $row['cat_title']; ?></h6>
                             <h4><?php echo $row['product_title']; ?></h4>
                             <h2><?php echo number_format($row['product_psp_price'], 2); ?> &#8360;</h2>
-                            <form id="addToCartForm" method="POST" onsubmit="return addToCart(event)">
+
+                            <!-- Add to Cart Form -->
+                            <form id="addToCartForm" method="POST" action="add_to_cart.php">
                                 <input type="number" name="quantity" min="1" max="10" value="1" required>
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
                                 <button type="submit" class="btn-normal">Add to Cart</button>
                             </form>
-                            <button class="btn-normal" onclick="buyNow(<?php echo $row['product_id']; ?>)">Buy Now</button>
+
+                            <!-- Buy Now Form -->
+                            <form id="buyNowForm" method="POST" action="buy_now.php">
+                                <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
+                                <input type="hidden" name="quantity" value="1"> <!-- You can modify this based on your requirements -->
+                                <button type="submit" class="btn-normal">Buy Now</button>
+                            </form>
+
                             <h4>Product Details</h4>
                             <span>
                                 <?php echo $row['product_desc']; ?>
@@ -101,6 +125,8 @@
                     </div>
                 </div>
             </section>
+            </section>
+
             <section class="products pm">
                 <div class="container">
                     <div class="row justify-content-center">
@@ -121,12 +147,12 @@
                         }
                         // Updated SQL query to use product_psp_price
                         $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-        p.product_psp_price AS price, p.product_price AS oldPrice,
-        p.product_img1 AS image
-        FROM products p
-        JOIN categories c ON p.cat_id = c.cat_id
-        ORDER BY RAND()
-        LIMIT 3";
+p.product_psp_price AS price, p.product_price AS oldPrice,
+p.product_img1 AS image
+FROM products p
+JOIN categories c ON p.cat_id = c.cat_id
+ORDER BY RAND()
+LIMIT 3";
                         $result = $connection->query($sql);
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
@@ -162,8 +188,8 @@
                                                     <i class="fa-solid fa-star-half-stroke clr"></i>
                                                     <h4><span class="old-prc"><?php echo number_format($row['oldPrice'], 2); ?>
                                                             &#8360;
-                                                        <br>
-                                                    </span><?php echo number_format($row['price'], 2); ?>&#8360;
+                                                            <br>
+                                                        </span><?php echo number_format($row['price'], 2); ?>&#8360;
                                                     </h4>
                                                 </div>
                                                 <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">
@@ -194,30 +220,46 @@
     include 'include/news.php';
     include 'include/footer.php';
         ?>
-
         <script>
-            function addToCart(event) {
-                event.preventDefault(); // Prevent the default form submission
-                const form = document.getElementById('addToCartForm');
-                const formData = new FormData(form); // Create FormData object from the form
+            var originalImage = document.getElementById("mainImage").src;
 
-                // Send AJAX request
-                fetch('add_to_cart.php', {
-                        method: 'POST',
-                        body: formData,
-                    })
-                    .then(response => response.text())
-                    .then(data => {
-                        // Handle the response from the server
-                        console.log(data); // Log the response for debugging
-                        alert('Product added to cart!'); // Display a success message
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('Failed to add product to cart.'); // Display an error message
-                    });
+            function changeImage(imageSrc) {
+                var mainImage = document.getElementById("mainImage");
+
+                // Add hidden class to fade out
+                mainImage.classList.add('hidden');
+
+                // Wait for the fade-out transition to complete
+                setTimeout(function() {
+                    mainImage.src = imageSrc; // Change the image source
+                    mainImage.classList.remove('hidden'); // Remove hidden class to fade in
+
+                    // Wait for a brief moment to allow for a full fade-in effect
+                    setTimeout(function() {
+                        mainImage.style.opacity = 1; // Reset opacity to 1
+                    }, 50); // Small delay to allow for transition
+                }, 500); // Match this duration to your CSS transition time
+            }
+
+            function resetImage() {
+                var mainImage = document.getElementById("mainImage");
+
+                // Add hidden class to fade out
+                mainImage.classList.add('hidden');
+
+                // Wait for the fade-out transition to complete
+                setTimeout(function() {
+                    mainImage.src = originalImage; // Change back to the original image
+                    mainImage.classList.remove('hidden'); // Remove hidden class to fade in
+
+                    // Wait for a brief moment to allow for a full fade-in effect
+                    setTimeout(function() {
+                        mainImage.style.opacity = 1; // Reset opacity to 1
+                    }, 50); // Small delay to allow for transition
+                }, 500); // Match this duration to your CSS transition time
             }
         </script>
+
 </body>
 
 </html>
