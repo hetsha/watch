@@ -1,18 +1,10 @@
 <?php
 session_start();
-
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ecom_store";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+include 'include/db.php';
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
 }
 
 // Check if the customer is logged in
@@ -25,7 +17,7 @@ if (!isset($_SESSION['customer_id'])) {
 $customerID = (int)$_SESSION['customer_id'];
 
 // Fetch the cart items for the logged-in customer
-$stmt = $conn->prepare("
+$stmt = $con->prepare("
     SELECT cart.product_id, cart.qty AS quantity, cart.p_price AS price, products.product_title
     FROM cart
     JOIN products ON cart.product_id = products.product_id
@@ -55,10 +47,10 @@ $stmt->close(); // Close the prepared statement
 $_SESSION['cart_total'] = $total; // Store total for later use in checkout
 
 // Function to generate a unique 6-digit invoice number
-function generateInvoiceNumber($conn) {
+function generateInvoiceNumber($con) {
     while (true) {
         $invoiceNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate a random 6-digit number
-        $stmt = $conn->prepare("SELECT COUNT(*) FROM invoices WHERE invoice_number = ?");
+        $stmt = $con->prepare("SELECT COUNT(*) FROM invoices WHERE invoice_number = ?");
         $stmt->bind_param("s", $invoiceNumber);
         $stmt->execute();
         $stmt->bind_result($count);
@@ -84,7 +76,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $payment_mode = htmlspecialchars(trim($_POST['payment_mode']));
 
     // Update customer details in customers table
-    $stmt = $conn->prepare("
+    $stmt = $con->prepare("
         UPDATE customers SET
             customer_address = ?, customer_city = ?, state = ?, zip_code = ?, customer_contact = ?, phone_number = ?
         WHERE customer_id = ?
@@ -102,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $total = $_SESSION['cart_total'];
 
     // Insert order details into customer_orders without invoice_id
-    $stmt = $conn->prepare("
+    $stmt = $con->prepare("
         INSERT INTO customer_orders (customer_id, order_total, order_date)
         VALUES (?, ?, NOW())
     ");
@@ -115,10 +107,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Generate a unique invoice number
-    $invoice_number = generateInvoiceNumber($conn);
+    $invoice_number = generateInvoiceNumber($con);
 
     // Insert invoice into the invoices table
-    $stmt = $conn->prepare("INSERT INTO invoices (invoice_number, customer_id, order_id, order_date) VALUES (?, ?, ?, NOW())");
+    $stmt = $con->prepare("INSERT INTO invoices (invoice_number, customer_id, order_id, order_date) VALUES (?, ?, ?, NOW())");
     $stmt->bind_param("sii", $invoice_number, $customerID, $order_id); // Bind the invoice number, customer ID, and order ID
     if ($stmt->execute()) {
         $invoice_id = $stmt->insert_id; // Get the last inserted invoice ID
@@ -128,7 +120,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Update the customer_orders table with the invoice_id
-    $stmt = $conn->prepare("UPDATE customer_orders SET invoice_id = ? WHERE order_id = ?");
+    $stmt = $con->prepare("UPDATE customer_orders SET invoice_id = ? WHERE order_id = ?");
     $stmt->bind_param("ii", $invoice_id, $order_id);
     if (!$stmt->execute()) {
         echo "Error updating customer_orders with invoice_id: " . $stmt->error;
@@ -138,7 +130,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     // Loop through each order item and insert into the order_items table
     foreach ($orderItems as $item) {
-        $stmt = $conn->prepare("
+        $stmt = $con->prepare("
             INSERT INTO order_items (order_id, product_id, qty, price)
             VALUES (?, ?, ?, ?)
         ");
@@ -147,7 +139,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Insert into the pending_orders table
-    $stmt = $conn->prepare("
+    $stmt = $con->prepare("
         INSERT INTO pending_orders (order_id, customer_id, order_total, order_date, payment_method)
         VALUES (?, ?, ?, NOW(), ?)
     ");
@@ -155,7 +147,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->execute();
 
     // Insert payment details into the payments table
-    $stmt = $conn->prepare("
+    $stmt = $con->prepare("
         INSERT INTO payments (invoice_id, amount, payment_mode, ref_no, payment_date)
         VALUES (?, ?, ?, ?, NOW())
     ");
@@ -163,7 +155,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->bind_param("idss", $invoice_id, $total, $payment_mode, $ref_no);
     if ($stmt->execute()) {
         // Payment successful, clear the cart
-        $stmt = $conn->prepare("DELETE FROM cart WHERE customer_id = ?");
+        $stmt = $con->prepare("DELETE FROM cart WHERE customer_id = ?");
         $stmt->bind_param("i", $customerID);
         $stmt->execute();
 

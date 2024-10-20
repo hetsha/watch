@@ -1,17 +1,11 @@
 <?php
 session_start();
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ecom_store";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+include 'include/db.php';
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
 }
 
 // Initialize variables
@@ -41,7 +35,7 @@ elseif (isset($_GET['product_id'])) {
 // Proceed if product ID is valid
 if ($productID > 0) {
     // Fetch product details from the database
-    $stmt = $conn->prepare("SELECT product_id, product_title, product_psp_price FROM products WHERE product_id = ?");
+    $stmt = $con->prepare("SELECT product_id, product_title, product_psp_price FROM products WHERE product_id = ?");
     $stmt->bind_param("i", $productID);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -50,7 +44,7 @@ if ($productID > 0) {
         $product = $result->fetch_assoc();
 
         // Check if the product is already in the cart
-        $cartCheck = $conn->prepare("SELECT * FROM cart WHERE customer_id = ? AND product_id = ?");
+        $cartCheck = $con->prepare("SELECT * FROM cart WHERE customer_id = ? AND product_id = ?");
         $cartCheck->bind_param("ii", $customerID, $productID);
         $cartCheck->execute();
         $cartResult = $cartCheck->get_result();
@@ -59,14 +53,14 @@ if ($productID > 0) {
             // Update quantity if the product already exists in the cart
             $cartItem = $cartResult->fetch_assoc();
             $newQty = $cartItem['qty'] + $qty;
-            $updateStmt = $conn->prepare("UPDATE cart SET qty = ? WHERE cart_id = ?");
+            $updateStmt = $con->prepare("UPDATE cart SET qty = ? WHERE cart_id = ?");
             $updateStmt->bind_param("ii", $newQty, $cartItem['cart_id']);
             $updateStmt->execute();
             $updateStmt->close();
             $_SESSION['message'] = 'Product quantity updated in cart!';
         } else {
             // Insert new product into cart
-            $insertStmt = $conn->prepare("INSERT INTO cart (customer_id, product_id, qty, p_price) VALUES (?, ?, ?, ?)");
+            $insertStmt = $con->prepare("INSERT INTO cart (customer_id, product_id, qty, p_price) VALUES (?, ?, ?, ?)");
             $insertStmt->bind_param("iiid", $customerID, $product['product_id'], $qty, $product['product_psp_price']);
             $insertStmt->execute();
             $insertStmt->close();

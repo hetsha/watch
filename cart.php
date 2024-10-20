@@ -1,17 +1,10 @@
 <?php
 session_start();
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ecom_store";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
+include 'include/db.php';
 
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
 }
 
 // Check if the customer is logged in
@@ -24,7 +17,7 @@ $customerID = (int)$_SESSION['customer_id']; // Ensure customer_id is available 
 $total = 0;
 
 // Fetch cart items for the logged-in customer
-$stmt = $conn->prepare("
+$stmt = $con->prepare("
     SELECT c.cart_id, c.qty AS quantity, c.p_price AS p_price,
            p.product_id, p.product_title AS title, p.product_img1 AS image
     FROM cart c

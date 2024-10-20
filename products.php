@@ -53,12 +53,9 @@ error_reporting(E_ALL);
                 </div>
                 <div class="row">
                     <?php
-                    // Database connection
-                    $connection = new mysqli("localhost", "root", "", "ecom_store");
-
-                    // Check connection
-                    if ($connection->connect_error) {
-                        die("Connection failed: " . $connection->connect_error);
+                    // Check con
+                    if ($con->connect_error) {
+                        die("con failed: " . $con->connect_error);
                     }
 
                     // Category ID from GET request
@@ -83,7 +80,7 @@ error_reporting(E_ALL);
                     // Add LIMIT clause for pagination
                     $sql .= " ORDER BY RAND() LIMIT $offset, $products_per_page";
 
-                    $result = $connection->query($sql);
+                    $result = $con->query($sql);
 
                     // Display products
                     if ($result->num_rows > 0) {
@@ -156,12 +153,12 @@ error_reporting(E_ALL);
                     if ($category_id) {
                         $total_products_sql .= " WHERE cat_id = $category_id";
                     }
-                    $total_result = $connection->query($total_products_sql);
+                    $total_result = $con->query($total_products_sql);
                     $total_row = $total_result->fetch_assoc();
                     $total_pages = ceil($total_row['total'] / $products_per_page);
 
-                    // Close the database connection
-                    $connection->close();
+                    // Close the database con
+                    $con->close();
                     ?>
                 </div>
             </div>

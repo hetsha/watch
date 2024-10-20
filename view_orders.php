@@ -1,18 +1,6 @@
 <?php
 session_start();
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ecom_store";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include 'include/db.php'; // Use the connection from this file
 
 // Check if the customer is logged in
 if (!isset($_SESSION['customer_id'])) {
@@ -23,7 +11,7 @@ if (!isset($_SESSION['customer_id'])) {
 $customerID = (int)$_SESSION['customer_id'];
 
 // Fetch past orders for the logged-in customer
-$stmt = $conn->prepare("
+$stmt = $con->prepare("
     SELECT o.order_id, i.invoice_number, o.order_date, o.order_total, o.order_status
     FROM customer_orders o
     JOIN invoices i ON o.invoice_id = i.invoice_id
@@ -42,13 +30,9 @@ $result = $stmt->get_result();
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Past Orders - ORA</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
-        integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <?php include 'include/fav.php'; ?>
 </head>
@@ -71,7 +55,7 @@ $result = $stmt->get_result();
                         <thead>
                             <tr>
                                 <th>Order ID</th>
-                                <th>Invoice ID</th> <!-- Changed from Invoice Number to Invoice ID -->
+                                <th>Invoice ID</th>
                                 <th>Order Date</th>
                                 <th>Total Amount</th>
                                 <th>Status</th>
@@ -83,7 +67,7 @@ $result = $stmt->get_result();
                                 while ($order = $result->fetch_assoc()) {
                                     echo "<tr>
             <td>
-                <a href='order_confirmation.php?order_id={$order['order_id']}''>
+                <a href='order_confirmation.php?order_id={$order['order_id']}'>
                     {$order['order_id']}
                 </a>
             </td> <!-- Link to Order Confirmation -->
@@ -117,5 +101,5 @@ $result = $stmt->get_result();
 
 <?php
 $stmt->close(); // Close the prepared statement
-$conn->close(); // Close the database connection
+$con->close(); // Close the database connection
 ?>

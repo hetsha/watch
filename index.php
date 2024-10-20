@@ -150,7 +150,7 @@
             </div>
         </section><!-- wrapper&carousel-end  -->
         <?php
-        include 'catagory.php';
+        include 'include/catagory.php';
         ?>
         <section class="products pm">
             <div class="container">
@@ -165,11 +165,9 @@
                 </div>
                 <div class="row">
                     <?php
-                    // Database connection
-                    $connection = new mysqli("localhost", "root", "", "ecom_store");
-                    // Check for connection errors
-                    if ($connection->connect_error) {
-                        die("Connection failed: " . $connection->connect_error);
+                    // Check for con errors
+                    if ($con->connect_error) {
+                        die("con failed: " . $con->connect_error);
                     }
                     // SQL query to fetch 6 random products and their categories
                     $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
@@ -179,7 +177,7 @@
                 JOIN categories c ON p.cat_id = c.cat_id
                  ORDER BY p.product_id DESC
             LIMIT 3";
-                    $result = $connection->query($sql);
+                    $result = $con->query($sql);
                     $displayed_products = []; // Array to store displayed product IDs
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
@@ -238,8 +236,8 @@
                     } else {
                         echo "<p>No products found.</p>";
                     }
-                    // Close the database connection
-                    $connection->close();
+                    // Close the database con
+                    $con->close();
                     ?>
                 </div>
             </div>
@@ -268,11 +266,11 @@
                 </div>
                 <div class="row">
                     <?php
-                    // Database connection
-                    $connection = new mysqli("localhost", "root", "", "ecom_store");
-                    // Check for connection errors
-                    if ($connection->connect_error) {
-                        die("Connection failed: " . $connection->connect_error);
+                    // Database con
+                    $con = new mysqli("localhost", "root", "", "ecom_store");
+                    // Check for con errors
+                    if ($con->connect_error) {
+                        die("con failed: " . $con->connect_error);
                     }
                     // SQL query to fetch 6 more random products excluding the ones already displayed
                     $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
@@ -284,7 +282,7 @@
                 WHERE p.product_id NOT IN ($placeholders)
                  ORDER BY p.product_id ASC
                 LIMIT 6";
-                    $stmt = $connection->prepare($sql);
+                    $stmt = $con->prepare($sql);
                     if (!empty($displayed_products)) {
                         $types = str_repeat('i', count($displayed_products));
                         $stmt->bind_param($types, ...$displayed_products);
@@ -344,9 +342,9 @@
                     } else {
                         echo "<p>No more products found.</p>";
                     }
-                    // Close the database connection
+                    // Close the database con
                     $stmt->close();
-                    $connection->close();
+                    $con->close();
                     ?>
                 </div>
                 <div class="row">
@@ -358,7 +356,7 @@
         </section><!-- products end -->
     </main>
     <?php
-    include 'other.php';
+    include 'include/other.php';
     include 'include/news.php';
     include 'include/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"

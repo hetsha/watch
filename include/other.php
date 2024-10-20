@@ -14,7 +14,6 @@
                                     <p>
                                         Lorem ipsum dolor sit amet consectetur adipisicing elit.
                                         Alias commodi, architecto labore minima distinctio aliquam
-                                        voluptates dolor delectus temporibus, iusto corporis perferendis?
                                         Dignissimos unde blanditiis dolorum, omnis alias voluptatibus
                                         doloremque.
                                     </p>

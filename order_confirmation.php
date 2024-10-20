@@ -1,24 +1,15 @@
 <?php
-session_start();
-// Database connection
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ecom_store";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
+include 'include/db.php';
 // Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if ($con->connect_error) {
+    die("Connection failed: " . $con->connect_error);
 }
 
 // Get order ID from the URL
 $order_id = (int)$_GET['order_id'];
 
 // Fetch order details along with the invoice number
-$stmt = $conn->prepare("
+$stmt = $con->prepare("
     SELECT o.order_id, o.order_total, o.order_date, i.invoice_number,
            c.customer_name, c.customer_email, c.customer_address,
            c.customer_city, c.state, c.zip_code,
@@ -40,7 +31,7 @@ $orderDetails = $result->fetch_assoc();
 $stmt->close();
 
 // Fetch order items
-$stmt = $conn->prepare("
+$stmt = $con->prepare("
     SELECT oi.product_id, p.product_title, oi.qty, oi.price
     FROM order_items oi
     JOIN products p ON oi.product_id = p.product_id

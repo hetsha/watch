@@ -44,26 +44,19 @@
     session_start();
     include 'include/navbar.php';
     include 'include/base.php';
-    // Database connection
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ecom_store";
-    $conn = new mysqli($servername, $username, $password, $dbname);
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+    include 'include/db.php'; // Assuming 'include/db.php' contains the $con variable for connection
+
     // Get product ID from URL
     $productID = $_GET['id'];
+
     // SQL query to fetch product details
     $sql = "
-    SELECT products.*, categories.cat_title
-    FROM products
-    JOIN categories ON products.cat_id = categories.cat_id
-    WHERE product_id = '$productID'
-    ";
-    $result = $conn->query($sql);
+SELECT products.*, categories.cat_title
+FROM products
+JOIN categories ON products.cat_id = categories.cat_id
+WHERE product_id = '$productID'
+";
+    $result = $con->query($sql);
     if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
     ?>
@@ -143,8 +136,7 @@
                     <div class="row">
                         <?php
                         // Fetch latest products
-                        $connection = new mysqli("localhost", "root", "", "ecom_store");
-                        if ($connection->connect_error) {
+                            if ($con->connect_error) {
                             die("Connection failed: " . $connection->connect_error);
                         }
                         // Updated SQL query to use product_psp_price
@@ -155,7 +147,7 @@ FROM products p
 JOIN categories c ON p.cat_id = c.cat_id
 ORDER BY RAND()
 LIMIT 3";
-                        $result = $connection->query($sql);
+                        $result = $con->query($sql);
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 $old_price = $row['price'];
@@ -209,7 +201,7 @@ LIMIT 3";
                         } else {
                             echo "<p>No products found.</p>";
                         }
-                        $connection->close();
+                        $con->close();
                         ?>
                     </div>
                 </div>
@@ -218,7 +210,6 @@ LIMIT 3";
     } else {
         echo "<h3>Product not found.</h3>";
     }
-    $conn->close();
     include 'include/news.php';
     include 'include/footer.php';
         ?>
@@ -262,21 +253,21 @@ LIMIT 3";
             }
         </script>
         <script>
-    // Get references to the quantity input and Buy Now hidden input
-    var quantityInput = document.getElementById('quantityInput');
-    var buyNowQuantity = document.getElementById('buyNowQuantity');
-    var buyNowForm = document.getElementById('buyNowForm');
+            // Get references to the quantity input and Buy Now hidden input
+            var quantityInput = document.getElementById('quantityInput');
+            var buyNowQuantity = document.getElementById('buyNowQuantity');
+            var buyNowForm = document.getElementById('buyNowForm');
 
-    // Update Buy Now form's hidden quantity field when quantity changes
-    quantityInput.addEventListener('input', function () {
-        buyNowQuantity.value = quantityInput.value;
-    });
+            // Update Buy Now form's hidden quantity field when quantity changes
+            quantityInput.addEventListener('input', function() {
+                buyNowQuantity.value = quantityInput.value;
+            });
 
-    // Optionally, ensure the Buy Now form submits the correct quantity
-    buyNowForm.addEventListener('submit', function () {
-        buyNowQuantity.value = quantityInput.value;
-    });
-</script>
+            // Optionally, ensure the Buy Now form submits the correct quantity
+            buyNowForm.addEventListener('submit', function() {
+                buyNowQuantity.value = quantityInput.value;
+            });
+        </script>
 
 </body>
 
