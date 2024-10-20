@@ -36,6 +36,7 @@ $result = $stmt->get_result();
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -51,6 +52,7 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="assets/css/style.css">
     <?php include 'include/fav.php'; ?>
 </head>
+
 <body>
     <?php include 'include/navbar.php'; ?>
     <main class="wrapper">
@@ -76,35 +78,41 @@ $result = $stmt->get_result();
                             </tr>
                         </thead>
                         <tbody>
-                        <?php
-                        if ($result && $result->num_rows > 0) {
-                            while ($order = $result->fetch_assoc()) {
-                                echo "<tr>
-                                    <td><a href='order_confirmation.php?order_id={$order['order_id']}' class='text-decoration-none'>{$order['order_id']}</a></td> <!-- Link to Order Confirmation -->
-                                    <td>{$order['invoice_number']}</td> <!-- Display Invoice ID -->
-                                    <td>" . date("Y-m-d H:i:s", strtotime($order['order_date'])) . "</td>
-                                    <td>&#8360;" . number_format($order['order_total'], 2) . "</td>
-                                    <td>" . htmlspecialchars($order['order_status']) . "</td>
-                                </tr>";
+                            <?php
+                            if ($result && $result->num_rows > 0) {
+                                while ($order = $result->fetch_assoc()) {
+                                    echo "<tr>
+            <td>
+                <a href='order_confirmation.php?order_id={$order['order_id']}''>
+                    {$order['order_id']}
+                </a>
+            </td> <!-- Link to Order Confirmation -->
+            <td>click to get info<a href='order_confirmation.php?order_id={$order['order_id']}' style='color: blue; text-decoration: underline;'>{$order['invoice_number']}</a></td> <!-- Link to Invoice ID -->
+            <td>" . date("Y-m-d H:i:s", strtotime($order['order_date'])) . "</td>
+            <td>&#8360;" . number_format($order['order_total'], 2) . "</td>
+            <td>" . htmlspecialchars($order['order_status']) . "</td>
+        </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='5'>No past orders found.</td></tr>"; // Adjusted colspan to 5
                             }
-                        } else {
-                            echo "<tr><td colspan='5'>No past orders found.</td></tr>"; // Adjusted colspan to 5
-                        }
-                        ?>
+                            ?>
                         </tbody>
+
                     </table>
                 </div>
             </div>
         </section>
 
         <?php
-                include 'include/news.php';
-            ?>
+        include 'include/news.php';
+        ?>
     </main>
     <?php include 'include/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="assets/js/script.js"></script>
 </body>
+
 </html>
 
 <?php

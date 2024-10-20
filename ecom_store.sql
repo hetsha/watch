@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 12, 2024 at 09:55 AM
+-- Generation Time: Oct 20, 2024 at 03:52 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,7 +44,8 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_id`, `admin_name`, `admin_email`, `admin_pass`, `admin_image`, `admin_contact`, `admin_country`, `admin_job`, `admin_about`) VALUES
-(1, 'het', 'hetshah6315@gmail.com', 'admin', 'IMG_20230513_122559_265.jpg', '9427961426', 'India', 'admin', ' admin of the ora watch  ');
+(1, 'het', 'hetshah6315@gmail.com', 'qwe', 'IMG_20230513_122559_265.jpg', '9427961426', 'India', 'admin', ' admin of the ora watch  '),
+(2, 'akshat', 'akshat@gmail.com', 'ak', 'user1.png', '9825079765', 'India', 'admin', '   ');
 
 -- --------------------------------------------------------
 
@@ -68,7 +69,8 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`cart_id`, `customer_id`, `product_id`, `qty`, `p_price`, `size`, `status`, `added_on`) VALUES
-(26, 1, 2, 1, 2500.00, NULL, 'active', '2024-10-12 06:10:27');
+(27, 3, 1, 1, 25000.00, NULL, 'active', '2024-10-19 07:59:23'),
+(41, 1, 2, 1, 2500.00, NULL, 'active', '2024-10-20 12:33:38');
 
 -- --------------------------------------------------------
 
@@ -111,7 +113,8 @@ CREATE TABLE `contact_us` (
 --
 
 INSERT INTO `contact_us` (`contact_id`, `name`, `contact_email`, `contact_heading`, `contact_desc`) VALUES
-(1, 'Het Shah', 'hetshah6315@gmail.com', 'test', 'testing 123');
+(1, 'Het Shah', 'hetshah6315@gmail.com', 'test', 'testing 123'),
+(2, 'akshat', 'akshat@gmail.com', 'php', 'about watches');
 
 -- --------------------------------------------------------
 
@@ -140,8 +143,10 @@ CREATE TABLE `customers` (
 --
 
 INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_pass`, `customer_email`, `customer_country`, `customer_city`, `state`, `zip_code`, `customer_contact`, `phone_number`, `customer_address`, `created_at`, `updated_at`) VALUES
-(1, 'het', 'asd', 'hetshah6315@gmail.com', 'india', 'Ahmedabad', 'Gujarat', '380007', '1234567893', '09427961426', 'Ahmedabad Gujarat', '2024-10-06 17:52:29', '2024-10-12 05:46:45'),
-(2, 'het shah', 'het', 'hetshah3156@gmail.com', 'brazil', 'Ahmedabad', 'Gujarat', '380007', '1234567893', '09427961426', 'Ahmedabad Gujarat', '2024-10-07 04:58:58', '2024-10-12 05:18:41');
+(1, 'het', 'qwe', 'hetshah6315@gmail.com', 'india', 'Ahmedabad', 'Gujarat', '380007', '09427961426', '09427961426', 'A 403 prakruti appt suvidha sanjivani road', '2024-10-06 17:52:29', '2024-10-20 12:49:52'),
+(2, 'het shah', 'wer', 'hetshah3156@gmail.com', 'brazil', 'Ahmedabad', 'Gujarat', '380007', '1234567893', '09427961426', 'Ahmedabad Gujarat', '2024-10-07 04:58:58', '2024-10-20 12:58:31'),
+(3, 'akshat', 'akshat', 'akshat@gmail.com', 'India', '', '', '', '9825079765', '', '', '2024-10-19 07:56:44', '2024-10-19 07:56:44'),
+(4, 'Devang', '123', 'devang@gmail.com', 'India', 'Ahmedabad', 'Gujarat', '380007', '09427961426', '9426628007', 'Paldi', '2024-10-20 13:36:11', '2024-10-20 13:37:42');
 
 -- --------------------------------------------------------
 
@@ -179,7 +184,9 @@ INSERT INTO `customer_orders` (`order_id`, `invoice_id`, `customer_id`, `due_amo
 (13, 13, 2, 0.00, '2024-10-12 05:24:59', 'Pending', 33000.00),
 (14, 14, 1, 0.00, '2024-10-12 05:26:51', 'Pending', 33000.00),
 (15, 15, 1, 0.00, '2024-10-12 05:40:44', 'Pending', 2500.00),
-(17, 22, 1, 0.00, '2024-10-12 06:03:54', 'Pending', 2500.00);
+(17, 22, 1, 0.00, '2024-10-12 06:03:54', 'Pending', 2500.00),
+(18, 23, 1, 0.00, '2024-10-20 12:18:00', 'Complete', 25000.00),
+(19, 24, 4, 0.00, '2024-10-20 13:37:42', 'Complete', 150000.00);
 
 -- --------------------------------------------------------
 
@@ -199,7 +206,8 @@ CREATE TABLE `enquiry_types` (
 INSERT INTO `enquiry_types` (`enquiry_id`, `enquiry_title`) VALUES
 (2, 'hetshah6315@gmail.com'),
 (3, 'hetshah6315@gmail.com'),
-(4, 'hetshah6315@gmail.com');
+(4, 'hetshah6315@gmail.com'),
+(5, 'akshat@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -235,7 +243,9 @@ INSERT INTO `invoices` (`invoice_id`, `invoice_number`, `order_id`, `customer_id
 (13, '069464', 13, 2, '2024-10-11 23:54:59'),
 (14, '268308', 14, 1, '2024-10-11 23:56:51'),
 (15, '113957', 15, 1, '2024-10-12 05:40:44'),
-(22, '962208', 17, 1, '2024-10-12 06:03:54');
+(22, '962208', 17, 1, '2024-10-12 06:03:54'),
+(23, '964339', 18, 1, '2024-10-20 12:18:00'),
+(24, '405717', 19, 4, '2024-10-20 13:37:42');
 
 -- --------------------------------------------------------
 
@@ -294,7 +304,9 @@ INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `qty`, `pr
 (16, 13, 1, 1, 33000.00),
 (17, 14, 1, 1, 33000.00),
 (18, 15, 2, 1, 2500.00),
-(19, 17, 2, 1, 2500.00);
+(19, 17, 2, 1, 2500.00),
+(20, 18, 1, 1, 25000.00),
+(21, 19, 1, 6, 25000.00);
 
 -- --------------------------------------------------------
 
@@ -332,7 +344,9 @@ INSERT INTO `payments` (`payment_id`, `invoice_id`, `amount`, `payment_mode`, `r
 (13, 13, 33000, 'COD', 0, 0, '2024-10-12 10:54:59'),
 (14, 14, 33000, 'COD', 0, 0, '2024-10-12 10:56:51'),
 (15, 15, 2500, 'COD', 0, 0, '2024-10-12 11:10:44'),
-(16, 22, 2500, 'Credit Card', 0, 0, '2024-10-12 11:33:54');
+(16, 22, 2500, 'Credit Card', 0, 0, '2024-10-12 11:33:54'),
+(17, 23, 25000, 'UPI', 0, 0, '2024-10-20 17:48:00'),
+(18, 24, 150000, 'Credit Card', 0, 0, '2024-10-20 19:07:42');
 
 -- --------------------------------------------------------
 
@@ -371,7 +385,9 @@ INSERT INTO `pending_orders` (`order_id`, `customer_id`, `invoice_id`, `product_
 (13, 2, 0, '', 0, '', '', 33000.00, 99999999.99, 'COD'),
 (14, 1, 0, '', 0, '', '', 33000.00, 99999999.99, 'COD'),
 (15, 1, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
-(17, 1, 0, '', 0, '', '', 2500.00, 99999999.99, 'Credit Card');
+(17, 1, 0, '', 0, '', '', 2500.00, 99999999.99, 'Credit Card'),
+(18, 1, 0, '', 0, '', '', 25000.00, 99999999.99, 'UPI'),
+(19, 4, 0, '', 0, '', '', 150000.00, 99999999.99, 'Credit Card');
 
 -- --------------------------------------------------------
 
@@ -403,7 +419,7 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `p_cat_id`, `cat_id`, `manufacturer_id`, `date`, `product_title`, `product_url`, `product_img1`, `product_img2`, `product_img3`, `product_img4`, `product_img5`, `product_price`, `product_desc`, `product_psp_price`, `status`) VALUES
-(1, 0, 2, 1, '2024-10-07 04:37:05', 'AL-prado', 'AL-prado', '001_8a65959a.jpg', '007_003ebd8c.jpg', '008_1c061100.jpg', '002_ce68dcc5.jpg', '011_d1838ad7.jpg', 435000.00, '', 33000.00, 'product'),
+(1, 0, 2, 1, '2024-10-12 08:52:08', 'AL-prado', 'AL-prado', '001_8a65959a.jpg', '007_003ebd8c.jpg', '008_1c061100.jpg', '002_ce68dcc5.jpg', '011_d1838ad7.jpg', 35000.00, '', 25000.00, 'product'),
 (2, 0, 1, 1, '2024-10-07 04:39:44', 'test1', 'test1', '010_eb22bd2f.jpg', '012_4fadea8c.jpg', '009_c04c6b85.jpg', '004_323ae7a2.jpg', '006_26bab30f.jpg', 5000.00, '', 2500.00, 'product');
 
 -- --------------------------------------------------------
@@ -534,73 +550,73 @@ ALTER TABLE `product_categories`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `contact_us`
 --
 ALTER TABLE `contact_us`
-  MODIFY `contact_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `contact_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `customer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `customer_orders`
 --
 ALTER TABLE `customer_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `enquiry_types`
 --
 ALTER TABLE `enquiry_types`
-  MODIFY `enquiry_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `enquiry_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `invoice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `invoice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `manufacturers`
 --
 ALTER TABLE `manufacturers`
-  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `order_item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `pending_orders`
 --
 ALTER TABLE `pending_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT for table `products`

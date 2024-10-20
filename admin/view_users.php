@@ -39,7 +39,7 @@ if (!isset($_SESSION['admin_email'])) {
                             </thead><!-- thead Ends -->
                             <tbody><!-- tbody Starts -->
                                 <?php
-                                $get_admin = "select * from admins WHERE admin_job ='admin'";
+                                $get_admin = "select * from admins";
                                 $run_admin = mysqli_query($con, $get_admin);
                                 while ($row_admin = mysqli_fetch_array($run_admin)) {
                                     $admin_id = $row_admin['admin_id'];

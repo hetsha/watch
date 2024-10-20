@@ -105,15 +105,17 @@
 
                             <!-- Add to Cart Form -->
                             <form id="addToCartForm" method="POST" action="add_to_cart.php">
-                                <input type="number" name="quantity" min="1" max="10" value="1" required>
+                                <input type="number" id="quantityInput" name="quantity" min="1" max="10" value="1" required>
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
+                                <input type="hidden" name="action" value="add_to_cart"> <!-- For Add to Cart -->
                                 <button type="submit" class="btn-normal">Add to Cart</button>
                             </form>
 
                             <!-- Buy Now Form -->
-                            <form id="buyNowForm" method="POST" action="buy_now.php">
+                            <form id="buyNowForm" method="POST" action="add_to_cart.php">
                                 <input type="hidden" name="product_id" value="<?php echo $row['product_id']; ?>">
-                                <input type="hidden" name="quantity" value="1"> <!-- You can modify this based on your requirements -->
+                                <input type="hidden" id="buyNowQuantity" name="quantity" value="1">
+                                <input type="hidden" name="action" value="buy_now"> <!-- For Buy Now -->
                                 <button type="submit" class="btn-normal">Buy Now</button>
                             </form>
 
@@ -259,6 +261,22 @@ LIMIT 3";
                 }, 500); // Match this duration to your CSS transition time
             }
         </script>
+        <script>
+    // Get references to the quantity input and Buy Now hidden input
+    var quantityInput = document.getElementById('quantityInput');
+    var buyNowQuantity = document.getElementById('buyNowQuantity');
+    var buyNowForm = document.getElementById('buyNowForm');
+
+    // Update Buy Now form's hidden quantity field when quantity changes
+    quantityInput.addEventListener('input', function () {
+        buyNowQuantity.value = quantityInput.value;
+    });
+
+    // Optionally, ensure the Buy Now form submits the correct quantity
+    buyNowForm.addEventListener('submit', function () {
+        buyNowQuantity.value = quantityInput.value;
+    });
+</script>
 
 </body>
 

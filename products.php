@@ -90,8 +90,7 @@ error_reporting(E_ALL);
                         while ($row = $result->fetch_assoc()) {
                             $old_price = isset($row['oldPrice']) ? $row['oldPrice'] : 0;
                             $new_price = $row['newPrice'];
-                            $discount_percentage = ($old_price > 0) ? (($old_price - $new_price) / $old_price) * 100 : 0;
-                    ?>
+                            $discount_percentage = ($old_price > 0) ? (($old_price - $new_price) / $old_price) * 100 : 0; ?>
                             <div class="col-md-6 col-lg-4">
                                 <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>">
                                     <div class="product-item-inner">
@@ -188,11 +187,11 @@ error_reporting(E_ALL);
         </section>
 
 
-    <?php
-    include 'include/news.php';
-    include 'include/footer.php'; ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></script>
-    <script src="assets/js/script.js"></script>
+        <?php
+        include 'include/news.php';
+        include 'include/footer.php'; ?>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></script>
+        <script src="assets/js/script.js"></script>
 </body>
 
 </html>
