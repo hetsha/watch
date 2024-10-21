@@ -5,6 +5,7 @@ if (!isset($_SESSION['admin_email'])) {
 ?>
     <!DOCTYPE html>
     <html>
+
     <head>
         <title> Insert Products </title>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>
@@ -14,6 +15,7 @@ if (!isset($_SESSION['admin_email'])) {
             });
         </script>
     </head>
+
     <body>
         <div class="row">
             <div class="col-lg-12">
@@ -67,7 +69,7 @@ if (!isset($_SESSION['admin_email'])) {
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div class="form-group">
                                 <label class="col-md-3 control-label"> Category </label>
                                 <div class="col-md-6">
@@ -128,6 +130,13 @@ if (!isset($_SESSION['admin_email'])) {
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="col-md-3 control-label"> Product Description </label>
+                                <div class="col-md-6">
+                                    <textarea name="product_desc" id="product_desc" class="form-control" rows="6" cols="19"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <label class="col-md-3 control-label"></label>
                                 <div class="col-md-6">
                                     <input type="submit" name="submit" value="Insert Product" class="btn btn-primary form-control">
@@ -139,15 +148,17 @@ if (!isset($_SESSION['admin_email'])) {
             </div>
         </div>
     </body>
+
     </html>
 <?php
     if (isset($_POST['submit'])) {
         $product_title = $_POST['product_title'];
-        $product_cat = $_POST['product_cat'];
+        // $product_cat = $_POST['product_cat'];
         $cat = $_POST['cat'];
         $manufacturer_id = $_POST['manufacturer'];
         $product_price = $_POST['product_price'];
         $psp_price = $_POST['psp_price'];
+        $product_desc = $_POST['product_desc'];
         $product_url = $_POST['product_url'];
         $status = "product"; // Check if you really need this column, or add it to the database if necessary.
         $product_img1 = $_FILES['product_img1']['name'];
@@ -166,14 +177,15 @@ if (!isset($_SESSION['admin_email'])) {
         move_uploaded_file($temp_name4, "product_images/$product_img4");
         move_uploaded_file($temp_name5, "product_images/$product_img5");
         $insert_product = "INSERT INTO products (
-      p_cat_id, cat_id, manufacturer_id, date, product_title, product_url,
-      product_img1, product_img2, product_img3, product_img4, product_img5,
-      product_price, product_psp_price, status
-  ) VALUES (
-      '$product_cat', '$cat', '$manufacturer_id', NOW(), '$product_title', '$product_url',
-      '$product_img1', '$product_img2', '$product_img3', '$product_img4', '$product_img5',
-      '$product_price', '$psp_price', '$status'
-  )";
+            cat_id, manufacturer_id, date, product_title, product_url,
+            product_img1, product_img2, product_img3, product_img4, product_img5,
+            product_price, product_psp_price, product_desc, status
+          ) VALUES (
+            '$cat', '$manufacturer_id', NOW(), '$product_title', '$product_url',
+            '$product_img1', '$product_img2', '$product_img3', '$product_img4', '$product_img5',
+            '$product_price', '$psp_price', '$product_desc', '$status'
+          )";
+
         $run_product = mysqli_query($con, $insert_product);
         if ($run_product) {
             echo "<script>alert('Product has been inserted successfully')</script>";

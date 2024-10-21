@@ -51,7 +51,7 @@ if (!isset($_SESSION['admin_email'])) {
                                         <td><?php echo $i; ?></td>
                                         <td><?php echo $pro_title; ?></td>
                                         <td><img src="product_images/<?php echo $pro_image; ?>" width="60" height="60"></td>
-                                        <td>$ <?php echo $pro_price; ?></td>
+                                        <td>Rs. <?php echo $pro_price; ?></td>
                                         <td><?php echo $pro_date; ?></td> <!-- Updated to remove sold count -->
                                         <td>
                                             <a href="index.php?delete_product=<?php echo $pro_id; ?>">

@@ -94,7 +94,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     echo "<script>alert('Passwords do not match!');</script>";
                 }
             }
-            $stmt->close();
+            // $stmt->close();
         }
     } elseif (isset($_POST['login'])) {
         // Handle login logic (as before)
