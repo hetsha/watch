@@ -279,9 +279,9 @@ error_reporting(E_ALL);
                 </div>
 
                 <!-- Pagination Section -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <nav aria-label="Page navigation">
+                <section class="pagination">
+                    <div class="container">
+                        <div class="row">
                             <div class="pagination justify-content-center">
                                 <?php if ($page > 1): ?>
                                     <a href="?page=<?php echo $page - 1; ?>" class="page-link"><i class="uil uil-arrow-left"></i></a>
@@ -293,9 +293,10 @@ error_reporting(E_ALL);
                                     <a href="?page=<?php echo $page + 1; ?>" class="page-link"><i class="uil uil-arrow-right"></i></a>
                                 <?php endif; ?>
                             </div>
-                        </nav>
+
+                        </div>
                     </div>
-                </div>
+                    </section>
             </div>
 
         </section>
