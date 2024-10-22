@@ -96,7 +96,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         <li class="menu-item menu-item-child <?php if ($currentPage == 'login.php' || $currentPage == 'sign.php' || $currentPage == 'logout.php') echo 'active'; ?>">
                             <a href="#" class="js-sub_menu">Settings <i class="fa-solid fa-angle-down"></i></a>
                             <ul class="sub-menu">
-                            <li class="sub-menu-item"><a href="contact.php">Profile</a></li>
+                            <li class="sub-menu-item"><a href="profile.php">Profile</a></li>
                                 <li class="sub-menu-item"><a href="logout.php">Logout</a></li>
                             </ul>
                         </li>
