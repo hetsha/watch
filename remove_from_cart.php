@@ -36,7 +36,7 @@ if (isset($_GET['id'])) {
             $deleteStmt->close();
         }
     }
-    $stmt->close(); // Close the prepared statement
+      // Close the prepared statement
 }
 
 // Redirect back to the cart page

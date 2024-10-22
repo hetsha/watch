@@ -85,6 +85,10 @@ $result = $stmt->get_result();
 
                     </table>
                 </div>
+                <form action="">
+                <button type="button" class="btn btn-primary" onclick="window.location.href='cart.php';">go to cart</button>
+            </form>
+            <br>
             </div>
         </section>
 
@@ -100,6 +104,6 @@ $result = $stmt->get_result();
 </html>
 
 <?php
-$stmt->close(); // Close the prepared statement
-$con->close(); // Close the database connection
+  // Close the prepared statement
+  // Close the database connection
 ?>

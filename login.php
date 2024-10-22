@@ -25,7 +25,7 @@ if (isset($_COOKIE['customer_name'])) {
             header("Location: index.php"); // Redirect to the main page
             exit;
         }
-        $stmt->close();
+
     }
 }
 
@@ -50,7 +50,7 @@ if (isset($_COOKIE['admin_name'])) {
             header("Location: admin/index.php?dashboard"); // Redirect to admin dashboard
             exit;
         }
-        $stmt->close();
+
     }
 }
 
@@ -88,13 +88,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         $_SESSION['customer_id'] = $customer_id;
                         $_SESSION['cart'] = array();
                         echo "<script>alert('Registration successful!');</script>";
-                        $stmt->close();
+
                     }
                 } else {
                     echo "<script>alert('Passwords do not match!');</script>";
                 }
             }
-            // $stmt->close();
+            //
         }
     } elseif (isset($_POST['login'])) {
         // Handle login logic (as before)
@@ -122,7 +122,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: admin/index.php?dashboard");
                 exit;
             }
-            $stmt->close();
+
         }
 
         // If not found in admins, check in the customers table
@@ -149,10 +149,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } else {
                 echo "<script>alert('Invalid Username or Password!');</script>";
             }
-            $stmt->close();
+
         }
     }
-    $con->close();
+
 }
 ?>
 <!DOCTYPE html>

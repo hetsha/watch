@@ -44,7 +44,7 @@ if ($result && $result->num_rows > 0) {
 // Store the cart total in the session
 $_SESSION['cart_total'] = $total;
 
-$stmt->close(); // Close the prepared statement
+  // Close the prepared statement
 ?>
 
 <!DOCTYPE html>
@@ -95,7 +95,7 @@ $stmt->close(); // Close the prepared statement
                             <?php foreach ($cartItems as $product): ?>
                                 <tr>
                                     <td>
-                                        <a href="remove_from_cart.php?id=<?php echo $product['cart_id']; ?>" class="btn btn-danger btn-sm">Remove</a>
+                                        <a href="remove_from_cart.php?id=<?php echo $product['cart_id']; ?>" class="btn btn-danger btn-sm" style="color:white;">Remove</a>
                                     </td>
                                     <td>
                                         <img src="admin/product_images/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['title']); ?>" width="50" class="img-thumbnail">

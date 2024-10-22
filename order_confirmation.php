@@ -28,7 +28,7 @@ if ($result->num_rows === 0) {
 }
 
 $orderDetails = $result->fetch_assoc();
-$stmt->close();
+
 
 // Fetch order items
 $stmt = $con->prepare("
@@ -40,7 +40,7 @@ $stmt = $con->prepare("
 $stmt->bind_param("i", $order_id);
 $stmt->execute();
 $orderItems = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
-$stmt->close();
+
 ?>
 
 <!DOCTYPE html>

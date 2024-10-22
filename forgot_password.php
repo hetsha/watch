@@ -37,7 +37,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             if (!$emailExists) {
                 echo "<script>alert('Email not found. Please try another one.');</script>";
             }
-            $stmt->close();
+
         }
     } elseif (isset($_POST['reset_password'])) {
         $new_password = $_POST['new_password'];
@@ -48,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt = $con->prepare($query)) {
             $stmt->bind_param("ss", $new_password, $email);
             $stmt->execute();
-            $stmt->close();
+
         }
 
         // Update password in admins table if it exists
@@ -56,7 +56,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($stmt = $con->prepare($query)) {
             $stmt->bind_param("ss", $new_password, $email);
             $stmt->execute();
-            $stmt->close();
+
         }
 
         // Clear the session variable
@@ -67,7 +67,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-$con->close();
+
 ?>
 
 <!DOCTYPE html>

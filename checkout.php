@@ -16,6 +16,31 @@ if (!isset($_SESSION['customer_id'])) {
 // Get customer ID from session
 $customerID = (int)$_SESSION['customer_id'];
 
+// Fetch customer details from the database
+$customerDetails = [];
+$stmt = $con->prepare("
+    SELECT customer_address, customer_city, state, zip_code, customer_contact, phone_number
+    FROM customers
+    WHERE customer_id = ?
+");
+$stmt->bind_param("i", $customerID);
+$stmt->execute();
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    $customerDetails = $result->fetch_assoc();
+} else {
+    // Initialize empty values if no details found
+    $customerDetails = [
+        'customer_address' => '',
+        'customer_city' => '',
+        'state' => '',
+        'zip_code' => '',
+        'customer_contact' => '',
+        'phone_number' => ''
+    ];
+}
+
 // Fetch the cart items for the logged-in customer
 $stmt = $con->prepare("
     SELECT cart.product_id, cart.qty AS quantity, cart.p_price AS price, products.product_title
@@ -41,13 +66,14 @@ while ($row = $result->fetch_assoc()) {
     $total += $row['price'] * $row['quantity']; // Calculate total
 }
 
-$stmt->close(); // Close the prepared statement
+// Close the prepared statement
 
 // Store total in session to access in checkout
 $_SESSION['cart_total'] = $total; // Store total for later use in checkout
 
 // Function to generate a unique 6-digit invoice number
-function generateInvoiceNumber($con) {
+function generateInvoiceNumber($con)
+{
     while (true) {
         $invoiceNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate a random 6-digit number
         $stmt = $con->prepare("SELECT COUNT(*) FROM invoices WHERE invoice_number = ?");
@@ -55,7 +81,7 @@ function generateInvoiceNumber($con) {
         $stmt->execute();
         $stmt->bind_result($count);
         $stmt->fetch();
-        $stmt->close();
+
 
         // If the invoice number does not exist, return it
         if ($count == 0) {
@@ -88,7 +114,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo "Error updating customer details: " . $stmt->error;
         exit();
     }
-    $stmt->close();
+
 
     // Use the session total for the order
     $total = $_SESSION['cart_total'];
@@ -126,7 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo "Error updating customer_orders with invoice_id: " . $stmt->error;
         exit();
     }
-    $stmt->close();
+
 
     // Loop through each order item and insert into the order_items table
     foreach ($orderItems as $item) {
@@ -167,12 +193,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         exit();
     }
 
-    $stmt->close(); // Close the prepared statement
+    // Close the prepared statement
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -183,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
         integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
-        <link rel="icon" href="assets/img/favicon.png" sizes="32x32" />
+    <link rel="icon" href="assets/img/favicon.png" sizes="32x32" />
     <link rel="icon" href="assets/img/favicon.png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/assets/img/favicon.png" />
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
@@ -252,39 +279,49 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <form method="POST" action="">
                     <div class="mb-3">
                         <label for="customer_address" class="form-label">Address</label>
-                        <input type="text" class="form-control" name="customer_address" id="customer_address" required>
+                        <input type="text" class="form-control" name="customer_address" id="customer_address"
+                            value="<?php echo htmlspecialchars($customerDetails['customer_address']); ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="customer_city" class="form-label">City</label>
-                        <input type="text" class="form-control" name="customer_city" id="customer_city" required>
+                        <input type="text" class="form-control" name="customer_city" id="customer_city"
+                            value="<?php echo htmlspecialchars($customerDetails['customer_city']); ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="state" class="form-label">State</label>
-                        <input type="text" class="form-control" name="state" id="state" required>
+                        <input type="text" class="form-control" name="state" id="state"
+                            value="<?php echo htmlspecialchars($customerDetails['state']); ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="zip_code" class="form-label">Zip Code</label>
-                        <input type="text" class="form-control" name="zip_code" id="zip_code" required>
+                        <input type="text" class="form-control" name="zip_code" id="zip_code"
+                            value="<?php echo htmlspecialchars($customerDetails['zip_code']); ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="customer_contact" class="form-label">Contact Number</label>
-                        <input type="text" class="form-control" name="customer_contact" id="customer_contact" required>
+                        <input type="text" class="form-control" name="customer_contact" id="customer_contact"
+                            value="<?php echo htmlspecialchars($customerDetails['customer_contact']); ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="phone_number" class="form-label">Phone Number</label>
-                        <input type="text" class="form-control" name="phone_number" id="phone_number" required>
+                        <input type="text" class="form-control" name="phone_number" id="phone_number"
+                            value="<?php echo htmlspecialchars($customerDetails['phone_number']); ?>" required>
                     </div>
                     <div class="mb-3">
                         <label for="payment_mode" class="form-label">Payment Mode</label>
                         <select class="form-select" name="payment_mode" id="payment_mode" required>
-                            <option value="" disabled selected>Select Payment Mode</option>
+                            <option value="" disabled>Select Payment Mode</option>
                             <option value="Credit Card">Credit Card</option>
                             <option value="Debit Card">Debit Card</option>
                             <option value="Net Banking">Net Banking</option>
                             <option value="UPI">UPI</option>
+                            <option value="COD">COD(CASH ON DEILIVERY)</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-primary">Place Order</button>
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='cart.php';">
+                        Go to Cart
+                    </button>
                 </form>
             </div>
         </section>
@@ -295,4 +332,5 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     include 'include/footer.php'; ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

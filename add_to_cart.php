@@ -69,7 +69,7 @@ if ($productID > 0) {
     } else {
         $_SESSION['message'] = 'Product not found.';
     }
-    $stmt->close(); // Close the prepared statement
+      // Close the prepared statement
 } else {
     $_SESSION['message'] = 'Invalid product ID.';
 }

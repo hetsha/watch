@@ -158,7 +158,7 @@ error_reporting(E_ALL);
                     $total_pages = ceil($total_row['total'] / $products_per_page);
 
                     // Close the database con
-                    $con->close();
+
                     ?>
                 </div>
             </div>

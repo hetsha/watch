@@ -126,7 +126,7 @@ if ($order_id > 0) {
         echo "No order found for Order ID: $order_id"; // Show order ID in the message
     }
 
-    $con->close();
+
 } else {
     echo "Invalid order ID.";
 }

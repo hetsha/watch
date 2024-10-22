@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -21,6 +22,7 @@
     <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.0/css/line.css">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
+
 <body>
     <?php
     session_start(); // Ensure this is the very first line in your PHP script
@@ -165,10 +167,6 @@
                 </div>
                 <div class="row">
                     <?php
-                    // Check for con errors
-                    if ($con->connect_error) {
-                        die("con failed: " . $con->connect_error);
-                    }
                     // SQL query to fetch 6 random products and their categories
                     $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
                 p.product_psp_price AS price, p.product_price AS oldPrice,
@@ -237,7 +235,7 @@
                         echo "<p>No products found.</p>";
                     }
                     // Close the database con
-                    $con->close();
+
                     ?>
                 </div>
             </div>
@@ -267,11 +265,7 @@
                 <div class="row">
                     <?php
                     // Database con
-                    $con = new mysqli("localhost", "root", "", "ecom_store");
-                    // Check for con errors
-                    if ($con->connect_error) {
-                        die("con failed: " . $con->connect_error);
-                    }
+
                     // SQL query to fetch 6 more random products excluding the ones already displayed
                     $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
                     $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
@@ -343,8 +337,6 @@
                         echo "<p>No more products found.</p>";
                     }
                     // Close the database con
-                    $stmt->close();
-                    $con->close();
                     ?>
                 </div>
                 <div class="row">
@@ -365,7 +357,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
         crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6jpN/A8mM4yFZfBOPjX3X4U4zI4pF3+0O4Oi5G2" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/6jpN/A8mM4yFZfBOPjX3X4U4zI4pF3+0O4Oi5G2" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-0xH9RHG/1sbHRF+IAHz9y9Zh5DkAZJk5wvF6uDHD+aDID4fR5eU5RV3bTf6ItGqJ" crossorigin="anonymous"></script>
     <script>
         $(document).ready(function() {
@@ -375,4 +367,5 @@
         });
     </script>
 </body>
+
 </html>

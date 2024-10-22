@@ -201,7 +201,7 @@ LIMIT 3";
                         } else {
                             echo "<p>No products found.</p>";
                         }
-                        $con->close();
+
                         ?>
                     </div>
                 </div>

@@ -59,11 +59,7 @@
         </div>
         <div class="col-12">
             <div class="copyright">
-                <p class="copy">&copy;<span id="year">. My Web Name.</span></p>
-                <a href="#" class="go-to-link">
-                    <p class="by">By:</p>
-                    <span id="author">Web Studio</span>
-                </a>
+                <p class="copy">&copy;<span id="year"><a href="https://orawatch.free.nf/">ora watch</a></span></p>
             </div>
         </div>
     </footer><!-- footer-end  -->
