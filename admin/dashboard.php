@@ -6,7 +6,7 @@ if (!isset($_SESSION['admin_email'])) {
     <div class="row"><!-- 1 row Starts -->
         <div class="col-lg-12"><!-- col-lg-12 Starts -->
             <h1 class="page-header">Dashboard
-            <img src="includes/light-logo.png" width="150" height="auto" alt="">
+            <!-- <img src="includes/light-logo.png" width="150" height="auto" alt=""> -->
         </h1>
             <ol class="breadcrumb"><!-- breadcrumb Starts -->
                 <li class="active">

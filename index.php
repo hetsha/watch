@@ -168,13 +168,20 @@
                 <div class="row">
                     <?php
                     // SQL query to fetch 6 random products and their categories
-                    $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-                p.product_psp_price AS price, p.product_price AS oldPrice,
-                p.product_img1 AS image
-                FROM products p
-                JOIN categories c ON p.cat_id = c.cat_id
-                 ORDER BY p.product_id DESC
-            LIMIT 3";
+                    $sql = "SELECT
+            p.product_id AS id,
+            p.product_title AS name,
+            c.cat_title AS category,
+            m.manufacturer_title AS manufacturer,  -- Added manufacturer title
+            p.product_psp_price AS price,
+            p.product_price AS oldPrice,
+            p.product_img1 AS image
+        FROM products p
+        JOIN categories c ON p.cat_id = c.cat_id
+        JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id  -- Assuming 'manu_id' is the foreign key in 'products'
+        ORDER BY p.product_id DESC
+        LIMIT 3";
+
                     $result = $con->query($sql);
                     $displayed_products = []; // Array to store displayed product IDs
                     if ($result->num_rows > 0) {
@@ -199,7 +206,8 @@
                                         </figure>
                                         <div class="details">
                                             <span class="cat"><i class="uil uil-tag-alt clr"></i>
-                                                <?php echo htmlspecialchars($row['category']); ?></span>
+                                                <?php echo htmlspecialchars($row['category']); ?>/
+                                                <?php echo htmlspecialchars($row['manufacturer']); ?></span>
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
                                                 <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
                                             </a>
@@ -215,15 +223,11 @@
                                                     <span class="new-prc"><?php echo number_format($new_price, 2); ?> &#8360;</span>
                                                 </h4>
                                             </div>
-                                            <form action="add_to_cart.php" method="POST" class="d-inline-block" id="cartForm">
-                                                <input type="hidden" name="product_id" value="<?php echo $row['id']; ?>">
-                                                <a href="#" class="btn-link p-0 cart-button" onclick="document.getElementById('cartForm').submit();">
-                                                    <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
-                                                </a>
-                                            </form>
-                                            <!-- View Details Button -->
+                                            <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">
+                                                <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
+                                            </a>
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
-                                                <i class="uil uil-eye"></i>
+                                                <i class="uil uil-eye" title="View Details"></i>
                                             </a>
                                         </div>
                                     </div>
@@ -268,14 +272,21 @@
 
                     // SQL query to fetch 6 more random products excluding the ones already displayed
                     $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
-                    $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-                p.product_psp_price AS price, p.product_price AS oldPrice,
-                p.product_img1 AS image
-                FROM products p
-                JOIN categories c ON p.cat_id = c.cat_id
-                WHERE p.product_id NOT IN ($placeholders)
-                 ORDER BY p.product_id ASC
-                LIMIT 6";
+                    $sql = "SELECT
+            p.product_id AS id,
+            p.product_title AS name,
+            c.cat_title AS category,
+            m.manufacturer_title AS manufacturer,  -- Added manufacturer title
+            p.product_psp_price AS price,
+            p.product_price AS oldPrice,
+            p.product_img1 AS image
+        FROM products p
+        JOIN categories c ON p.cat_id = c.cat_id
+        JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id  -- Assuming you have a foreign key 'manu_id' in 'products' table
+        WHERE p.product_id NOT IN ($placeholders)
+        ORDER BY p.product_id ASC
+        LIMIT 6";
+
                     $stmt = $con->prepare($sql);
                     if (!empty($displayed_products)) {
                         $types = str_repeat('i', count($displayed_products));
@@ -304,7 +315,7 @@
                                         </figure>
                                         <div class="details">
                                             <span class="cat"><i class="uil uil-tag-alt clr"></i>
-                                                <?php echo htmlspecialchars($row['category']); ?></span>
+                                                <?php echo htmlspecialchars($row['category']); ?>/<?php echo htmlspecialchars($row['manufacturer']); ?></span>
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
                                                 <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
                                             </a>
@@ -320,12 +331,11 @@
                                                     <span class="new-prc"><?php echo number_format($new_price, 2); ?> &#8360;</span>
                                                 </h4>
                                             </div>
-                                            <a class="go-to-cart" onclick="addToCart(<?php echo $row['id']; ?>)">
-                                                <i class="uil uil-shopping-bag shopping-cart cart"></i>
+                                            <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">
+                                                <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
                                             </a>
-                                            <!-- View Details Button -->
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
-                                                <i class="uil uil-eye"></i>
+                                                <i class="uil uil-eye" title="View Details"></i>
                                             </a>
                                         </div>
                                     </div>

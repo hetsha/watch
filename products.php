@@ -30,7 +30,6 @@ error_reporting(E_ALL);
     include 'include/db.php';
     include 'include/navbar.php';
     ?>
-
     <main class="wrapper">
         <section class="hero">
             <div class="container-fluid">
@@ -52,6 +51,31 @@ error_reporting(E_ALL);
                     </div>
                 </div>
                 <div class="row">
+                    <div class="col-md-12 mb-3">
+                        <!-- Manufacturer Filter -->
+                        <form method="GET" class="d-flex justify-content-between">
+                            <select name="manufacturer" class="form-select" onchange="this.form.submit()">
+                                <option value="">Select Manufacturer</option>
+                                <?php
+                                // Fetch manufacturers for dropdown
+                                $manufacturers_query = "SELECT manufacturer_id, manufacturer_title FROM manufacturers";
+                                $manufacturers_result = $con->query($manufacturers_query);
+                                while ($manufacturer = $manufacturers_result->fetch_assoc()) {
+                                    $selected = (isset($_GET['manufacturer']) && $_GET['manufacturer'] == $manufacturer['manufacturer_id']) ? 'selected' : '';
+                                    echo "<option value='{$manufacturer['manufacturer_id']}' $selected>{$manufacturer['manufacturer_title']}</option>";
+                                }
+                                ?>
+                            </select>
+                            <select name="sort" class="form-select" onchange="this.form.submit()">
+                                <option value="">Sort By</option>
+                                <option value="newest" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'newest') ? 'selected' : ''; ?>>Newest</option>
+                                <option value="price_asc" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'price_asc') ? 'selected' : ''; ?>>Price: Low to High</option>
+                                <option value="price_desc" <?php echo (isset($_GET['sort']) && $_GET['sort'] == 'price_desc') ? 'selected' : ''; ?>>Price: High to Low</option>
+                            </select>
+                        </form>
+                    </div>
+                </div>
+                <div class="row">
                     <?php
                     // Check con
                     if ($con->connect_error) {
@@ -67,19 +91,57 @@ error_reporting(E_ALL);
                     $offset = ($page - 1) * $products_per_page;
 
                     // Base SQL query with category filtering if applicable
-                    $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-                                   p.product_psp_price AS newPrice, p.product_price AS oldPrice, p.product_img1 AS image
-                            FROM products p
-                            JOIN categories c ON p.cat_id = c.cat_id";
+                    $sql = "SELECT p.product_id AS id,
+            p.product_title AS name,
+            c.cat_title AS category,
+            m.manufacturer_title AS manufacturer,
+            p.product_psp_price AS newPrice,
+            p.product_price AS oldPrice,
+            p.product_img1 AS image
+        FROM products p
+        JOIN categories c ON p.cat_id = c.cat_id
+        JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id";
 
-                    // If category ID is set, add the WHERE clause
+                    // Initialize a flag for the WHERE clause
+                    $where_clauses = [];
+
+                    // If category ID is set, add the category filter
                     if ($category_id) {
-                        $sql .= " WHERE p.cat_id = $category_id";
+                        $where_clauses[] = "p.cat_id = $category_id";
+                    }
+
+                    // Filter by manufacturer if selected
+                    if (isset($_GET['manufacturer']) && is_numeric($_GET['manufacturer'])) {
+                        $manufacturer_id = (int)$_GET['manufacturer'];
+                        $where_clauses[] = "p.manufacturer_id = $manufacturer_id";
+                    }
+
+                    // Add WHERE clause if there are any conditions
+                    if (!empty($where_clauses)) {
+                        $sql .= " WHERE " . implode(" AND ", $where_clauses);
+                    }
+
+                    // Sorting logic
+                    if (isset($_GET['sort'])) {
+                        switch ($_GET['sort']) {
+                            case 'newest':
+                                $sql .= " ORDER BY p.product_id DESC";
+                                break;
+                            case 'price_asc':
+                                $sql .= " ORDER BY p.product_psp_price ASC";
+                                break;
+                            case 'price_desc':
+                                $sql .= " ORDER BY p.product_psp_price DESC";
+                                break;
+                            default:
+                                $sql .= " ORDER BY RAND()"; // Default to random if no sort is specified
+                        }
+                    } else {
+                        $sql .= " ORDER BY RAND()"; // Default to random if no sort is specified
                     }
 
                     // Add LIMIT clause for pagination
-                    $sql .= " ORDER BY RAND() LIMIT $offset, $products_per_page";
-
+                    $sql .= " LIMIT $offset, $products_per_page";
                     $result = $con->query($sql);
 
                     // Display products
@@ -89,10 +151,10 @@ error_reporting(E_ALL);
                             $new_price = $row['newPrice'];
                             $discount_percentage = ($old_price > 0) ? (($old_price - $new_price) / $old_price) * 100 : 0; ?>
                             <div class="col-md-6 col-lg-4">
-                                <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>">
+                                <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>" onclick="location.href='singleproduct.php?id=<?php echo $row['id']; ?>';" style="cursor: pointer;">
                                     <div class="product-item-inner">
                                         <?php if ($discount_percentage > 0) : ?>
-                                            <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
+                                            <span class="discount"><?php echo number_format($discount_percentage, 2); ?>%</span>
                                         <?php endif; ?>
                                         <figure class="img-box">
                                             <?php
@@ -106,7 +168,7 @@ error_reporting(E_ALL);
                                             ?>
                                         </figure>
                                         <div class="details">
-                                            <span class="cat"><i class="uil uil-tag-alt clr"></i> <?php echo htmlspecialchars($row['category']); ?></span>
+                                            <span class="cat"><i class="uil uil-tag-alt clr"></i> <?php echo htmlspecialchars($row['category']); ?>/<?php echo htmlspecialchars($row['manufacturer']); ?></span>
                                             <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
                                                 <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
                                             </a>
@@ -134,61 +196,116 @@ error_reporting(E_ALL);
                                     </div>
                                 </div>
                             </div>
-                        <?php
+                    <?php
                         }
                     } else {
-                        // No products found message
-                        ?>
-                        <div class="col-12 text-center">
-                            <div class="no-products">
-                                <h3 class="text-danger">No products found.</h3>
-                                <p class="text-muted">Please check back later or browse other categories.</p>
-                            </div>
-                        </div>
-                    <?php
+                        echo "<p>No products found.</p>";
                     }
-
-                    // Pagination logic: calculate total products
-                    $total_products_sql = "SELECT COUNT(*) AS total FROM products";
-                    if ($category_id) {
-                        $total_products_sql .= " WHERE cat_id = $category_id";
-                    }
-                    $total_result = $con->query($total_products_sql);
-                    $total_row = $total_result->fetch_assoc();
-                    $total_pages = ceil($total_row['total'] / $products_per_page);
-
-                    // Close the database con
-
                     ?>
                 </div>
-            </div>
-        </section>
 
-        <!-- Pagination Section -->
-        <section class="pagination">
-            <div class="container">
                 <div class="row">
-                    <div class="pagination justify-content-center">
-                        <?php if ($page > 1): ?>
-                            <a href="?page=<?php echo $page - 1; ?>"><i class="uil uil-arrow-left"></i></a>
-                        <?php endif; ?>
-                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                            <a href="?page=<?php echo $i; ?>" class="<?php if ($i == $page) echo 'active'; ?>"><?php echo $i; ?></a>
-                        <?php endfor; ?>
-                        <?php if ($page < $total_pages): ?>
-                            <a href="?page=<?php echo $page + 1; ?>"><i class="uil uil-arrow-right"></i></a>
-                        <?php endif; ?>
+                    <?php
+                    // Check connection
+                    if ($con->connect_error) {
+                        die("Connection failed: " . $con->connect_error);
+                    }
+
+                    // Pagination setup
+                    $products_per_page = 9;
+                    $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
+                    $offset = ($page - 1) * $products_per_page;
+
+                    // SQL query to count total products for pagination
+                    $total_query = "SELECT COUNT(*) AS total FROM products p";
+                    if (!empty($where_clauses)) {
+                        $total_query .= " WHERE " . implode(" AND ", $where_clauses);
+                    }
+                    $total_result = $con->query($total_query);
+                    $total_row = $total_result->fetch_assoc();
+                    $total_products = $total_row['total'];
+                    $total_pages = ceil($total_products / $products_per_page);
+
+                    // Base SQL query to fetch products
+                    $sql = "SELECT p.product_id AS id,
+            p.product_title AS name,
+            c.cat_title AS category,
+            m.manufacturer_title AS manufacturer,
+            p.product_psp_price AS newPrice,
+            p.product_price AS oldPrice,
+            p.product_img1 AS image
+            FROM products p
+            JOIN categories c ON p.cat_id = c.cat_id
+            JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id";
+
+                    // Add WHERE clauses based on filters
+                    if (!empty($where_clauses)) {
+                        $sql .= " WHERE " . implode(" AND ", $where_clauses);
+                    }
+
+                    // Sorting logic
+                    if (isset($_GET['sort'])) {
+                        switch ($_GET['sort']) {
+                            case 'newest':
+                                $sql .= " ORDER BY p.product_id DESC";
+                                break;
+                            case 'price_asc':
+                                $sql .= " ORDER BY p.product_psp_price ASC";
+                                break;
+                            case 'price_desc':
+                                $sql .= " ORDER BY p.product_psp_price DESC";
+                                break;
+                            default:
+                                $sql .= " ORDER BY RAND()"; // Default to random
+                        }
+                    } else {
+                        $sql .= " ORDER BY RAND()"; // Default to random
+                    }
+
+                    // Limit for pagination
+                    $sql .= " LIMIT $offset, $products_per_page";
+                    $result = $con->query($sql);
+
+                    // Display products
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            // Display product details...
+                            // (Your existing product display code here)
+                        }
+                    } else {
+                        echo "<p>No products found.</p>";
+                    }
+                    ?>
+                </div>
+
+                <!-- Pagination Section -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <nav aria-label="Page navigation">
+                            <div class="pagination justify-content-center">
+                                <?php if ($page > 1): ?>
+                                    <a href="?page=<?php echo $page - 1; ?>" class="page-link"><i class="uil uil-arrow-left"></i></a>
+                                <?php endif; ?>
+                                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                                    <a href="?page=<?php echo $i; ?>" class="page-link <?php if ($i == $page) echo 'active'; ?>"><?php echo $i; ?></a>
+                                <?php endfor; ?>
+                                <?php if ($page < $total_pages): ?>
+                                    <a href="?page=<?php echo $page + 1; ?>" class="page-link"><i class="uil uil-arrow-right"></i></a>
+                                <?php endif; ?>
+                            </div>
+                        </nav>
                     </div>
                 </div>
             </div>
+
         </section>
+    </main>
 
-
-        <?php
-        include 'include/news.php';
-        include 'include/footer.php'; ?>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous"></script>
-        <script src="assets/js/script.js"></script>
+    <?php
+    include 'include/news.php';
+    include 'include/footer.php'; ?>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-LtrjvnSIAt7gx2V2jQGz5NvmXt38f1YFovVSIb8zD4B+JCBiwlE/NKX3fBguHeTf" crossorigin="anonymous"></script>
+    <script src="assets/js/script.js"></script>
 </body>
 
 </html>

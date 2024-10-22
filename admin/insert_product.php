@@ -46,10 +46,7 @@ if (!isset($_SESSION['admin_email'])) {
                                 <label class="col-md-3 control-label"> Product Url </label>
                                 <div class="col-md-6">
                                     <input type="text" name="product_url" class="form-control" required>
-                                    <br>
-                                    <p style="font-size:15px; font-weight:bold;">
-                                        Product Url Example : navy-blue-t-shirt
-                                    </p>
+                                    
                                 </div>
                             </div>
                             <div class="form-group">

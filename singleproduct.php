@@ -36,6 +36,16 @@
             visibility: hidden;
             /* Hide the image from the layout */
         }
+        .d-flex{
+            width: 90%;
+        }
+        .big-product{
+            width: 75%;
+        }
+         .het{
+            --bs-gutter-x: -210px!important;
+         }
+
     </style>
 </head>
 
@@ -71,7 +81,7 @@ WHERE product_id = '$productID'
             </section>
             <section class="product-details">
                 <div class="container-fluid">
-                    <div class="row gap-5">
+                    <div class="row gap-3 het">
                         <div class="col-md-12 col-lg-6 mx-auto single-product-img">
                             <div class="big-product">
                                 <img id="mainImage" src="admin/product_images/<?php echo $row['product_img1']; ?>" class="pro-img img-fluid" alt="<?php echo $row['product_title']; ?>" />
@@ -136,17 +146,24 @@ WHERE product_id = '$productID'
                     <div class="row">
                         <?php
                         // Fetch latest products
-                            if ($con->connect_error) {
+                        if ($con->connect_error) {
                             die("Connection failed: " . $connection->connect_error);
                         }
                         // Updated SQL query to use product_psp_price
-                        $sql = "SELECT p.product_id AS id, p.product_title AS name, c.cat_title AS category,
-p.product_psp_price AS price, p.product_price AS oldPrice,
-p.product_img1 AS image
-FROM products p
-JOIN categories c ON p.cat_id = c.cat_id
-ORDER BY RAND()
-LIMIT 3";
+                        $sql = "SELECT
+            p.product_id AS id,
+            p.product_title AS name,
+            c.cat_title AS category,
+            p.product_psp_price AS price,
+            p.product_price AS oldPrice,
+            p.product_img1 AS image,
+            m.manufacturer_title AS manufacturer
+        FROM products p
+        JOIN categories c ON p.cat_id = c.cat_id
+        JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id  -- Assuming you have a foreign key 'manu_id' in 'products' table
+        ORDER BY RAND()
+        LIMIT 3";
+
                         $result = $con->query($sql);
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
@@ -155,9 +172,10 @@ LIMIT 3";
                                 $discount_percentage = (($new_price - $old_price) / $new_price) * 100;
                         ?>
                                 <div class="col-md-6 col-lg-4">
-                                    <div class="product-item discount">
+                                    <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>" onclick="location.href='singleproduct.php?id=<?php echo $row['id']; ?>';" style="cursor: pointer;">
+
                                         <div class="product-item-inner">
-                                            <span class="discount">-<?php echo number_format($discount_percentage, 2); ?>%</span>
+                                            <span class="discount"><?php echo number_format($discount_percentage, 2); ?>%</span>
                                             <figure class="img-box">
                                                 <?php
                                                 if (!empty($row['image'])) {
@@ -170,7 +188,7 @@ LIMIT 3";
                                             </figure>
                                             <div class="details">
                                                 <span class="cat"><i class="uil uil-tag-alt clr"></i>
-                                                    <?php echo $row['category']; ?></span>
+                                                    <?php echo $row['category']; ?>/<?php echo $row['manufacturer']; ?></span>
                                                 <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
                                                     <h5 class="title"><?php echo $row['name']; ?></h5>
                                                 </a>
