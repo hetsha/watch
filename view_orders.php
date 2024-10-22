@@ -48,9 +48,11 @@ $result = $stmt->get_result();
                 </div>
             </div>
         </section>
+        <br>
         <section class="orders">
             <div class="container">
                 <div class="row">
+
                     <table class="table table-striped">
                         <thead>
                             <tr>
@@ -86,7 +88,7 @@ $result = $stmt->get_result();
                     </table>
                 </div>
                 <form action="">
-                <button type="button" class="btn btn-primary" onclick="window.location.href='cart.php';">go to cart</button>
+                <button type="button" class="btn btn-primary" onclick="window.location.href='cart.php';" style="color:blue;">Go To Cart</button>
             </form>
             <br>
             </div>

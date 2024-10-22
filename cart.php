@@ -95,7 +95,7 @@ $_SESSION['cart_total'] = $total;
                             <?php foreach ($cartItems as $product): ?>
                                 <tr>
                                     <td>
-                                        <a href="remove_from_cart.php?id=<?php echo $product['cart_id']; ?>" class="btn btn-danger btn-sm" style="color:white;">Remove</a>
+                                        <a href="remove_from_cart.php?id=<?php echo $product['cart_id']; ?>" class="btn btn-danger btn-md" style="color:white;">Remove</a>
                                     </td>
                                     <td>
                                         <img src="admin/product_images/<?php echo $product['image']; ?>" alt="<?php echo htmlspecialchars($product['title']); ?>" width="50" class="img-thumbnail">
@@ -131,8 +131,8 @@ $_SESSION['cart_total'] = $total;
                             <tr>
                                 <td colspan="2">
                                     <!-- Inside the subtotal section -->
-                                    <a href="checkout.php?customer_id=<?php echo $_SESSION['customer_id']; ?>&total=<?php echo number_format($total, 2); ?>" class="btn-normal">Proceed to Checkout</a>
-                                    <a href="view_orders.php?customer_id=<?php echo $customerID; ?>" class="btn-normal">View Orders</a>
+                                    <a href="checkout.php?customer_id=<?php echo $_SESSION['customer_id']; ?>&total=<?php echo number_format($total, 2); ?>" class="btn btn-normal">Proceed to Checkout</a>
+                                    <a href="view_orders.php?customer_id=<?php echo $customerID; ?>" class="btn-normal btn">View Past Orders</a>
                                 </td>
                             </tr>
                         </table>

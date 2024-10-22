@@ -59,7 +59,7 @@
         </div>
         <div class="col-12">
             <div class="copyright">
-                <p class="copy">&copy;<span id="year"><a href="https://orawatch.free.nf/">ora watch</a></span></p>
+                <p class="copy" style="display:none;"><span id="year"><a href="https://orawatch.free.nf/">ora watch</a></span></p>
             </div>
         </div>
     </footer><!-- footer-end  -->
