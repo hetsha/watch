@@ -186,14 +186,16 @@
                     $displayed_products = []; // Array to store displayed product IDs
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
-                            $displayed_products[] = $row['id']; // Add product ID to the array
-                            $old_price = $row['oldPrice'];
-                            $new_price = $row['price'];
+                            $old_price = $row['price'];
+                            $new_price = $row['oldPrice'];
+                            $discount_percentage = (($new_price - $old_price) / $new_price) * 100;
                     ?>
                             <!-- HTML for product display -->
                             <div class="col-md-6 col-lg-4">
-                                <div class="product-item">
+                                <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>" onclick="location.href='singleproduct.php?id=<?php echo $row['id']; ?>';" style="cursor: pointer;">
                                     <div class="product-item-inner">
+                                        <span class="discount"><?php echo number_format($discount_percentage, 2); ?>%</span>
+
                                         <figure class="img-box">
                                             <?php
                                             if (!empty($row['image'])) {
@@ -271,81 +273,110 @@
                     // Database con
 
                     // SQL query to fetch 6 more random products excluding the ones already displayed
-                    $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
-                    $sql = "SELECT
-            p.product_id AS id,
-            p.product_title AS name,
-            c.cat_title AS category,
-            m.manufacturer_title AS manufacturer,  -- Added manufacturer title
-            p.product_psp_price AS price,
-            p.product_price AS oldPrice,
-            p.product_img1 AS image
-        FROM products p
-        JOIN categories c ON p.cat_id = c.cat_id
-        JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id  -- Assuming you have a foreign key 'manu_id' in 'products' table
-        WHERE p.product_id NOT IN ($placeholders)
-        ORDER BY p.product_id ASC
-        LIMIT 6";
+                    // Check if displayed_products is not empty
+if (!empty($displayed_products)) {
+    $placeholders = implode(',', array_fill(0, count($displayed_products), '?'));
+    $sql = "SELECT
+                p.product_id AS id,
+                p.product_title AS name,
+                c.cat_title AS category,
+                m.manufacturer_title AS manufacturer,
+                p.product_psp_price AS price,
+                p.product_price AS oldPrice,
+                p.product_img1 AS image
+            FROM products p
+            JOIN categories c ON p.cat_id = c.cat_id
+            JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id
+            WHERE p.product_id NOT IN ($placeholders)
+            ORDER BY p.product_id ASC
+            LIMIT 6";
 
-                    $stmt = $con->prepare($sql);
-                    if (!empty($displayed_products)) {
-                        $types = str_repeat('i', count($displayed_products));
-                        $stmt->bind_param($types, ...$displayed_products);
-                    }
-                    $stmt->execute();
-                    $result = $stmt->get_result();
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            $old_price = $row['oldPrice'];
-                            $new_price = $row['price'];
-                    ?>
-                            <!-- HTML for more product display -->
-                            <div class="col-md-6 col-lg-4">
-                                <div class="product-item">
-                                    <div class="product-item-inner">
-                                        <figure class="img-box">
-                                            <?php
-                                            if (!empty($row['image'])) {
-                                                $image_path = 'admin/product_images/' . $row['image'];
-                                                echo "<img src='$image_path' alt='" . htmlspecialchars($row['name']) . "'>";
-                                            } else {
-                                                echo "<p>No image available</p>";
-                                            }
-                                            ?>
-                                        </figure>
-                                        <div class="details">
-                                            <span class="cat"><i class="uil uil-tag-alt clr"></i>
-                                                <?php echo htmlspecialchars($row['category']); ?>/<?php echo htmlspecialchars($row['manufacturer']); ?></span>
-                                            <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
-                                                <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
-                                            </a>
-                                            <div class="star">
-                                                <i class="fa-solid fa-star clr"></i>
-                                                <i class="fa-solid fa-star clr"></i>
-                                                <i class="fa-solid fa-star clr"></i>
-                                                <i class="fa-solid fa-star clr"></i>
-                                                <i class="fa-solid fa-star-half-stroke clr"></i>
-                                                <h4>
-                                                    <span class="old-prc"><?php echo number_format($old_price, 2); ?> &#8360;</span>
-                                                    <br>
-                                                    <span class="new-prc"><?php echo number_format($new_price, 2); ?> &#8360;</span>
-                                                </h4>
-                                            </div>
-                                            <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">
-                                                <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
-                                            </a>
-                                            <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
-                                                <i class="uil uil-eye" title="View Details"></i>
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    <?php
+    // Prepare the statement
+    $stmt = $con->prepare($sql);
+
+    // Bind parameters if there are displayed products
+    $types = str_repeat('i', count($displayed_products)); // Assuming product_id is an integer
+    $stmt->bind_param($types, ...$displayed_products);
+} else {
+    // If no products are displayed, select all products
+    $sql = "SELECT
+                p.product_id AS id,
+                p.product_title AS name,
+                c.cat_title AS category,
+                m.manufacturer_title AS manufacturer,
+                p.product_psp_price AS price,
+                p.product_price AS oldPrice,
+                p.product_img1 AS image
+            FROM products p
+            JOIN categories c ON p.cat_id = c.cat_id
+            JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id
+            ORDER BY p.product_id ASC
+            LIMIT 6";
+
+    // Prepare the statement for selecting all products
+    $stmt = $con->prepare($sql);
+}
+
+// Execute the statement
+$stmt->execute();
+
+// Get the result
+$result = $stmt->get_result();
+
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $old_price = $row['price'];
+        $new_price = $row['oldPrice'];
+        $discount_percentage = (($new_price - $old_price) / $new_price) * 100;
+?>
+        <!-- HTML for more product display -->
+        <div class="col-md-6 col-lg-4">
+            <div class="product-item <?php echo $discount_percentage > 0 ? 'discount' : ''; ?>" onclick="location.href='singleproduct.php?id=<?php echo $row['id']; ?>';" style="cursor: pointer;">
+                <div class="product-item-inner">
+                    <span class="discount"><?php echo number_format($discount_percentage, 2); ?>%</span>
+                    <figure class="img-box">
+                        <?php
+                        if (!empty($row['image'])) {
+                            $image_path = 'admin/product_images/' . $row['image'];
+                            echo "<img src='$image_path' alt='" . htmlspecialchars($row['name']) . "'>";
+                        } else {
+                            echo "<p>No image available</p>";
                         }
-                    } else {
-                        echo "<p>No more products found.</p>";
-                    }
+                        ?>
+                    </figure>
+                    <div class="details">
+                        <span class="cat"><i class="uil uil-tag-alt clr"></i>
+                            <?php echo htmlspecialchars($row['category']); ?>/<?php echo htmlspecialchars($row['manufacturer']); ?></span>
+                        <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="link">
+                            <h5 class="title"><?php echo htmlspecialchars($row['name']); ?></h5>
+                        </a>
+                        <div class="star">
+                            <i class="fa-solid fa-star clr"></i>
+                            <i class="fa-solid fa-star clr"></i>
+                            <i class="fa-solid fa-star clr"></i>
+                            <i class="fa-solid fa-star clr"></i>
+                            <i class="fa-solid fa-star-half-stroke clr"></i>
+                            <h4>
+                                <span class="old-prc"><?php echo number_format($old_price, 2); ?> &#8360;</span>
+                                <br>
+                                <span class="new-prc"><?php echo number_format($new_price, 2); ?> &#8360;</span>
+                            </h4>
+                        </div>
+                        <a href="add_to_cart.php?product_id=<?php echo $row['id']; ?>&quantity=1" class="btn-link p-0 cart-link">
+                            <i class="uil uil-shopping-bag cart-icon cart" title="Add to Cart"></i>
+                        </a>
+                        <a href="singleproduct.php?id=<?php echo $row['id']; ?>" class="view-details">
+                            <i class="uil uil-eye" title="View Details"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+<?php
+    }
+} else {
+    echo "<p>No more products found.</p>";
+}
                     // Close the database con
                     ?>
                 </div>
