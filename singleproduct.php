@@ -40,10 +40,13 @@
             width: 90%;
         }
         .big-product{
-            width: 75%;
+            width: 90%!important;
         }
          .het{
-            --bs-gutter-x: -210px!important;
+            --bs-gutter-x: -250px!important;
+         }
+         .gap-1{
+            gap:0.0rem!important
          }
 
     </style>
@@ -81,7 +84,7 @@ WHERE product_id = '$productID'
             </section>
             <section class="product-details">
                 <div class="container-fluid">
-                    <div class="row gap-3 het">
+                    <div class="row gap-1 het">
                         <div class="col-md-12 col-lg-6 mx-auto single-product-img">
                             <div class="big-product">
                                 <img id="mainImage" src="admin/product_images/<?php echo $row['product_img1']; ?>" class="pro-img img-fluid" alt="<?php echo $row['product_title']; ?>" />
@@ -147,7 +150,7 @@ WHERE product_id = '$productID'
                         <?php
                         // Fetch latest products
                         if ($con->connect_error) {
-                            die("Connection failed: " . $connection->connect_error);
+                            die("Connection failed:" . $connection->connect_error);
                         }
                         // Updated SQL query to use product_psp_price
                         $sql = "SELECT

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 20, 2024 at 03:52 PM
+-- Generation Time: Oct 23, 2024 at 08:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Database: `ecom_store`
 --
+CREATE DATABASE IF NOT EXISTS `ecom_store` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `ecom_store`;
 
 -- --------------------------------------------------------
 
@@ -44,8 +46,7 @@ CREATE TABLE `admins` (
 --
 
 INSERT INTO `admins` (`admin_id`, `admin_name`, `admin_email`, `admin_pass`, `admin_image`, `admin_contact`, `admin_country`, `admin_job`, `admin_about`) VALUES
-(1, 'het', 'hetshah6315@gmail.com', 'qwe', 'IMG_20230513_122559_265.jpg', '9427961426', 'India', 'admin', ' admin of the ora watch  '),
-(2, 'akshat', 'akshat@gmail.com', 'ak', 'user1.png', '9825079765', 'India', 'admin', '   ');
+(1, 'akshat', '', 'ak', '', '', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -69,8 +70,8 @@ CREATE TABLE `cart` (
 --
 
 INSERT INTO `cart` (`cart_id`, `customer_id`, `product_id`, `qty`, `p_price`, `size`, `status`, `added_on`) VALUES
-(27, 3, 1, 1, 25000.00, NULL, 'active', '2024-10-19 07:59:23'),
-(41, 1, 2, 1, 2500.00, NULL, 'active', '2024-10-20 12:33:38');
+(3, 1, 5, 1, 85000.00, NULL, 'active', '2024-10-22 19:09:22'),
+(4, 1, 1, 1, 300000.00, NULL, 'active', '2024-10-23 05:46:12');
 
 -- --------------------------------------------------------
 
@@ -90,9 +91,10 @@ CREATE TABLE `categories` (
 --
 
 INSERT INTO `categories` (`cat_id`, `cat_title`, `cat_top`, `cat_image`) VALUES
-(1, 'Casual', '', ''),
-(2, 'Formal', '', ''),
-(3, 'Smart watch', '', '');
+(1, 'Formal', '', ''),
+(2, 'Casual', '', ''),
+(3, 'Smart Watches', 'yes', ''),
+(4, 'Sports', '', '');
 
 -- --------------------------------------------------------
 
@@ -107,14 +109,6 @@ CREATE TABLE `contact_us` (
   `contact_heading` text NOT NULL,
   `contact_desc` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `contact_us`
---
-
-INSERT INTO `contact_us` (`contact_id`, `name`, `contact_email`, `contact_heading`, `contact_desc`) VALUES
-(1, 'Het Shah', 'hetshah6315@gmail.com', 'test', 'testing 123'),
-(2, 'akshat', 'akshat@gmail.com', 'php', 'about watches');
 
 -- --------------------------------------------------------
 
@@ -135,18 +129,16 @@ CREATE TABLE `customers` (
   `phone_number` varchar(20) NOT NULL,
   `customer_address` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `profile_pic` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Dumping data for table `customers`
 --
 
-INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_pass`, `customer_email`, `customer_country`, `customer_city`, `state`, `zip_code`, `customer_contact`, `phone_number`, `customer_address`, `created_at`, `updated_at`) VALUES
-(1, 'het', 'qwe', 'hetshah6315@gmail.com', 'india', 'Ahmedabad', 'Gujarat', '380007', '09427961426', '09427961426', 'A 403 prakruti appt suvidha sanjivani road', '2024-10-06 17:52:29', '2024-10-20 12:49:52'),
-(2, 'het shah', 'wer', 'hetshah3156@gmail.com', 'brazil', 'Ahmedabad', 'Gujarat', '380007', '1234567893', '09427961426', 'Ahmedabad Gujarat', '2024-10-07 04:58:58', '2024-10-20 12:58:31'),
-(3, 'akshat', 'akshat', 'akshat@gmail.com', 'India', '', '', '', '9825079765', '', '', '2024-10-19 07:56:44', '2024-10-19 07:56:44'),
-(4, 'Devang', '123', 'devang@gmail.com', 'India', 'Ahmedabad', 'Gujarat', '380007', '09427961426', '9426628007', 'Paldi', '2024-10-20 13:36:11', '2024-10-20 13:37:42');
+INSERT INTO `customers` (`customer_id`, `customer_name`, `customer_pass`, `customer_email`, `customer_country`, `customer_city`, `state`, `zip_code`, `customer_contact`, `phone_number`, `customer_address`, `created_at`, `updated_at`, `profile_pic`) VALUES
+(1, 'Het', '123', 'hetshah6315@gmail.com', 'India', 'Ahmedabad', 'Gujarat', '380007', '09427961426', '09427961426', 'A 403 prakruti appt suvidha sanjivani road', '2024-10-22 08:04:18', '2024-10-22 18:58:36', 'uploads/6717f1b583c33-IMG_20230513_122559_265.jpg');
 
 -- --------------------------------------------------------
 
@@ -169,24 +161,7 @@ CREATE TABLE `customer_orders` (
 --
 
 INSERT INTO `customer_orders` (`order_id`, `invoice_id`, `customer_id`, `due_amount`, `order_date`, `order_status`, `order_total`) VALUES
-(1, 1, 1, 0.00, '2024-10-07 04:43:48', 'Pending', 5000.00),
-(2, 2, 2, 0.00, '2024-10-07 05:00:31', 'Pending', 111500.00),
-(3, 3, 2, 0.00, '2024-10-07 15:11:06', 'Pending', 2500.00),
-(4, 4, 2, 0.00, '2024-10-07 18:07:47', 'Pending', 71000.00),
-(5, 5, 2, 0.00, '2024-10-07 18:14:18', 'Pending', 2500.00),
-(6, 6, 2, 0.00, '2024-10-07 18:19:51', 'Pending', 2500.00),
-(7, 7, 2, 0.00, '2024-10-07 18:42:38', 'Pending', 2500.00),
-(8, 8, 2, 0.00, '2024-10-12 04:59:03', 'Pending', 38000.00),
-(9, 9, 2, 0.00, '2024-10-12 05:04:53', 'Pending', 2500.00),
-(10, 10, 2, 0.00, '2024-10-12 05:10:38', 'Pending', 2500.00),
-(11, 11, 2, 0.00, '2024-10-12 05:17:12', 'Pending', 2500.00),
-(12, 12, 2, 0.00, '2024-10-12 05:18:41', 'Pending', 2500.00),
-(13, 13, 2, 0.00, '2024-10-12 05:24:59', 'Pending', 33000.00),
-(14, 14, 1, 0.00, '2024-10-12 05:26:51', 'Pending', 33000.00),
-(15, 15, 1, 0.00, '2024-10-12 05:40:44', 'Pending', 2500.00),
-(17, 22, 1, 0.00, '2024-10-12 06:03:54', 'Pending', 2500.00),
-(18, 23, 1, 0.00, '2024-10-20 12:18:00', 'Complete', 25000.00),
-(19, 24, 4, 0.00, '2024-10-20 13:37:42', 'Complete', 150000.00);
+(1, 1, 1, 0.00, '2024-10-22 17:30:22', 'Complete', 78500.00);
 
 -- --------------------------------------------------------
 
@@ -198,16 +173,6 @@ CREATE TABLE `enquiry_types` (
   `enquiry_id` int(10) NOT NULL,
   `enquiry_title` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `enquiry_types`
---
-
-INSERT INTO `enquiry_types` (`enquiry_id`, `enquiry_title`) VALUES
-(2, 'hetshah6315@gmail.com'),
-(3, 'hetshah6315@gmail.com'),
-(4, 'hetshah6315@gmail.com'),
-(5, 'akshat@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -228,24 +193,7 @@ CREATE TABLE `invoices` (
 --
 
 INSERT INTO `invoices` (`invoice_id`, `invoice_number`, `order_id`, `customer_id`, `order_date`) VALUES
-(1, '957568', 1, 1, '2024-10-06 23:13:48'),
-(2, '789235', 2, 2, '2024-10-06 23:30:31'),
-(3, '065404', 3, 2, '2024-10-07 09:41:06'),
-(4, '219420', 4, 2, '2024-10-07 12:37:47'),
-(5, '498054', 5, 2, '2024-10-07 12:44:18'),
-(6, '778263', 6, 2, '2024-10-07 12:49:51'),
-(7, '591731', 7, 2, '2024-10-07 13:12:38'),
-(8, '311994', 8, 2, '2024-10-11 23:29:03'),
-(9, '961958', 9, 2, '2024-10-11 23:34:53'),
-(10, '289774', 10, 2, '2024-10-11 23:40:38'),
-(11, '378237', 11, 2, '2024-10-11 23:47:12'),
-(12, '945253', 12, 2, '2024-10-11 23:48:41'),
-(13, '069464', 13, 2, '2024-10-11 23:54:59'),
-(14, '268308', 14, 1, '2024-10-11 23:56:51'),
-(15, '113957', 15, 1, '2024-10-12 05:40:44'),
-(22, '962208', 17, 1, '2024-10-12 06:03:54'),
-(23, '964339', 18, 1, '2024-10-20 12:18:00'),
-(24, '405717', 19, 4, '2024-10-20 13:37:42');
+(1, '053364', 1, 1, '2024-10-22 17:30:22');
 
 -- --------------------------------------------------------
 
@@ -265,7 +213,18 @@ CREATE TABLE `manufacturers` (
 --
 
 INSERT INTO `manufacturers` (`manufacturer_id`, `manufacturer_title`, `manufacturer_top`, `manufacturer_image`) VALUES
-(1, 'ORA', '', '');
+(1, 'Rolex', '', ''),
+(2, 'ORA', '', ''),
+(3, 'Apple', '', ''),
+(5, 'Titan', '', ''),
+(6, 'Boat', '', ''),
+(7, 'Noice', '', ''),
+(10, 'Tissot', '', ''),
+(11, 'Emporio armani', '', ''),
+(12, 'G-Shock', '', ''),
+(13, 'Casio', '', ''),
+(14, 'Fastrack', '', ''),
+(15, 'Sonata', '', '');
 
 -- --------------------------------------------------------
 
@@ -286,27 +245,8 @@ CREATE TABLE `order_items` (
 --
 
 INSERT INTO `order_items` (`order_item_id`, `order_id`, `product_id`, `qty`, `price`) VALUES
-(1, 1, 2, 2, 2500.00),
-(2, 2, 1, 3, 33000.00),
-(3, 2, 2, 5, 2500.00),
-(4, 3, 2, 1, 2500.00),
-(5, 4, 1, 2, 33000.00),
-(6, 4, 2, 2, 2500.00),
-(7, 5, 2, 1, 2500.00),
-(8, 6, 2, 1, 2500.00),
-(9, 7, 2, 1, 2500.00),
-(10, 8, 2, 2, 2500.00),
-(11, 8, 1, 1, 33000.00),
-(12, 9, 2, 1, 2500.00),
-(13, 10, 2, 1, 2500.00),
-(14, 11, 2, 1, 2500.00),
-(15, 12, 2, 1, 2500.00),
-(16, 13, 1, 1, 33000.00),
-(17, 14, 1, 1, 33000.00),
-(18, 15, 2, 1, 2500.00),
-(19, 17, 2, 1, 2500.00),
-(20, 18, 1, 1, 25000.00),
-(21, 19, 1, 6, 25000.00);
+(1, 1, 10, 1, 33500.00),
+(2, 1, 2, 1, 45000.00);
 
 -- --------------------------------------------------------
 
@@ -329,24 +269,7 @@ CREATE TABLE `payments` (
 --
 
 INSERT INTO `payments` (`payment_id`, `invoice_id`, `amount`, `payment_mode`, `ref_no`, `code`, `payment_date`) VALUES
-(1, 1, 5000, 'cash_on_delivery', 0, 0, '2024-10-07 10:13:48'),
-(2, 2, 111500, 'cash_on_delivery', 0, 0, '2024-10-07 10:30:31'),
-(3, 3, 2500, 'cash_on_delivery', 0, 0, '2024-10-07 20:41:06'),
-(4, 4, 71000, 'cash_on_delivery', 0, 0, '2024-10-07 23:37:47'),
-(5, 5, 2500, 'credit_card', 0, 0, '2024-10-07 23:44:18'),
-(6, 6, 2500, 'Cash on Delivery', 0, 0, '2024-10-07 23:49:51'),
-(7, 7, 2500, 'COD', 0, 0, '2024-10-08 00:12:38'),
-(8, 8, 38000, 'COD', 0, 0, '2024-10-12 10:29:03'),
-(9, 9, 2500, 'COD', 0, 0, '2024-10-12 10:34:53'),
-(10, 10, 2500, 'COD', 0, 0, '2024-10-12 10:40:38'),
-(11, 11, 2500, 'Credit Card', 0, 0, '2024-10-12 10:47:12'),
-(12, 12, 2500, 'COD', 0, 0, '2024-10-12 10:48:41'),
-(13, 13, 33000, 'COD', 0, 0, '2024-10-12 10:54:59'),
-(14, 14, 33000, 'COD', 0, 0, '2024-10-12 10:56:51'),
-(15, 15, 2500, 'COD', 0, 0, '2024-10-12 11:10:44'),
-(16, 22, 2500, 'Credit Card', 0, 0, '2024-10-12 11:33:54'),
-(17, 23, 25000, 'UPI', 0, 0, '2024-10-20 17:48:00'),
-(18, 24, 150000, 'Credit Card', 0, 0, '2024-10-20 19:07:42');
+(1, 1, 78500, 'Net Banking', 0, 0, '2024-10-22 23:00:22');
 
 -- --------------------------------------------------------
 
@@ -372,22 +295,7 @@ CREATE TABLE `pending_orders` (
 --
 
 INSERT INTO `pending_orders` (`order_id`, `customer_id`, `invoice_id`, `product_id`, `qty`, `p_price`, `order_status`, `order_total`, `order_date`, `payment_method`) VALUES
-(3, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'cash_on_delivery'),
-(4, 2, 0, '', 0, '', '', 71000.00, 99999999.99, 'cash_on_delivery'),
-(5, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'credit_card'),
-(6, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'Cash on Delivery'),
-(7, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
-(8, 2, 0, '', 0, '', '', 38000.00, 99999999.99, 'COD'),
-(9, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
-(10, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
-(11, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'Credit Card'),
-(12, 2, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
-(13, 2, 0, '', 0, '', '', 33000.00, 99999999.99, 'COD'),
-(14, 1, 0, '', 0, '', '', 33000.00, 99999999.99, 'COD'),
-(15, 1, 0, '', 0, '', '', 2500.00, 99999999.99, 'COD'),
-(17, 1, 0, '', 0, '', '', 2500.00, 99999999.99, 'Credit Card'),
-(18, 1, 0, '', 0, '', '', 25000.00, 99999999.99, 'UPI'),
-(19, 4, 0, '', 0, '', '', 150000.00, 99999999.99, 'Credit Card');
+(1, 1, 0, '', 0, '', '', 78500.00, 99999999.99, 'Net Banking');
 
 -- --------------------------------------------------------
 
@@ -419,8 +327,15 @@ CREATE TABLE `products` (
 --
 
 INSERT INTO `products` (`product_id`, `p_cat_id`, `cat_id`, `manufacturer_id`, `date`, `product_title`, `product_url`, `product_img1`, `product_img2`, `product_img3`, `product_img4`, `product_img5`, `product_price`, `product_desc`, `product_psp_price`, `status`) VALUES
-(1, 0, 2, 1, '2024-10-12 08:52:08', 'AL-prado', 'AL-prado', '001_8a65959a.jpg', '007_003ebd8c.jpg', '008_1c061100.jpg', '002_ce68dcc5.jpg', '011_d1838ad7.jpg', 35000.00, '', 25000.00, 'product'),
-(2, 0, 1, 1, '2024-10-07 04:39:44', 'test1', 'test1', '010_eb22bd2f.jpg', '012_4fadea8c.jpg', '009_c04c6b85.jpg', '004_323ae7a2.jpg', '006_26bab30f.jpg', 5000.00, '', 2500.00, 'product');
+(1, 0, 1, 1, '2024-10-22 08:30:09', 'Rolex Date Black Leather Watch', 'Rolex Date Black Leather Watch', '2_9.jpg', 'WhatsApp-Image-2023-08-25-at-5.28.04-PM-6.jpeg', 'WhatsApp-Image-2023-08-25-at-5.28.04-PM-6.jpeg', 'WhatsApp-Image-2023-08-25-at-5.28.04-PM-6.jpeg', 'WhatsApp-Image-2023-08-25-at-5.28.04-PM-6.jpeg', 400000.00, 'The concept of innovation has become crucial when it comes to timepieces, and luxury calendar watches have established a distinct niche for themselves when it comes to innovative horology. Calendar watches are complicated yet artistically advanced pieces that combine all the functions of a calendar in a single wrist piece.', 300000.00, 'product'),
+(2, 0, 1, 11, '2024-10-22 08:05:06', 'Armani black leather watch', 'Armani black leather watch', '612GjkDdOeL._SX679_.jpg', '41LxlwA+0iL._SX679_.jpg', '41LxlwA+0iL._SX679_.jpg', '41LxlwA+0iL._SX679_.jpg', '41LxlwA+0iL._SX679_.jpg', 50000.00, '', 45000.00, 'product'),
+(3, 0, 1, 11, '2024-10-22 08:06:39', 'Armani ar1151', 'Armani ar1151', 'emporio-armani-ar11521-mens-watch.webp', 'emporio-armani-ar11521-mens-watch (1).webp', 'emporio-armani-ar11521-mens-watch (1).webp', 'emporio-armani-ar11521-mens-watch (1).webp', 'emporio-armani-ar11521-mens-watch (1).webp', 33000.00, '', 30000.00, 'product'),
+(5, 0, 1, 11, '2024-10-22 08:24:29', 'Armani Chronograph Black Leather Watch', 'Armani Chronograph Black Leather Watch', 'w480 (2).webp', 'w480.webp', 'w480.webp', 'w480.webp', 'w480.webp', 90000.00, '', 85000.00, 'product'),
+(6, 0, 1, 1, '2024-10-22 08:26:45', 'rolex-sky-dweller', 'rolex-sky-dweller', 'rolex-sky-dweller-336933-blkind-multiple-1.webp', 'rolex-sky-dweller-336933-blkind-multiple-3.webp', 'rolex-sky-dweller-336933-blkind-multiple-3.webp', 'rolex-sky-dweller-336933-blkind-multiple-3.webp', 'rolex-sky-dweller-336933-blkind-multiple-3.webp', 1500000.00, '', 1350000.00, 'product'),
+(7, 0, 1, 1, '2024-10-22 08:27:58', 'rolex-gmt-master-ii', 'rolex-gmt-master-ii', 'rolex-gmt-master-ii-116710ln-pow-large_02.webp', 'rolex-gmt-master-ii-116710ln-pow_multiple_03.webp', 'rolex-gmt-master-ii-116710ln-pow_multiple_03.webp', 'rolex-gmt-master-ii-116710ln-pow_multiple_03.webp', 'rolex-gmt-master-ii-116710ln-pow_multiple_03.webp', 2500000.00, '', 2350000.00, 'product'),
+(8, 0, 1, 10, '2024-10-22 08:41:06', 'Tissot Chrono XL Classic', 'Tissot Chrono XL Classic', 'tissot-t-sport-t116-617-22-091-00-large.webp', 'tissot-t-sport-t116-617-22-091-00-multiple-3.webp', 'tissot-t-sport-t116-617-22-091-00-multiple-3.webp', 'tissot-t-sport-t116-617-22-091-00-multiple-3.webp', 'tissot-t-sport-t116-617-22-091-00-multiple-3.webp', 45000.00, '', 44000.00, 'product'),
+(9, 0, 1, 10, '2024-10-22 08:42:03', 'Tissot T-Race Chronograph', 'Tissot T-Race Chronograph', 'tissot-t-sport-t141-417-37-051-00-large.webp', 'tissot-t-sport-t141-417-37-051-00-multiple-3.webp', 'tissot-t-sport-t141-417-37-051-00-multiple-3.webp', 'tissot-t-sport-t141-417-37-051-00-multiple-3.webp', 'tissot-t-sport-t141-417-37-051-00-multiple-3.webp', 59000.00, '', 58000.00, 'product'),
+(10, 0, 1, 10, '2024-10-22 08:43:00', 'Tissot Xl Men Leather Watch', 'Tissot Xl Men Leather Watch', 'T1166173605203.webp', 'T1166173605203_3.webp', 'T1166173605203_3.webp', 'T1166173605203_3.webp', 'T1166173605203_3.webp', 35000.00, '', 33500.00, 'product');
 
 -- --------------------------------------------------------
 
@@ -434,14 +349,6 @@ CREATE TABLE `product_categories` (
   `p_cat_top` text NOT NULL,
   `p_cat_image` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Dumping data for table `product_categories`
---
-
-INSERT INTO `product_categories` (`p_cat_id`, `p_cat_title`, `p_cat_top`, `p_cat_image`) VALUES
-(1, 'Casual', '', ''),
-(2, 'Formal', '', '');
 
 --
 -- Indexes for dumped tables
@@ -550,13 +457,13 @@ ALTER TABLE `product_categories`
 -- AUTO_INCREMENT for table `admins`
 --
 ALTER TABLE `admins`
-  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `admin_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `cart_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `categories`
@@ -568,67 +475,67 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT for table `contact_us`
 --
 ALTER TABLE `contact_us`
-  MODIFY `contact_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `contact_id` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `customer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `customer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `customer_orders`
 --
 ALTER TABLE `customer_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `enquiry_types`
 --
 ALTER TABLE `enquiry_types`
-  MODIFY `enquiry_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `enquiry_id` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `invoices`
 --
 ALTER TABLE `invoices`
-  MODIFY `invoice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `invoice_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `manufacturers`
 --
 ALTER TABLE `manufacturers`
-  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `manufacturer_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `order_items`
 --
 ALTER TABLE `order_items`
-  MODIFY `order_item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `order_item_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `payments`
 --
 ALTER TABLE `payments`
-  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `payment_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `pending_orders`
 --
 ALTER TABLE `pending_orders`
-  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `order_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
-  MODIFY `product_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `product_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `product_categories`
 --
 ALTER TABLE `product_categories`
-  MODIFY `p_cat_id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `p_cat_id` int(10) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -673,6 +580,455 @@ ALTER TABLE `payments`
 --
 ALTER TABLE `products`
   ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`manufacturer_id`) REFERENCES `manufacturers` (`manufacturer_id`);
+--
+-- Database: `phpmyadmin`
+--
+CREATE DATABASE IF NOT EXISTS `phpmyadmin` DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+USE `phpmyadmin`;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__bookmark`
+--
+
+CREATE TABLE `pma__bookmark` (
+  `id` int(10) UNSIGNED NOT NULL,
+  `dbase` varchar(255) NOT NULL DEFAULT '',
+  `user` varchar(255) NOT NULL DEFAULT '',
+  `label` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `query` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Bookmarks';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__central_columns`
+--
+
+CREATE TABLE `pma__central_columns` (
+  `db_name` varchar(64) NOT NULL,
+  `col_name` varchar(64) NOT NULL,
+  `col_type` varchar(64) NOT NULL,
+  `col_length` text DEFAULT NULL,
+  `col_collation` varchar(64) NOT NULL,
+  `col_isNull` tinyint(1) NOT NULL,
+  `col_extra` varchar(255) DEFAULT '',
+  `col_default` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Central list of columns';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__column_info`
+--
+
+CREATE TABLE `pma__column_info` (
+  `id` int(5) UNSIGNED NOT NULL,
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `table_name` varchar(64) NOT NULL DEFAULT '',
+  `column_name` varchar(64) NOT NULL DEFAULT '',
+  `comment` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `mimetype` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT '',
+  `transformation` varchar(255) NOT NULL DEFAULT '',
+  `transformation_options` varchar(255) NOT NULL DEFAULT '',
+  `input_transformation` varchar(255) NOT NULL DEFAULT '',
+  `input_transformation_options` varchar(255) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Column information for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__designer_settings`
+--
+
+CREATE TABLE `pma__designer_settings` (
+  `username` varchar(64) NOT NULL,
+  `settings_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Settings related to Designer';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__export_templates`
+--
+
+CREATE TABLE `pma__export_templates` (
+  `id` int(5) UNSIGNED NOT NULL,
+  `username` varchar(64) NOT NULL,
+  `export_type` varchar(10) NOT NULL,
+  `template_name` varchar(64) NOT NULL,
+  `template_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Saved export templates';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__favorite`
+--
+
+CREATE TABLE `pma__favorite` (
+  `username` varchar(64) NOT NULL,
+  `tables` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Favorite tables';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__history`
+--
+
+CREATE TABLE `pma__history` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `db` varchar(64) NOT NULL DEFAULT '',
+  `table` varchar(64) NOT NULL DEFAULT '',
+  `timevalue` timestamp NOT NULL DEFAULT current_timestamp(),
+  `sqlquery` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='SQL history for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__navigationhiding`
+--
+
+CREATE TABLE `pma__navigationhiding` (
+  `username` varchar(64) NOT NULL,
+  `item_name` varchar(64) NOT NULL,
+  `item_type` varchar(64) NOT NULL,
+  `db_name` varchar(64) NOT NULL,
+  `table_name` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Hidden items of navigation tree';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__pdf_pages`
+--
+
+CREATE TABLE `pma__pdf_pages` (
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `page_nr` int(10) UNSIGNED NOT NULL,
+  `page_descr` varchar(50) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='PDF relation pages for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__recent`
+--
+
+CREATE TABLE `pma__recent` (
+  `username` varchar(64) NOT NULL,
+  `tables` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Recently accessed tables';
+
+--
+-- Dumping data for table `pma__recent`
+--
+
+INSERT INTO `pma__recent` (`username`, `tables`) VALUES
+('root', '[{\"db\":\"ecom_store\",\"table\":\"customers\"},{\"db\":\"ecom_store\",\"table\":\"invoices\"},{\"db\":\"ecom_store\",\"table\":\"customer_orders\"},{\"db\":\"ecom_store\",\"table\":\"manufacturers\"},{\"db\":\"ecom_store\",\"table\":\"products\"},{\"db\":\"ecom_store\",\"table\":\"admins\"},{\"db\":\"fp\",\"table\":\"i_new_user_details\"},{\"db\":\"fp\",\"table\":\"admin_ver\"},{\"db\":\"project-clothingstore\",\"table\":\"owners\"},{\"db\":\"project-clothingstore\",\"table\":\"user\"}]');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__relation`
+--
+
+CREATE TABLE `pma__relation` (
+  `master_db` varchar(64) NOT NULL DEFAULT '',
+  `master_table` varchar(64) NOT NULL DEFAULT '',
+  `master_field` varchar(64) NOT NULL DEFAULT '',
+  `foreign_db` varchar(64) NOT NULL DEFAULT '',
+  `foreign_table` varchar(64) NOT NULL DEFAULT '',
+  `foreign_field` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Relation table';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__savedsearches`
+--
+
+CREATE TABLE `pma__savedsearches` (
+  `id` int(5) UNSIGNED NOT NULL,
+  `username` varchar(64) NOT NULL DEFAULT '',
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `search_name` varchar(64) NOT NULL DEFAULT '',
+  `search_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Saved searches';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__table_coords`
+--
+
+CREATE TABLE `pma__table_coords` (
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `table_name` varchar(64) NOT NULL DEFAULT '',
+  `pdf_page_number` int(11) NOT NULL DEFAULT 0,
+  `x` float UNSIGNED NOT NULL DEFAULT 0,
+  `y` float UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Table coordinates for phpMyAdmin PDF output';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__table_info`
+--
+
+CREATE TABLE `pma__table_info` (
+  `db_name` varchar(64) NOT NULL DEFAULT '',
+  `table_name` varchar(64) NOT NULL DEFAULT '',
+  `display_field` varchar(64) NOT NULL DEFAULT ''
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Table information for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__table_uiprefs`
+--
+
+CREATE TABLE `pma__table_uiprefs` (
+  `username` varchar(64) NOT NULL,
+  `db_name` varchar(64) NOT NULL,
+  `table_name` varchar(64) NOT NULL,
+  `prefs` text NOT NULL,
+  `last_update` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Tables'' UI preferences';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__tracking`
+--
+
+CREATE TABLE `pma__tracking` (
+  `db_name` varchar(64) NOT NULL,
+  `table_name` varchar(64) NOT NULL,
+  `version` int(10) UNSIGNED NOT NULL,
+  `date_created` datetime NOT NULL,
+  `date_updated` datetime NOT NULL,
+  `schema_snapshot` text NOT NULL,
+  `schema_sql` text DEFAULT NULL,
+  `data_sql` longtext DEFAULT NULL,
+  `tracking` set('UPDATE','REPLACE','INSERT','DELETE','TRUNCATE','CREATE DATABASE','ALTER DATABASE','DROP DATABASE','CREATE TABLE','ALTER TABLE','RENAME TABLE','DROP TABLE','CREATE INDEX','DROP INDEX','CREATE VIEW','ALTER VIEW','DROP VIEW') DEFAULT NULL,
+  `tracking_active` int(1) UNSIGNED NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Database changes tracking for phpMyAdmin';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__userconfig`
+--
+
+CREATE TABLE `pma__userconfig` (
+  `username` varchar(64) NOT NULL,
+  `timevalue` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `config_data` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='User preferences storage for phpMyAdmin';
+
+--
+-- Dumping data for table `pma__userconfig`
+--
+
+INSERT INTO `pma__userconfig` (`username`, `timevalue`, `config_data`) VALUES
+('root', '2024-10-23 06:13:42', '{\"Console\\/Mode\":\"collapse\"}');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__usergroups`
+--
+
+CREATE TABLE `pma__usergroups` (
+  `usergroup` varchar(64) NOT NULL,
+  `tab` varchar(64) NOT NULL,
+  `allowed` enum('Y','N') NOT NULL DEFAULT 'N'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='User groups with configured menu items';
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pma__users`
+--
+
+CREATE TABLE `pma__users` (
+  `username` varchar(64) NOT NULL,
+  `usergroup` varchar(64) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin COMMENT='Users and their assignments to user groups';
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `pma__bookmark`
+--
+ALTER TABLE `pma__bookmark`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `pma__central_columns`
+--
+ALTER TABLE `pma__central_columns`
+  ADD PRIMARY KEY (`db_name`,`col_name`);
+
+--
+-- Indexes for table `pma__column_info`
+--
+ALTER TABLE `pma__column_info`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `db_name` (`db_name`,`table_name`,`column_name`);
+
+--
+-- Indexes for table `pma__designer_settings`
+--
+ALTER TABLE `pma__designer_settings`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__export_templates`
+--
+ALTER TABLE `pma__export_templates`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `u_user_type_template` (`username`,`export_type`,`template_name`);
+
+--
+-- Indexes for table `pma__favorite`
+--
+ALTER TABLE `pma__favorite`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__history`
+--
+ALTER TABLE `pma__history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `username` (`username`,`db`,`table`,`timevalue`);
+
+--
+-- Indexes for table `pma__navigationhiding`
+--
+ALTER TABLE `pma__navigationhiding`
+  ADD PRIMARY KEY (`username`,`item_name`,`item_type`,`db_name`,`table_name`);
+
+--
+-- Indexes for table `pma__pdf_pages`
+--
+ALTER TABLE `pma__pdf_pages`
+  ADD PRIMARY KEY (`page_nr`),
+  ADD KEY `db_name` (`db_name`);
+
+--
+-- Indexes for table `pma__recent`
+--
+ALTER TABLE `pma__recent`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__relation`
+--
+ALTER TABLE `pma__relation`
+  ADD PRIMARY KEY (`master_db`,`master_table`,`master_field`),
+  ADD KEY `foreign_field` (`foreign_db`,`foreign_table`);
+
+--
+-- Indexes for table `pma__savedsearches`
+--
+ALTER TABLE `pma__savedsearches`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `u_savedsearches_username_dbname` (`username`,`db_name`,`search_name`);
+
+--
+-- Indexes for table `pma__table_coords`
+--
+ALTER TABLE `pma__table_coords`
+  ADD PRIMARY KEY (`db_name`,`table_name`,`pdf_page_number`);
+
+--
+-- Indexes for table `pma__table_info`
+--
+ALTER TABLE `pma__table_info`
+  ADD PRIMARY KEY (`db_name`,`table_name`);
+
+--
+-- Indexes for table `pma__table_uiprefs`
+--
+ALTER TABLE `pma__table_uiprefs`
+  ADD PRIMARY KEY (`username`,`db_name`,`table_name`);
+
+--
+-- Indexes for table `pma__tracking`
+--
+ALTER TABLE `pma__tracking`
+  ADD PRIMARY KEY (`db_name`,`table_name`,`version`);
+
+--
+-- Indexes for table `pma__userconfig`
+--
+ALTER TABLE `pma__userconfig`
+  ADD PRIMARY KEY (`username`);
+
+--
+-- Indexes for table `pma__usergroups`
+--
+ALTER TABLE `pma__usergroups`
+  ADD PRIMARY KEY (`usergroup`,`tab`,`allowed`);
+
+--
+-- Indexes for table `pma__users`
+--
+ALTER TABLE `pma__users`
+  ADD PRIMARY KEY (`username`,`usergroup`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `pma__bookmark`
+--
+ALTER TABLE `pma__bookmark`
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__column_info`
+--
+ALTER TABLE `pma__column_info`
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__export_templates`
+--
+ALTER TABLE `pma__export_templates`
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__history`
+--
+ALTER TABLE `pma__history`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__pdf_pages`
+--
+ALTER TABLE `pma__pdf_pages`
+  MODIFY `page_nr` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `pma__savedsearches`
+--
+ALTER TABLE `pma__savedsearches`
+  MODIFY `id` int(5) UNSIGNED NOT NULL AUTO_INCREMENT;
+--
+-- Database: `test`
+--
+CREATE DATABASE IF NOT EXISTS `test` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `test`;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
