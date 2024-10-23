@@ -3,7 +3,7 @@ if (!isset($_SESSION['admin_email'])) {
     echo "<script>window.open('../login.php','_self')</script>";
 } else {
     // Pagination logic starts
-    $limit = 9; // Number of products per page
+    $limit = 10; // Number of products per page
     $page = isset($_GET['page']) ? $_GET['page'] : 1; // Get current page from URL, default is 1
     $start = ($page - 1) * $limit; // Calculate the starting product index for the query
 
@@ -33,6 +33,10 @@ if (!isset($_SESSION['admin_email'])) {
                     </h3><!-- panel-title Ends -->
                 </div><!-- panel-heading Ends -->
                 <div class="panel-body"><!-- panel-body Starts -->
+                    <div><!-- Total products display -->
+                        <h4>Total Products: <?php echo $total_records; ?></h4>
+                    </div>
+
                     <div class="table-responsive"><!-- table-responsive Starts -->
                         <table class="table table-bordered table-hover table-striped"><!-- table table-bordered table-hover table-striped Starts -->
                             <thead>
@@ -51,12 +55,13 @@ if (!isset($_SESSION['admin_email'])) {
                             <tbody>
                                 <?php
                                 $i = $start;
-                                // Modified query to include LIMIT for pagination
+                                // Modified query to include ordering and pagination
                                 $get_pro = "SELECT p.product_id, p.product_title, p.product_img1, p.product_price, p.date, c.cat_title, m.manufacturer_title
                                             FROM products p
                                             JOIN categories c ON p.cat_id = c.cat_id
                                             JOIN manufacturers m ON p.manufacturer_id = m.manufacturer_id
                                             WHERE p.status='product'
+                                            ORDER BY p.date DESC
                                             LIMIT $start, $limit";
 
                                 $run_pro = mysqli_query($con, $get_pro);
