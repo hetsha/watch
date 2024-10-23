@@ -96,8 +96,8 @@ WHERE product_id = '$productID'
                                     if (!empty($row[$imageField])) {
                                 ?>
                                         <div class="col-lg-3 img-col">
-                                            <img src="admin/product_images/<?php echo $row[$imageField]; ?>" class="img-sm" alt="<?php echo $row['product_title']; ?>" onmouseover="changeImage('admin/product_images/<?php echo $row[$imageField]; ?>')" onmouseout="resetImage()" />
-                                        </div>
+                                            <img src="admin/product_images/<?php echo $row[$imageField]; ?>" class="img-sm" alt="<?php echo $row['product_title']; ?>" onclick="changeImage('admin/product_images/<?php echo $row[$imageField]; ?>'); resetImage();" />
+                                            </div>
                                 <?php
                                     }
                                 }
@@ -235,44 +235,45 @@ WHERE product_id = '$productID'
     include 'include/footer.php';
         ?>
         <script>
-            var originalImage = document.getElementById("mainImage").src;
+    var originalImage = document.getElementById("mainImage").src;
 
-            function changeImage(imageSrc) {
-                var mainImage = document.getElementById("mainImage");
+    function changeImage(imageSrc) {
+        var mainImage = document.getElementById("mainImage");
 
-                // Add hidden class to fade out
-                mainImage.classList.add('hidden');
+        // Add hidden class to fade out
+        mainImage.classList.add('hidden');
 
-                // Wait for the fade-out transition to complete
-                setTimeout(function() {
-                    mainImage.src = imageSrc; // Change the image source
-                    mainImage.classList.remove('hidden'); // Remove hidden class to fade in
+        // Wait for the fade-out transition to complete
+        setTimeout(function() {
+            mainImage.src = imageSrc; // Change the image source
+            mainImage.classList.remove('hidden'); // Remove hidden class to fade in
 
-                    // Wait for a brief moment to allow for a full fade-in effect
-                    setTimeout(function() {
-                        mainImage.style.opacity = 1; // Reset opacity to 1
-                    }, 50); // Small delay to allow for transition
-                }, 500); // Match this duration to your CSS transition time
-            }
+            // Reset opacity after fade-in
+            setTimeout(function() {
+                mainImage.style.opacity = 1; // Reset opacity to 1
+            }, 50); // Small delay to allow for transition
+        }, 500); // Match this duration to your CSS transition time
+    }
 
-            function resetImage() {
-                var mainImage = document.getElementById("mainImage");
+    function resetImage() {
+        var mainImage = document.getElementById("mainImage");
 
-                // Add hidden class to fade out
-                mainImage.classList.add('hidden');
+        // Add hidden class to fade out
+        mainImage.classList.add('hidden');
 
-                // Wait for the fade-out transition to complete
-                setTimeout(function() {
-                    mainImage.src = originalImage; // Change back to the original image
-                    mainImage.classList.remove('hidden'); // Remove hidden class to fade in
+        // Wait for the fade-out transition to complete
+        setTimeout(function() {
+            mainImage.src = originalImage; // Change back to the original image
+            mainImage.classList.remove('hidden'); // Remove hidden class to fade in
 
-                    // Wait for a brief moment to allow for a full fade-in effect
-                    setTimeout(function() {
-                        mainImage.style.opacity = 1; // Reset opacity to 1
-                    }, 50); // Small delay to allow for transition
-                }, 500); // Match this duration to your CSS transition time
-            }
-        </script>
+            // Set a long duration before changing back to the original image
+            setTimeout(function() {
+                mainImage.style.opacity = 1; // Reset opacity to 1
+            }, 500); // Small delay to allow for transition
+        }, 9000); // Change this duration to how long you want to keep the image displayed (in milliseconds)
+    }
+</script>
+
         <script>
             // Get references to the quantity input and Buy Now hidden input
             var quantityInput = document.getElementById('quantityInput');
