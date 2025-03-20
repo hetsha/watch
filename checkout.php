@@ -9,7 +9,7 @@ if ($con->connect_error) {
 
 // Check if the customer is logged in
 if (!isset($_SESSION['customer_id'])) {
-    header("Location: login.php"); // Redirect to login page if not logged in
+    header("Location: login.php");
     exit();
 }
 
@@ -17,31 +17,17 @@ if (!isset($_SESSION['customer_id'])) {
 $customerID = (int)$_SESSION['customer_id'];
 
 // Fetch customer details from the database
-$customerDetails = [];
 $stmt = $con->prepare("
-    SELECT customer_address, customer_city, state, zip_code, customer_contact, phone_number
+    SELECT customer_name, customer_email, customer_address, customer_city, state, zip_code, customer_contact, phone_number
     FROM customers
     WHERE customer_id = ?
 ");
 $stmt->bind_param("i", $customerID);
 $stmt->execute();
 $result = $stmt->get_result();
+$customerDetails = $result->fetch_assoc();
 
-if ($result->num_rows > 0) {
-    $customerDetails = $result->fetch_assoc();
-} else {
-    // Initialize empty values if no details found
-    $customerDetails = [
-        'customer_address' => '',
-        'customer_city' => '',
-        'state' => '',
-        'zip_code' => '',
-        'customer_contact' => '',
-        'phone_number' => ''
-    ];
-}
-
-// Fetch the cart items for the logged-in customer
+// Fetch cart items
 $stmt = $con->prepare("
     SELECT cart.product_id, cart.qty AS quantity, cart.p_price AS price, products.product_title
     FROM cart
@@ -52,150 +38,173 @@ $stmt->bind_param("i", $customerID);
 $stmt->execute();
 $result = $stmt->get_result();
 
-$total = 0; // Initialize total amount
-$orderItems = []; // Initialize order items
+$total = 0;
+$orderItems = [];
 
 if ($result->num_rows === 0) {
-    header("Location: cart.php"); // Redirect to cart page if the cart is empty
+    echo "Error: Cart is empty.";
     exit();
 }
 
-// Store order items and calculate total
 while ($row = $result->fetch_assoc()) {
-    $orderItems[] = $row; // Collect order items
-    $total += $row['price'] * $row['quantity']; // Calculate total
+    $orderItems[] = $row;
+    $total += $row['price'] * $row['quantity'];
 }
 
-// Close the prepared statement
+$_SESSION['cart_total'] = $total;
 
-// Store total in session to access in checkout
-$_SESSION['cart_total'] = $total; // Store total for later use in checkout
+// Shiprocket API Credentials
+$shiprocket_email = "hetshah6312@gmail.com";
+$shiprocket_password = "Het@9117";
 
-// Function to generate a unique 6-digit invoice number
-function generateInvoiceNumber($con)
+// Indian State Codes Map
+$state_codes = [
+    "Andhra Pradesh" => "AP",
+    "Gujarat" => "GJ",
+    "Maharashtra" => "MH",
+    "Delhi" => "DL",
+    "Rajasthan" => "RJ",
+    "Tamil Nadu" => "TN",
+    "Uttar Pradesh" => "UP",
+    "West Bengal" => "WB"
+];
+
+// Get Shiprocket Token
+function getShiprocketToken($email, $password)
 {
-    while (true) {
-        $invoiceNumber = str_pad(rand(0, 999999), 6, '0', STR_PAD_LEFT); // Generate a random 6-digit number
-        $stmt = $con->prepare("SELECT COUNT(*) FROM invoices WHERE invoice_number = ?");
-        $stmt->bind_param("s", $invoiceNumber);
-        $stmt->execute();
-        $stmt->bind_result($count);
-        $stmt->fetch();
+    $url = "https://apiv2.shiprocket.in/v1/external/auth/login";
+    $data = json_encode(["email" => $email, "password" => $password]);
 
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 
-        // If the invoice number does not exist, return it
-        if ($count == 0) {
-            return $invoiceNumber;
-        }
-    }
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    $json = json_decode($response, true);
+    return $json['token'] ?? null;
 }
 
-// Handle form submission for placing an order
+// Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Sanitize and prepare inputs
-    $address = htmlspecialchars(trim($_POST['customer_address']));
-    $city = htmlspecialchars(trim($_POST['customer_city']));
-    $state = htmlspecialchars(trim($_POST['state']));
-    $zip = htmlspecialchars(trim($_POST['zip_code']));
-    $contact = htmlspecialchars(trim($_POST['customer_contact']));
-    $phone = htmlspecialchars(trim($_POST['phone_number']));
+    // Collect billing info
     $payment_mode = htmlspecialchars(trim($_POST['payment_mode']));
 
-    // Update customer details in customers table
-    $stmt = $con->prepare("
-        UPDATE customers SET
-            customer_address = ?, customer_city = ?, state = ?, zip_code = ?, customer_contact = ?, phone_number = ?
-        WHERE customer_id = ?
-    ");
-    $stmt->bind_param("ssssssi", $address, $city, $state, $zip, $contact, $phone, $customerID);
+    // Validation
+    $required_fields = ['customer_name', 'customer_email', 'customer_address', 'customer_city', 'state', 'zip_code', 'phone_number'];
+    foreach ($required_fields as $field) {
+        if (empty($customerDetails[$field])) {
+            echo "Error: All fields are required.";
+            exit();
+        }
+    }
 
-    // Execute the update query
-    if (!$stmt->execute()) {
-        echo "Error updating customer details: " . $stmt->error;
+    // Convert state name to code
+    $billing_state_code = $state_codes[$customerDetails['state']] ?? $customerDetails['state'];
+
+    // Shiprocket Integration
+    $token = getShiprocketToken($shiprocket_email, $shiprocket_password);
+    if (!$token) {
+        echo "Error: Unable to authenticate with Shiprocket.";
         exit();
     }
 
+    // Generate order ID before using it
+    $order_id = $customerID . time();
 
-    // Use the session total for the order
-    $total = $_SESSION['cart_total'];
+    // Build Shiprocket Order Payload
+    // Build Shiprocket Order Payload
+    $shiprocket_order_data = [
+        "order_id" => $order_id,
+        "order_date" => date("Y-m-d H:i"),
+        "pickup_location" => "Primary",
+        "billing_address" => [
+            "customer_name" => $customerDetails['customer_name'] ?? '',
+            "email" => $customerDetails['customer_email'] ?? '',
+            "address" => $customerDetails['customer_address'] ?? '',
+            "city" => $customerDetails['customer_city'] ?? '',
+            "state" => $billing_state_code,
+            "pincode" => (int)($customerDetails['zip_code'] ?? 0),
+            "country" => "India",
+            "phone" => (string)($customerDetails['phone_number'] ?? 0)
+        ],
+        "shipping_is_billing" => true,
+        "order_items" => array_map(function ($item) {
+            return [
+                "name" => $item['product_title'],
+                "sku" => "PROD" . $item['product_id'],
+                "units" => (int)$item['quantity'],
+                "selling_price" => (float)$item['price']
+            ];
+        }, $orderItems),
+        "payment_method" => $payment_mode,
+        "sub_total" => (float)$total,
+        "length" => 10.0,
+        "breadth" => 10.0,
+        "height" => 10.0,
+        "weight" => 0.5
+    ];
 
-    // Insert order details into customer_orders without invoice_id
-    $stmt = $con->prepare("
-        INSERT INTO customer_orders (customer_id, order_total, order_date)
-        VALUES (?, ?, NOW())
-    ");
-    $stmt->bind_param("id", $customerID, $total);
-    if ($stmt->execute()) {
-        $order_id = $stmt->insert_id; // Get the last inserted order ID
-    } else {
-        echo "Error inserting order: " . $stmt->error;
+    // Debug Payload
+    echo "<h3>Shiprocket Payload:</h3>";
+    echo "<pre>" . json_encode($shiprocket_order_data, JSON_PRETTY_PRINT) . "</pre>";
+
+    // Send Order to Shiprocket
+    $ch = curl_init("https://apiv2.shiprocket.in/v1/external/orders/create/adhoc");
+    curl_setopt($ch, CURLOPT_POST, true);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($shiprocket_order_data));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Content-Type: application/json",
+        "Authorization: Bearer $token"
+    ]);
+
+    function getShiprocketOrderDetails($order_id, $token)
+    {
+        $url = "https://apiv2.shiprocket.in/v1/external/orders/show/" . $order_id;
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            "Content-Type: application/json",
+            "Authorization: Bearer $token"
+        ]);
+
+        $response = curl_exec($ch);
+        curl_close($ch);
+
+        return json_decode($response, true);
+    }
+
+    // Example usage:
+    // $order_id is already defined earlier
+    $orderDetails = getShiprocketOrderDetails($order_id, $token);
+
+    echo "<h3>Shiprocket Order Details:</h3>";
+    echo "<pre>" . json_encode($orderDetails, JSON_PRETTY_PRINT) . "</pre>";
+
+    $response = curl_exec($ch);
+    $http_code = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    $shiprocket_response = json_decode($response, true);
+
+    echo "<h3>Shiprocket Response (HTTP Code: $http_code):</h3>";
+    echo "<pre>" . json_encode($shiprocket_response, JSON_PRETTY_PRINT) . "</pre>";
+
+    if ($http_code !== 200) {
+        echo "Error: Failed to create Shiprocket order.";
         exit();
     }
 
-    // Generate a unique invoice number
-    $invoice_number = generateInvoiceNumber($con);
-
-    // Insert invoice into the invoices table
-    $stmt = $con->prepare("INSERT INTO invoices (invoice_number, customer_id, order_id, order_date) VALUES (?, ?, ?, NOW())");
-    $stmt->bind_param("sii", $invoice_number, $customerID, $order_id); // Bind the invoice number, customer ID, and order ID
-    if ($stmt->execute()) {
-        $invoice_id = $stmt->insert_id; // Get the last inserted invoice ID
-    } else {
-        echo "Error inserting invoice: " . $stmt->error;
-        exit();
-    }
-
-    // Update the customer_orders table with the invoice_id
-    $stmt = $con->prepare("UPDATE customer_orders SET invoice_id = ? WHERE order_id = ?");
-    $stmt->bind_param("ii", $invoice_id, $order_id);
-    if (!$stmt->execute()) {
-        echo "Error updating customer_orders with invoice_id: " . $stmt->error;
-        exit();
-    }
-
-
-    // Loop through each order item and insert into the order_items table
-    foreach ($orderItems as $item) {
-        $stmt = $con->prepare("
-            INSERT INTO order_items (order_id, product_id, qty, price)
-            VALUES (?, ?, ?, ?)
-        ");
-        $stmt->bind_param("iiid", $order_id, $item['product_id'], $item['quantity'], $item['price']);
-        $stmt->execute();
-    }
-
-    // Insert into the pending_orders table
-    $stmt = $con->prepare("
-        INSERT INTO pending_orders (order_id, customer_id, order_total, order_date, payment_method)
-        VALUES (?, ?, ?, NOW(), ?)
-    ");
-    $stmt->bind_param("iids", $order_id, $customerID, $total, $payment_mode);
-    $stmt->execute();
-
-    // Insert payment details into the payments table
-    $stmt = $con->prepare("
-        INSERT INTO payments (invoice_id, amount, payment_mode, ref_no, payment_date)
-        VALUES (?, ?, ?, ?, NOW())
-    ");
-    $ref_no = 'REF' . $order_id; // Generate a reference number
-    $stmt->bind_param("idss", $invoice_id, $total, $payment_mode, $ref_no);
-    if ($stmt->execute()) {
-        // Payment successful, clear the cart
-        $stmt = $con->prepare("DELETE FROM cart WHERE customer_id = ?");
-        $stmt->bind_param("i", $customerID);
-        $stmt->execute();
-
-        // Redirect to success page or order confirmation page
-        header("Location: order_confirmation.php?order_id=" . $order_id);
-        exit();
-    } else {
-        echo "Error inserting payment details: " . $stmt->error;
-        exit();
-    }
-
-    // Close the prepared statement
+    echo "<h3>Order successfully sent to Shiprocket!</h3>";
 }
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
